@@ -318,9 +318,9 @@ function Frame9() {
 
   return (
     <div className="content-stretch flex h-[115px] max-h-[115px] items-start justify-between relative shrink-0 w-full overflow-hidden">
-      <div className="flex-1 font-['Source_Serif_Pro:Regular',sans-serif] min-w-0 not-italic relative text-[#2e2a26] overflow-hidden">
-        <p className="leading-[1.1] mb-[2px] text-[48px] tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-        <p className="leading-[1.15] text-[36px] font-medium whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#2e2a26] overflow-hidden" data-name="Frame 53">
+        <p className="leading-[1.1] mb-[2px] text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+        <p className="leading-[1.15] text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
       <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[16px]" data-name="Location Indicator">
         <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
