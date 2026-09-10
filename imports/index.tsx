@@ -317,10 +317,10 @@ function Frame9() {
   const headline = ctx?.brief?.headline || "Dress light today";
 
   return (
-    <div className="content-stretch flex h-[135px] max-h-[135px] items-start justify-between relative shrink-0 w-full overflow-hidden">
+    <div className="content-stretch flex h-[115px] max-h-[115px] items-start justify-between relative shrink-0 w-full overflow-hidden">
       <div className="flex-1 font-['Source_Serif_Pro:Regular',sans-serif] min-w-0 not-italic relative text-[#2e2a26] overflow-hidden">
-        <p className="leading-[1.1] mb-[4px] text-[52px] tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-        <p className="leading-[1.15] text-[40px] font-medium whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+        <p className="leading-[1.1] mb-[2px] text-[48px] tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+        <p className="leading-[1.15] text-[36px] font-medium whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
       <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[16px]" data-name="Location Indicator">
         <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
@@ -544,7 +544,7 @@ function WeatherVisualHero() {
   }, [ctx?.brief?.current.conditionCode, ctx?.brief?.current.isDay]);
 
   return (
-    <div className="h-full max-w-[506px] relative rounded-[22px] shrink-0 w-[317px] overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)]" data-name="Weather Visual Display">
+    <div className="h-full max-w-[506px] relative rounded-[22px] shrink-0 w-[270px] overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)]" data-name="Weather Visual Display">
       <img
         alt={ctx?.brief?.current.condition || "Weather conditions"}
         className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[22px] size-full transition-opacity duration-700"

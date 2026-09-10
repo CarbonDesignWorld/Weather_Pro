@@ -56,7 +56,7 @@ export default function WeatherApp() {
               if (!prev) return prev;
               return {
                 ...prev,
-                headline: (copy.headline && typeof copy.headline === "string" ? copy.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 28) : prev.headline),
+                headline: (copy.headline && typeof copy.headline === "string" ? copy.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : prev.headline),
                 wear: {
                   ...prev.wear,
                   description: copy.wearDescription || prev.wear.description,
