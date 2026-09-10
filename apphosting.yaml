@@ -4,9 +4,3 @@ runConfig:
   minInstances: 0
   maxInstances: 10
   concurrency: 80
-
-env:
-  - variable: GEMINI_API_KEY
-    availability:
-      - BUILD
-      - RUNTIME
