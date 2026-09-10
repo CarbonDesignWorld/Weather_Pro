@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import svgPaths from "./svg-7a2pt52j2y";
 import imgWeatherVisualDisplay from "./468d1251b756da2aa4f79a32648edd195a653df0.png";
 import { useWeather } from "../src/context/WeatherContext";
