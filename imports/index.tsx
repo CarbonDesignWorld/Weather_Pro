@@ -279,17 +279,6 @@ function TimeAndConditions() {
   );
 }
 
-function WeatherMessageBox() {
-  const ctx = useWeather();
-  const desc = ctx?.brief?.nowDescription || ctx?.brief?.hourly?.[0]?.description || "84 degrees and climbing. Find shade where you can.";
-
-  return (
-    <div className="bg-[#faf8f4]/95 backdrop-blur-xs content-stretch flex flex-[1_0_0] h-[139px] items-start justify-between min-w-px overflow-clip px-[24px] py-[16px] relative rounded-[30px] shadow-[0px_2px_8px_rgba(28,42,68,0.08)]" data-name="Weather message Box">
-      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular',sans-serif] font-normal leading-relaxed min-w-px not-italic relative text-[16px] text-black">{desc}</p>
-    </div>
-  );
-}
-
 function Frame() {
   const ctx = useWeather();
   const loc = ctx?.brief?.location;
@@ -551,13 +540,6 @@ function WeatherVisualHero() {
         src={imgSrc}
         onError={() => setImgSrc(imgWeatherVisualDisplay)}
       />
-      {/* Atmospheric gradient overlay for contrast */}
-      <div className="absolute inset-x-0 bottom-0 h-[170px] bg-gradient-to-t from-black/40 via-black/10 to-transparent pointer-events-none rounded-b-[22px]" />
-      <div className="flex flex-row items-end max-w-[inherit] overflow-clip rounded-[inherit] size-full relative z-10">
-        <div className="content-stretch flex items-end justify-between max-w-[inherit] px-[25px] py-[19px] relative size-full">
-          <WeatherMessageBox />
-        </div>
-      </div>
     </div>
   );
 }

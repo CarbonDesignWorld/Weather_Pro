@@ -81,6 +81,7 @@ body,
   font-weight: 600 !important;
 }
 
+
 /* Side panel container */
 .weather-app-root [data-name="Time and conditions"] {
   overflow-x: hidden !important;
