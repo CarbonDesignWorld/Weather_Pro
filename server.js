@@ -43,6 +43,41 @@ function readJsonBody(req) {
   });
 }
 
+async function callGemini(apiKey, payload) {
+  const models = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+  let lastErr = null;
+
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        return await res.json();
+      }
+
+      const errText = await res.text();
+      console.error(`Gemini call failed for ${model} (${res.status}):`, errText);
+      lastErr = { status: res.status, statusText: res.statusText, details: errText };
+
+      if (res.status === 401 || res.status === 403) {
+        break;
+      }
+    } catch (e) {
+      lastErr = { message: e.message };
+    }
+  }
+
+  throw lastErr;
+}
+
 async function handleChat(req, res) {
   try {
     const { messages, context } = await readJsonBody(req);
@@ -99,35 +134,28 @@ ${contextJson}`;
       parts: [{ text: m.content || m.text }],
     }));
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          contents,
-          generationConfig: {
-            temperature: 0.3,
-            maxOutputTokens: 150,
-          },
-        }),
-      }
-    );
-
-    if (!geminiRes.ok) {
-      const errData = await geminiRes.text();
-      console.error("Gemini chat error:", errData);
+    let data;
+    try {
+      data = await callGemini(apiKey, {
+        systemInstruction: { parts: [{ text: systemInstruction }] },
+        contents,
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 150,
+        },
+      });
+    } catch (callErr) {
+      console.error("Gemini chat error:", callErr);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         message: "Unable to complete request right now.",
-        error: geminiRes.statusText,
+        error: callErr.statusText || callErr.message || "Failed",
+        details: callErr.details,
         retryable: true,
       }));
       return;
     }
 
-    const data = await geminiRes.json();
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -185,28 +213,22 @@ Return strict JSON:
   "nowDescription": "Current moment conditions summary (20-90 chars)"
 }`;
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `${systemInstruction}\n\n${prompt}` }] }],
-          generationConfig: {
-            temperature: 0.4,
-            responseMimeType: "application/json",
-          },
-        }),
-      }
-    );
-
-    if (!geminiRes.ok) {
+    let data;
+    try {
+      data = await callGemini(apiKey, {
+        contents: [{ parts: [{ text: `${systemInstruction}\n\n${prompt}` }] }],
+        generationConfig: {
+          temperature: 0.4,
+          responseMimeType: "application/json",
+        },
+      });
+    } catch (err) {
+      console.error("Generate copy error:", err);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ fallback: true }));
       return;
     }
 
-    const data = await geminiRes.json();
     const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     const parsed = rawText ? JSON.parse(rawText) : {};
     res.writeHead(200, { 'Content-Type': 'application/json' });
