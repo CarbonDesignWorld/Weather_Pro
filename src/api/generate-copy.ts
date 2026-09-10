@@ -44,7 +44,7 @@ TONE: ${voiceTone}
 CRITICAL RULES:
 1. You MUST describe ONLY the exact items in WEAR_ITEMS and PACK_ITEMS. Never recommend or name any garment or item not in those lists.
 2. Character limits (STRICT):
-   - headline: 20 to 110 characters.
+   - headline: 10 to 30 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 30 characters or wrap.
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
    - nowDescription: 20 to 90 characters.
@@ -58,7 +58,7 @@ Severity: ${severity}
 
 Return strict JSON:
 {
-  "headline": "Short punchy headline summary (20-110 chars)",
+  "headline": "Short single-line punchy headline (10-30 chars)",
   "wearDescription": "Why to wear these specific items (30-180 chars)",
   "packDescription": "Why to pack these specific items (30-180 chars)",
   "nowDescription": "Current moment conditions summary (20-90 chars)"
@@ -93,7 +93,7 @@ Return strict JSON:
 
     // Validate budget lengths and sanity
     return {
-      headline: (parsed.headline && parsed.headline.slice(0, 110)) || fallback.headline,
+      headline: (parsed.headline && typeof parsed.headline === "string" ? parsed.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 28) : fallback.headline),
       wearDescription: (parsed.wearDescription && parsed.wearDescription.slice(0, 180)) || fallback.wearDescription,
       packDescription: (parsed.packDescription && parsed.packDescription.slice(0, 180)) || fallback.packDescription,
       nowDescription: (parsed.nowDescription && parsed.nowDescription.slice(0, 90)) || fallback.nowDescription,

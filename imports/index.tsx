@@ -314,15 +314,15 @@ function Frame1() {
 function Frame9() {
   const ctx = useWeather();
   const greeting = ctx?.brief?.greeting || "Hey,";
-  const headline = ctx?.brief?.headline || "Dress Light today";
+  const headline = ctx?.brief?.headline || "Dress light today";
 
   return (
-    <div className="content-stretch flex h-[160px] items-start justify-end relative shrink-0 w-full">
-      <div className="[word-break:break-word] flex-[1_0_0] font-['Source_Serif_Pro:Regular',sans-serif] leading-[0] min-w-px not-italic relative text-[#2e2a26] text-[64px]">
-        <p className="leading-[normal] mb-0">{greeting}</p>
-        <p className="leading-[normal] text-[48px] font-medium">{headline}</p>
+    <div className="content-stretch flex h-[135px] max-h-[135px] items-start justify-between relative shrink-0 w-full overflow-hidden">
+      <div className="flex-1 font-['Source_Serif_Pro:Regular',sans-serif] min-w-0 not-italic relative text-[#2e2a26] overflow-hidden">
+        <p className="leading-[1.1] mb-[4px] text-[52px] tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+        <p className="leading-[1.15] text-[40px] font-medium whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
-      <div className="bg-white relative rounded-[90px] shrink-0 w-fit" data-name="Location Indicator">
+      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[16px]" data-name="Location Indicator">
         <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
           <div className="content-stretch flex flex-col items-center justify-center px-[16px] py-[8px] relative size-full">
             <Frame1 />

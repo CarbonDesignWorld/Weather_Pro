@@ -97,12 +97,11 @@ export const TAG_LABELS: Record<TemperatureTagId | SkyTagId | MoistureTagId, str
 };
 
 export function getFallbackHeadline(condition: string, tempF: number, severity: SeverityLevel): string {
-  if (severity === "extreme") {
-    return `Extreme conditions: ${condition}, ${Math.round(tempF)}°F.`;
-  }
-  if (tempF >= 80) return `Warm and ${condition.toLowerCase()} today.`;
-  if (tempF <= 40) return `Cold and ${condition.toLowerCase()} today.`;
-  return `${condition}, ${Math.round(tempF)}°F today.`;
+  if (severity === "extreme") return "Extreme conditions";
+  if (tempF >= 80) return "Dress light today";
+  if (tempF <= 45) return "Layer up today";
+  if (condition.toLowerCase().includes("rain")) return "Grab a raincoat";
+  return "Dress light today";
 }
 
 export function getFallbackWearDescription(icons: IconId[]): string {
