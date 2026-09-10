@@ -16,20 +16,25 @@ export async function requestCopyGeneration(brief: DayBrief): Promise<GeneratedC
         severity: brief.severity,
       }),
     });
-    if (res.ok) {
-      return await res.json();
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const data = await res.json();
+      if (data && !data.fallback && data.headline) {
+        return data;
+      }
     }
   } catch {
     // fallback to direct handler
   }
 
+  const localKey = typeof window !== "undefined" ? localStorage.getItem("TODAY_GEMINI_API_KEY") || undefined : undefined;
   return generateCopy({
     current: brief.current,
     dayRange: brief.dayRange,
     wearIcons: brief.wear.icons,
     packIcons: brief.pack.icons,
     severity: brief.severity,
-  });
+  }, localKey);
 }
 
 export async function sendChatMessage(messages: ChatMessage[], context: DayBrief): Promise<ChatResponse> {
@@ -39,12 +44,17 @@ export async function sendChatMessage(messages: ChatMessage[], context: DayBrief
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ messages, context }),
     });
-    if (res.ok) {
-      return await res.json();
+    const contentType = res.headers.get("content-type") || "";
+    if (res.ok && contentType.includes("application/json")) {
+      const data = await res.json();
+      if (data && data.message) {
+        return data;
+      }
     }
   } catch {
     // fallback to direct handler
   }
 
-  return processChatTurn({ messages, context });
+  const localKey = typeof window !== "undefined" ? localStorage.getItem("TODAY_GEMINI_API_KEY") || undefined : undefined;
+  return processChatTurn({ messages, context, apiKey: localKey });
 }

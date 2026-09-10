@@ -28,8 +28,207 @@ const MIME_TYPES = {
   '.txt': 'text/plain; charset=utf-8',
 };
 
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch (err) {
+        reject(err);
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+async function handleChat(req, res) {
+  try {
+    const { messages, context } = await readJsonBody(req);
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        message: "Chat agent is currently running in offline preview mode. Please configure your GEMINI_API_KEY."
+      }));
+      return;
+    }
+
+    const history = (messages || []).slice(-6);
+    const contextJson = JSON.stringify({
+      location: context?.location,
+      current: context?.current,
+      dayRange: context?.dayRange,
+      wear: context?.wear,
+      pack: context?.pack,
+      tags: context?.tags,
+      severity: context?.severity,
+      hourly: context?.hourly?.map((h) => ({
+        time: h.displayTime,
+        tempF: h.tempF,
+        condition: h.condition,
+      })),
+    });
+
+    const isExtreme = context?.severity === "extreme";
+    const systemInstruction = `You are the assistant inside Today.io, a weather app that tells people what to wear and pack.
+
+You can only discuss TODAY, for the location in CONTEXT below. You have no ability to look up other days, other locations, or historical weather.
+If asked about other days or other locations, say: "I can only talk about today right now." and stop.
+
+Answer only from CONTEXT. Never invent a temperature, condition, or forecast. If CONTEXT doesn't contain the answer, say so.
+
+VOICE:
+${isExtreme ? "- Severity is extreme: Use plain, factual voice only. No wit or stylisation of any kind." : "- Conclusion first, then the reason, then stop. Short declarative sentences. Specific over intense. No exclamation marks, no hedging, no personified weather, no clichés, no emoji, no profanity."}
+
+RULES:
+1. When asked whether an item can be substituted, give a direct YES or NO first, then one line of reasoning grounded in the actual conditions from CONTEXT.
+2. Keep answers under 60 words unless the user explicitly asks for detail.
+3. SAFETY: You do not give medical diagnoses or travel-safety verdicts.
+   - If asked about medical symptoms (heat stroke, hypothermia, etc.): do not diagnose; point to medical professionals or emergency services immediately.
+   - If asked whether it is safe to drive, fly, or travel: describe the conditions accurately, do not issue a safety verdict.
+   - If asked about an active weather emergency: state conditions and direct to official local authorities.
+
+CONTEXT:
+${contextJson}`;
+
+    const contents = history.map((m) => ({
+      role: m.role === "user" ? "user" : "model",
+      parts: [{ text: m.content || m.text }],
+    }));
+
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemInstruction }] },
+          contents,
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 150,
+          },
+        }),
+      }
+    );
+
+    if (!geminiRes.ok) {
+      const errData = await geminiRes.text();
+      console.error("Gemini chat error:", errData);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        message: "Unable to complete request right now.",
+        error: geminiRes.statusText,
+        retryable: true,
+      }));
+      return;
+    }
+
+    const data = await geminiRes.json();
+    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      message: reply || "I can only answer questions about today's weather and recommendations."
+    }));
+  } catch (err) {
+    console.error("Chat turn error:", err);
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: "Internal server error", error: err.message }));
+  }
+}
+
+async function handleGenerateCopy(req, res) {
+  try {
+    const { current, dayRange, wearIcons, packIcons, severity } = await readJsonBody(req);
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    if (!apiKey) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ fallback: true }));
+      return;
+    }
+
+    let voiceTone = "Blunt, dry, and confident. Short declarative sentences. Specific over intense. No exclamation marks, no hedging, no personified weather, no clichés, no emoji.";
+    if (severity === "elevated") {
+      voiceTone = "Blunt but no wit. Straight facts and instruction only. Serious weather conditions.";
+    } else if (severity === "extreme") {
+      voiceTone = "Plain and factual only. No stylisation or humor of any kind. Dangerous weather conditions.";
+    }
+
+    const systemInstruction = `You write the editorial copy for Today.io, a weather utility app that tells people what to wear and pack today in one glance.
+
+TONE: ${voiceTone}
+
+CRITICAL RULES:
+1. You MUST describe ONLY the exact items in WEAR_ITEMS and PACK_ITEMS. Never recommend or name any garment or item not in those lists.
+2. Character limits (STRICT):
+   - headline: 20 to 110 characters.
+   - wearDescription: 30 to 180 characters.
+   - packDescription: 30 to 180 characters.
+   - nowDescription: 20 to 90 characters.
+3. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
+
+    const prompt = `Current Weather: ${current?.condition}, ${current?.tempF}°F (Feels like ${current?.feelsLikeF}°F).
+Day Range: Low ${dayRange?.minTempF}°F / High ${dayRange?.maxTempF}°F. Rain probability: ${current?.precipProbability}%. Wind: ${current?.windMph} mph.
+WEAR_ITEMS: ${(wearIcons || []).join(', ') || "None"}
+PACK_ITEMS: ${(packIcons || []).join(', ') || "None"}
+Severity: ${severity}
+
+Return strict JSON:
+{
+  "headline": "Short punchy headline summary (20-110 chars)",
+  "wearDescription": "Why to wear these specific items (30-180 chars)",
+  "packDescription": "Why to pack these specific items (30-180 chars)",
+  "nowDescription": "Current moment conditions summary (20-90 chars)"
+}`;
+
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `${systemInstruction}\n\n${prompt}` }] }],
+          generationConfig: {
+            temperature: 0.4,
+            responseMimeType: "application/json",
+          },
+        }),
+      }
+    );
+
+    if (!geminiRes.ok) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ fallback: true }));
+      return;
+    }
+
+    const data = await geminiRes.json();
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const parsed = rawText ? JSON.parse(rawText) : {};
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify(parsed));
+  } catch (err) {
+    console.error("Generate copy error:", err);
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ fallback: true }));
+  }
+}
+
 const server = http.createServer((req, res) => {
   const reqPath = decodeURI(req.url.split('?')[0]);
+
+  // API endpoints
+  if (req.method === 'POST' && reqPath === '/api/chat') {
+    return handleChat(req, res);
+  }
+  if (req.method === 'POST' && reqPath === '/api/generate-copy') {
+    return handleGenerateCopy(req, res);
+  }
+
   let filePath = path.join(DIST_DIR, reqPath);
 
   if (!filePath.startsWith(DIST_DIR)) {
