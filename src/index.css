@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap');
+@import 'tailwindcss';
+
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Wear / Pack icon cards — hover state */
+.weather-app-root [data-name="Frame Background Cell"] {
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.weather-app-root [data-name="Frame Background Cell"]:hover {
+  background-color: #e4dfd6 !important;
+  box-shadow: 0px 2px 6px 1px rgba(28, 42, 68, 0.15);
+}
+
+.weather-app-root [data-name="Frame Background Cell"]:active {
+  background-color: #d5cfc4 !important;
+}
+
+/* Suggestion prompt buttons — consistent hover across button + div elements */
+.weather-app-root [data-name="Suggestion Prompt"] > * {
+  cursor: pointer !important;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.weather-app-root [data-name="Suggestion Prompt"] > *:hover {
+  background-color: #3a5384 !important;
+  box-shadow: 0px 2px 8px 2px rgba(28, 42, 68, 0.3) !important;
+}
+
+.weather-app-root [data-name="Suggestion Prompt"] > *:active {
+  background-color: #2a3d61 !important;
+}
+
+/* Wear / Pack overlay slide-in animation */
+@keyframes overlaySlideIn {
+  from {
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.overlay-card {
+  animation: overlaySlideIn 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Weather visual image swap — rainy night city */
+.weather-app-root [data-name="Weather Visual Display"] {
+  background-image: url('https://images.unsplash.com/photo-1618941240535-234c3212e3e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080');
+  background-size: cover;
+  background-position: center;
+}
+
+.weather-app-root [data-name="Weather Visual Display"] > img {
+  opacity: 0;
+}
+
+/* Confidence card — light pill, Inter Regular 16px, dark text */
+.weather-app-root [data-name="Confidence Card"] [class*="bg-\[#6b655b\]"] {
+  background-color: #d5cfc4 !important;
+}
+
+.weather-app-root [data-name="Confidence Card"] p {
+  color: #6b655b !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+}
+
+/* Location pill: city name + Change Location link — Source Serif 4 Regular 16px */
+.weather-app-root [data-name="Location Indicator"] p {
+  font-family: 'Source Serif 4', serif !important;
+  font-weight: 400 !important;
+  font-size: 16px !important;
+}
+
+/* Greeting text: Source Serif Pro Semibold 48px */
+.weather-app-root [class*="leading-[0]"] {
+  font-size: 48px !important;
+  font-weight: 600 !important;
+  font-family: 'Source Serif 4', serif !important;
+  line-height: 1.1 !important;
+}
+
+/* Make side panel time container scrollable */
+.weather-app-root [data-name="Time and conditions"] {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.weather-app-root [data-name="Time and conditions"] [data-name="Time Stamps"] {
+  height: 1700px !important;
+  width: 130px !important;
+  white-space: nowrap !important;
+}
+
+/* Layout fixes for imported weather design */
+.weather-app-root [data-name="Main"] {
+  justify-content: flex-start !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.weather-app-root [data-name="Center Screen"] {
+  height: 100% !important;
+  width: auto !important;
+  flex: 1 0 0 !important;
+}
+
+.weather-app-root [data-name="Detail Display"] {
+  flex: 1 1 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.weather-app-root [data-name="Chat Window"] {
+  flex-shrink: 0 !important;
+  height: 300px !important;
+}
