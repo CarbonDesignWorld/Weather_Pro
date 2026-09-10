@@ -47,7 +47,7 @@ CRITICAL RULES:
    - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
-   - nowDescription: 20 to 90 characters.
+   - nowDescription: 50 to 130 characters. An atmospheric summary of current conditions and the day's weather feel (e.g. "88° and climbing under direct sun. Peak UV at 9 this afternoon—find shade where you can.", "Cool and overcast at 58°. Light drizzle setting in with damp breezes.").
 3. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
   const prompt = `Current Weather: ${current.condition}, ${current.tempF}°F (Feels like ${current.feelsLikeF}°F).
@@ -61,7 +61,7 @@ Return strict JSON:
   "headline": "Short single-line punchy headline (10-25 chars)",
   "wearDescription": "Why to wear these specific items (30-180 chars)",
   "packDescription": "Why to pack these specific items (30-180 chars)",
-  "nowDescription": "Current moment conditions summary (20-90 chars)"
+  "nowDescription": "Atmospheric conditions summary for the weather card (50-130 chars)"
 }`;
 
   try {
@@ -96,7 +96,7 @@ Return strict JSON:
       headline: (parsed.headline && typeof parsed.headline === "string" ? parsed.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : fallback.headline),
       wearDescription: (parsed.wearDescription && parsed.wearDescription.slice(0, 180)) || fallback.wearDescription,
       packDescription: (parsed.packDescription && parsed.packDescription.slice(0, 180)) || fallback.packDescription,
-      nowDescription: (parsed.nowDescription && parsed.nowDescription.slice(0, 90)) || fallback.nowDescription,
+      nowDescription: (parsed.nowDescription && parsed.nowDescription.slice(0, 140)) || fallback.nowDescription,
     };
   } catch (err) {
     console.error("Copy generation error", err);

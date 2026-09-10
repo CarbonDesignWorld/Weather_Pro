@@ -116,6 +116,22 @@ export function getFallbackPackDescription(icons: IconId[]): string {
   return `Pack ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`;
 }
 
-export function getFallbackNowDescription(condition: string, tempF: number): string {
-  return `${condition}, ${Math.round(tempF)}°F.`;
+export function getFallbackNowDescription(condition: string, tempF: number, maxTempF?: number, windMph?: number): string {
+  const rounded = Math.round(tempF);
+  const condLower = condition.toLowerCase();
+
+  if (rounded >= 85 || (maxTempF && maxTempF >= 88)) {
+    return `${rounded}° and climbing under ${condLower}. High heat and peak UV through the afternoon—find shade where you can.`;
+  }
+  if (condLower.includes("rain") || condLower.includes("drizzle") || condLower.includes("shower")) {
+    return `${rounded}°, ${condLower}. Steady damp conditions with slick roads and wet pavement through the evening.`;
+  }
+  if (condLower.includes("thunder") || condLower.includes("storm")) {
+    return `${rounded}° with active storm systems. Expect gusty winds and sudden heavy downpours.`;
+  }
+  if (rounded <= 45) {
+    const windNote = windMph && windMph > 15 ? ` Gusts up to ${Math.round(windMph)} mph add a sharp bite.` : "";
+    return `Currently ${rounded}° and brisk.${windNote} Dress warmly if you'll be out past sunset.`;
+  }
+  return `${condition} and ${rounded}°. Mild, steady conditions with comfortable temperatures continuing through tonight.`;
 }

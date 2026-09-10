@@ -266,6 +266,7 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
   }
 
   const headline = getFallbackHeadline(current.condition, current.tempF, rulesResult.severity);
+  const nowDescription = getFallbackNowDescription(current.condition, current.tempF, dayRange.maxTempF, current.windMph);
   const wearDescription = getFallbackWearDescription(rulesResult.wearIcons);
   const packDescription = getFallbackPackDescription(rulesResult.packIcons);
 
@@ -275,6 +276,7 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     dayRange,
     headline,
     greeting: "Hey,",
+    nowDescription,
     wear: {
       icons: rulesResult.wearIcons,
       description: wearDescription,

@@ -281,11 +281,11 @@ function TimeAndConditions() {
 
 function WeatherMessageBox() {
   const ctx = useWeather();
-  const headline = ctx?.brief?.headline || "84 degrees and climbing. Find shade where you can.";
+  const desc = ctx?.brief?.nowDescription || ctx?.brief?.hourly?.[0]?.description || "84 degrees and climbing. Find shade where you can.";
 
   return (
     <div className="bg-[#faf8f4]/95 backdrop-blur-xs content-stretch flex flex-[1_0_0] h-[139px] items-start justify-between min-w-px overflow-clip px-[24px] py-[16px] relative rounded-[30px] shadow-[0px_2px_8px_rgba(28,42,68,0.08)]" data-name="Weather message Box">
-      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular',sans-serif] font-normal leading-relaxed min-w-px not-italic relative text-[16px] text-black">{headline}</p>
+      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular',sans-serif] font-normal leading-relaxed min-w-px not-italic relative text-[16px] text-black">{desc}</p>
     </div>
   );
 }

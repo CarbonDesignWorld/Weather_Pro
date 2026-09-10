@@ -57,6 +57,7 @@ export default function WeatherApp() {
               return {
                 ...prev,
                 headline: (copy.headline && typeof copy.headline === "string" ? copy.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : prev.headline),
+                nowDescription: copy.nowDescription || prev.nowDescription,
                 wear: {
                   ...prev.wear,
                   description: copy.wearDescription || prev.wear.description,

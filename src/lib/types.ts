@@ -92,6 +92,7 @@ export interface DayBrief {
   dayRange: DayRange;
   headline: string; // LLM or fallback
   greeting: string; // Static "Hey,"
+  nowDescription?: string; // Atmospheric conditions brief for Weather Message Box
   wear: {
     icons: IconId[]; // max 4
     description: string; // LLM or fallback
