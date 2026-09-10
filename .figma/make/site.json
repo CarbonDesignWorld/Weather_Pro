@@ -1,5 +1,6 @@
 {
-  "description": "Get real-time weather updates with vibrant visuals and an intuitive interface, helping users easily understand current conditions and plan their day.",
+  "title": "Today.io — Weather, Wear & Pack",
+  "description": "Today.io answers one question — what should I wear and pack today? — for one location, in one glance.",
   "robots": {
     "index": false
   },

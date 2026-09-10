@@ -1,4 +1,6 @@
-import svgPaths from "#imports/svg-7a2pt52j2y";
+import React from "react";
+import { DayBrief } from "./lib/types";
+import WeatherIconItem from "./components/WeatherIconItem";
 
 export type OverlayType = "wear" | "pack" | null;
 
@@ -14,55 +16,19 @@ const PACK_IMAGES = [
   "https://images.unsplash.com/photo-1616118132534-381148898bb4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400",
 ];
 
-function IconCircle({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="bg-[#f0ece4] flex items-center justify-center rounded-[22px] shrink-0 size-[44px]">
-      {children}
-    </div>
-  );
-}
-
-function WearIcons() {
-  return (
-    <div className="flex gap-[10px] items-center">
-      <IconCircle><svg fill="none" height="28" viewBox="0 0 28 28" width="28"><path d={svgPaths.p2d822f0} fill="#5B7FC7" /></svg></IconCircle>
-      <IconCircle><svg fill="none" height="28" viewBox="0 0 28 28" width="28"><path d={svgPaths.p24c7b70} fill="#5B7FC7" /></svg></IconCircle>
-      <IconCircle><svg fill="none" height="28" viewBox="0 0 28 28" width="28"><path d={svgPaths.p2cafffb0} fill="#5B7FC7" /></svg></IconCircle>
-      <IconCircle><svg fill="none" height="34" viewBox="0 0 34 34" width="34"><path d={svgPaths.pc1d7670} fill="#5B7FC7" /></svg></IconCircle>
-    </div>
-  );
-}
-
-function PackIcons() {
-  return (
-    <div className="flex gap-[10px] items-center">
-      <IconCircle>
-        <svg fill="none" height="28" viewBox="0 0 27.9998 10.7061" width="28">
-          <path d={svgPaths.p2f13c100} fill="#5B7FC7" />
-          <path d={svgPaths.pf412200} fill="#5B7FC7" />
-          <path d={svgPaths.p2f0d48b0} fill="#5B7FC7" />
-          <path d={svgPaths.p2305ee80} fill="#5B7FC7" />
-        </svg>
-      </IconCircle>
-      <IconCircle><svg fill="none" height="29" viewBox="0 0 17.0601 29" width="17"><path clipRule="evenodd" d={svgPaths.p2b951680} fill="#5B7FC7" fillRule="evenodd" /></svg></IconCircle>
-      <IconCircle><svg fill="none" height="44" viewBox="0 0 44 44" width="44"><path d={svgPaths.p1271ba00} fill="#5B7FC7" /></svg></IconCircle>
-    </div>
-  );
-}
-
 type CardProps = {
   title: string;
   icons: React.ReactNode;
+  description: string;
   images: string[];
   ctaLabel: string;
   onCta: () => void;
 };
 
-// Container is 900px wide; each card slot is 700px so 200px of next card always peeks
 const CONTAINER_W = 900;
 const CARD_W = 700;
 
-function Card({ title, icons, images, ctaLabel, onCta }: CardProps) {
+function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps) {
   return (
     <div
       className="flex flex-col gap-[24px] pt-[40px] pb-[36px] px-[48px] shrink-0"
@@ -75,9 +41,11 @@ function Card({ title, icons, images, ctaLabel, onCta }: CardProps) {
       >
         {title}
       </h2>
-      <p className="text-[#6b655b] text-[16px] leading-relaxed m-0" style={{ fontFamily: "Inter, sans-serif", maxWidth: 560 }}>
-        The denim jeans are your best option. To get through a weather day that
-        starts cold and end very hot, you'll want something insulating
+      <p
+        className="text-[#6b655b] text-[16px] leading-relaxed m-0"
+        style={{ fontFamily: "Inter, sans-serif", maxWidth: 560 }}
+      >
+        {description}
       </p>
       <div className="flex gap-[12px]">
         {images.map((src, i) => (
@@ -103,21 +71,37 @@ function Card({ title, icons, images, ctaLabel, onCta }: CardProps) {
 
 type Props = {
   open: OverlayType;
+  brief: DayBrief | null;
   onClose: () => void;
   onSwitch: (to: OverlayType) => void;
 };
 
-export default function WearPackOverlay({ open, onClose, onSwitch }: Props) {
-  if (!open) return null;
+export default function WearPackOverlay({ open, brief, onClose, onSwitch }: Props) {
+  if (!open || !brief) return null;
 
   const atPack = open === "pack";
 
+  const wearIconsNode = (
+    <div className="flex gap-[10px] items-center">
+      {brief.wear.icons.map((id) => (
+        <WeatherIconItem key={id} id={id} />
+      ))}
+    </div>
+  );
+
+  const packIconsNode = (
+    <div className="flex gap-[10px] items-center">
+      {brief.pack.icons.map((id) => (
+        <WeatherIconItem key={id} id={id} />
+      ))}
+    </div>
+  );
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-xs"
       onClick={onClose}
     >
-      {/* Outer viewport: fixed width clips carousel, 200px always peeks */}
       <div
         className="relative bg-white rounded-[28px] shadow-[0px_8px_40px_rgba(28,42,68,0.18)] overflow-hidden overlay-card"
         style={{ width: CONTAINER_W, maxHeight: "85vh" }}
@@ -134,22 +118,24 @@ export default function WearPackOverlay({ open, onClose, onSwitch }: Props) {
         >
           <Card
             title="What to wear today."
-            icons={<WearIcons />}
+            icons={wearIconsNode}
+            description={brief.wear.description}
             images={WEAR_IMAGES}
             ctaLabel="See what to pack."
             onCta={() => onSwitch("pack")}
           />
           <Card
             title="What to pack today."
-            icons={<PackIcons />}
+            icons={packIconsNode}
+            description={brief.pack.description}
             images={PACK_IMAGES}
             ctaLabel="See what to wear."
             onCta={() => onSwitch("wear")}
           />
-          {/* Duplicate wear at slot 3 so it peeks when pack is active */}
           <Card
             title="What to wear today."
-            icons={<WearIcons />}
+            icons={wearIconsNode}
+            description={brief.wear.description}
             images={WEAR_IMAGES}
             ctaLabel="See what to pack."
             onCta={() => onSwitch("pack")}
@@ -159,7 +145,9 @@ export default function WearPackOverlay({ open, onClose, onSwitch }: Props) {
         {/* Right-edge gradient fading the peeking card */}
         <div
           className="pointer-events-none absolute top-0 right-0 h-full w-[220px]"
-          style={{ background: "linear-gradient(to left, rgba(255,255,255,1) 30%, rgba(255,255,255,0))" }}
+          style={{
+            background: "linear-gradient(to left, rgba(255,255,255,1) 30%, rgba(255,255,255,0))",
+          }}
         />
       </div>
     </div>

@@ -1,53 +1,83 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { DayBrief, ChatMessage } from "./lib/types";
+import { sendChatMessage } from "./lib/apiClient";
 
-type Message = {
-  id: number;
-  role: "user" | "agent";
+type MessageItem = {
+  id: string | number;
+  role: "user" | "assistant";
   text: string;
 };
 
 type Props = {
   open: boolean;
   initialMessage: string | null;
+  brief: DayBrief | null;
   onClose: () => void;
 };
 
-export default function ChatView({ open, initialMessage, onClose }: Props) {
-  const [messages, setMessages] = useState<Message[]>([]);
+export default function ChatView({ open, initialMessage, brief, onClose }: Props) {
+  const [messages, setMessages] = useState<MessageItem[]>([]);
   const [input, setInput] = useState("");
-  const [nextId, setNextId] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // When a prompt is clicked, seed it as the first message
+  // When a prompt is clicked or opened with seed, send initial message
   useEffect(() => {
-    if (open && initialMessage) {
-      const userMsg: Message = { id: 1, role: "user", text: initialMessage };
-      const agentMsg: Message = { id: 2, role: "agent", text: "Agents message displays here." };
-      setMessages([userMsg, agentMsg]);
-      setNextId(3);
-    }
-    if (!open) {
+    if (open && initialMessage && brief) {
+      const userMsg: MessageItem = { id: Date.now(), role: "user", text: initialMessage };
+      setMessages([userMsg]);
+      sendMessageInternal(initialMessage, [userMsg]);
+    } else if (!open) {
       setMessages([]);
       setInput("");
-      setNextId(1);
+      setErrorMsg(null);
+      setLoading(false);
     }
   }, [open, initialMessage]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
-  function sendMessage(text: string) {
-    if (!text.trim()) return;
-    const userMsg: Message = { id: nextId, role: "user", text: text.trim() };
-    const agentMsg: Message = { id: nextId + 1, role: "agent", text: "Agents message displays here." };
-    setMessages((prev) => [...prev, userMsg, agentMsg]);
-    setNextId((n) => n + 2);
+  async function sendMessageInternal(text: string, currentHistory: MessageItem[]) {
+    if (!text.trim() || !brief) return;
+    setLoading(true);
+    setErrorMsg(null);
+
+    const apiMessages: ChatMessage[] = currentHistory.map((m) => ({
+      role: m.role,
+      content: m.text,
+    }));
+
+    try {
+      const res = await sendChatMessage(apiMessages, brief);
+      if (res.error) {
+        setErrorMsg(res.error);
+      }
+      const agentMsg: MessageItem = {
+        id: Date.now() + 1,
+        role: "assistant",
+        text: res.message || "I can only answer questions about today's weather.",
+      };
+      setMessages((prev) => [...prev, agentMsg]);
+    } catch (err: any) {
+      setErrorMsg(err?.message || "Failed to reach agent");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleSend(text: string) {
+    if (!text.trim() || loading) return;
+    const userMsg: MessageItem = { id: Date.now(), role: "user", text: text.trim() };
+    const updated = [...messages, userMsg];
+    setMessages(updated);
     setInput("");
+    sendMessageInternal(text.trim(), updated);
   }
 
   return (
-    // Page layer — #faf8f4, holds Close and the chat card
     <div
       className="fixed z-40 flex flex-col"
       style={{
@@ -62,7 +92,7 @@ export default function ChatView({ open, initialMessage, onClose }: Props) {
         transition: "opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
-      {/* Close — sits in the page background above the card */}
+      {/* Close button */}
       <div className="flex justify-end px-[32px] pt-[16px] pb-[8px] shrink-0">
         <button
           onClick={onClose}
@@ -73,16 +103,24 @@ export default function ChatView({ open, initialMessage, onClose }: Props) {
         </button>
       </div>
 
-      {/* Chat card — #f0ece4 rounded container */}
-      <div className="flex-1 flex flex-col mx-[24px] mb-[24px] min-h-0 rounded-[42px] overflow-hidden" style={{ background: "#f0ece4" }}>
-
+      {/* Chat card */}
+      <div
+        className="flex-1 flex flex-col mx-[24px] mb-[24px] min-h-0 rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)]"
+        style={{ background: "#f0ece4" }}
+      >
         {/* Message list */}
         <div className="flex-1 overflow-y-auto px-[32px] pt-[32px] pb-[16px] flex flex-col gap-[16px] min-h-0">
+          {messages.length === 0 && (
+            <div className="text-center py-12 text-[#6b655b] text-[15px]" style={{ fontFamily: "Inter, sans-serif" }}>
+              Ask anything about today&apos;s weather, what to wear, or item substitutions.
+            </div>
+          )}
+
           {messages.map((msg) =>
             msg.role === "user" ? (
               <div key={msg.id} className="flex justify-end">
                 <div
-                  className="bg-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[#2e2a26] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)]"
+                  className="bg-[#4a69a9] text-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.1)]"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -91,7 +129,7 @@ export default function ChatView({ open, initialMessage, onClose }: Props) {
             ) : (
               <div key={msg.id} className="flex justify-start">
                 <div
-                  className="bg-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[#6b655b] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)]"
+                  className="bg-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[#2e2a26] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)] leading-relaxed"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -99,27 +137,60 @@ export default function ChatView({ open, initialMessage, onClose }: Props) {
               </div>
             )
           )}
+
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-white/80 rounded-[20px] px-[20px] py-[14px] text-[#6b655b] text-[14px] italic">
+                Thinking...
+              </div>
+            </div>
+          )}
+
+          {errorMsg && (
+            <div className="text-center py-2 text-red-600 text-[14px]">
+              {errorMsg}.{" "}
+              <button
+                onClick={() => {
+                  const lastUser = [...messages].reverse().find((m) => m.role === "user");
+                  if (lastUser) sendMessageInternal(lastUser.text, messages);
+                }}
+                className="underline cursor-pointer bg-transparent border-none text-red-700"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input — inside the card, same light bg as home screen chat box */}
+        {/* Input bar */}
         <div className="shrink-0 px-[24px] pb-[24px]">
           <form
-            onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
-            className="rounded-[22px] flex items-center px-[20px] py-[16px] gap-[12px]"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend(input);
+            }}
+            className="rounded-[22px] flex items-center px-[20px] py-[16px] gap-[12px] border border-[#e4dfd6]"
             style={{ background: "#faf8f4" }}
           >
             <input
               autoFocus
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about today.."
+              placeholder="Ask about today"
+              maxLength={500}
               className="flex-1 bg-transparent border-none outline-none text-[#2e2a26] text-[16px] placeholder-[#6b655b]"
               style={{ fontFamily: "Inter, sans-serif" }}
             />
             <button
               type="submit"
-              className="shrink-0 bg-[#4a69a9] hover:bg-[#3a5384] active:bg-[#2a3d61] text-white rounded-[14px] px-[16px] py-[8px] text-[14px] cursor-pointer border-none transition-colors duration-150 hover:shadow-[0px_2px_8px_2px_rgba(28,42,68,0.3)]"
+              disabled={!input.trim() || loading}
+              className={`shrink-0 rounded-[14px] px-[16px] py-[8px] text-[14px] font-medium border-none transition-colors duration-150 ${
+                input.trim() && !loading
+                  ? "bg-[#4a69a9] hover:bg-[#3a5384] active:bg-[#2a3d61] text-white cursor-pointer shadow-[0px_2px_8px_rgba(28,42,68,0.25)]"
+                  : "bg-[#d5cfc4] text-[#6b655b] cursor-not-allowed"
+              }`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               Send
