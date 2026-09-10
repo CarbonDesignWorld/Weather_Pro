@@ -123,9 +123,14 @@ type HeaderProps = {
   temperatureLabel?: string;
 };
 
-function Header({ className, brandName = "Today.io", dateLabel = "Sept 6", status = "Closed", temperatureLabel = "74 F | 23 C" }: HeaderProps) {
+function formatHeaderDate(d: Date = new Date()): string {
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  return `${months[d.getMonth()]} ${d.getDate()}`;
+}
+
+function Header({ className, brandName = "Today.io", dateLabel, status = "Closed", temperatureLabel = "74 F | 23 C" }: HeaderProps) {
   const ctx = useWeather();
-  const dateStr = dateLabel || new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date());
+  const dateStr = dateLabel || formatHeaderDate();
   const tempStr = ctx?.brief ? `${ctx.brief.current.tempF} F | ${ctx.brief.current.tempC} C` : temperatureLabel;
 
   return (
