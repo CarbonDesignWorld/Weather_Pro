@@ -240,10 +240,29 @@ Return strict JSON:
   }
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const reqPath = decodeURI(req.url.split('?')[0]);
 
   // API endpoints
+  if (req.method === 'GET' && reqPath === '/api/debug-models') {
+    const apiKey = process.env.GEMINI_API_KEY;
+    try {
+      const resGl = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, {
+        headers: { 'x-goog-api-key': apiKey }
+      });
+      const glText = await resGl.text();
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        glStatus: resGl.status,
+        glBody: glText,
+      }));
+    } catch (e) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: e.message }));
+    }
+    return;
+  }
+
   if (req.method === 'POST' && reqPath === '/api/chat') {
     return handleChat(req, res);
   }
