@@ -92,7 +92,6 @@ export default function WeatherIconItem({ id, className = "", size = 44 }: Weath
       case "boots":
       case "rain_boots":
       case "closed_shoes":
-      case "sandals":
       case "warm_socks":
         return (
           <svg className="size-[26px]" fill="none" height="26" viewBox="0 0 24 24" width="26" stroke="#5B7FC7" strokeWidth="2">

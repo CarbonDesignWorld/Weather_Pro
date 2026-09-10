@@ -156,40 +156,44 @@ function TimeStamps() {
     const timelineGradient = getTimelineGradient(hourly);
 
     return (
-      <div className="relative pl-[28px] py-[53px] w-[180px]" data-name="Time Stamps">
-        {/* Continuous thermal gradient rail running down the side panel */}
+      <div className="relative pl-[22px] py-[6px] w-full" data-name="Time Stamps">
+        {/* Continuous thermal gradient rail */}
         <div
-          className="absolute left-[10px] top-[53px] bottom-[53px] w-[5px] rounded-full shadow-xs opacity-90"
+          className="absolute left-[6px] top-[10px] bottom-[10px] w-[5px] rounded-full shadow-xs opacity-90"
           style={{ background: timelineGradient }}
           title="Thermal progression of the day"
         />
 
-        <div className="[word-break:break-word] content-stretch flex flex-col font-['Inter:Semi_Bold',sans-serif] font-semibold gap-[165px] items-start leading-[normal] not-italic text-[#2e2a26] text-[24px]">
+        <div className="flex flex-col gap-[26px] w-full">
           {hourly.map((h, i) => {
             const tempColor = getTemperatureColor(h.tempF);
             return (
-              <div key={i} className="relative shrink-0 w-full flex flex-col">
+              <div key={i} className="flex flex-col w-full">
                 {h.isDateBoundary && (
-                  <span className="text-[11px] uppercase tracking-wider text-[#8b8478] mb-1 font-medium border-b border-[#e4dfd6] pb-1 w-fit">
+                  <span className="text-[11px] uppercase tracking-wider text-[#8b8478] mb-1 font-semibold border-b border-[#e4dfd6] pb-0.5 w-fit">
                     Tomorrow
                   </span>
                 )}
-                <p className="relative shrink-0 w-full m-0 text-[#2e2a26] text-[22px]">{h.displayTime}</p>
-                
-                {/* Temperature pill indicator with gradient */}
-                <div className="flex items-center gap-2 mt-1.5">
-                  <div
-                    className="h-[6px] w-[38px] rounded-full shadow-xs"
-                    style={{
-                      background: `linear-gradient(to right, ${tempColor}, ${getTemperatureColor(h.tempF + 5)})`,
-                    }}
-                  />
-                  <span
-                    className="text-[15px] font-semibold tracking-tight"
-                    style={{ color: tempColor }}
-                  >
-                    {h.tempF}°F
+                <div className="flex items-center justify-between w-full pr-2">
+                  <span className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[#2e2a26] text-[18px]">
+                    {h.displayTime}
                   </span>
+
+                  {/* Temperature cell placed right next to hour slot:time */}
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="h-[6px] w-[28px] rounded-full shadow-xs"
+                      style={{
+                        background: `linear-gradient(to right, ${tempColor}, ${getTemperatureColor(h.tempF + 5)})`,
+                      }}
+                    />
+                    <span
+                      className="text-[16px] font-semibold tracking-tight"
+                      style={{ color: tempColor }}
+                    >
+                      {h.tempF}°F
+                    </span>
+                  </div>
                 </div>
               </div>
             );
@@ -200,11 +204,13 @@ function TimeStamps() {
   }
 
   return (
-    <div className="[word-break:break-word] absolute content-stretch flex flex-col font-['Inter:Semi_Bold',sans-serif] font-semibold gap-[193px] items-start leading-[normal] left-[42px] not-italic text-[#6b655b] text-[24px] top-[53px] w-[104px]" data-name="Time Stamps">
-      <p className="relative shrink-0 w-full">8:00 am</p>
-      <p className="relative shrink-0 w-full">11:00 am</p>
-      <p className="relative shrink-0 w-full">2:00 pm</p>
-      <p className="relative shrink-0 w-full">5:00 pm</p>
+    <div className="relative pl-[22px] py-[6px] w-full" data-name="Time Stamps">
+      <div className="flex flex-col gap-[26px] w-full font-['Inter:Semi_Bold',sans-serif] font-semibold text-[#6b655b] text-[18px]">
+        <div className="flex items-center justify-between w-full pr-2"><span>8:00 am</span><span>72°F</span></div>
+        <div className="flex items-center justify-between w-full pr-2"><span>11:00 am</span><span>81°F</span></div>
+        <div className="flex items-center justify-between w-full pr-2"><span>2:00 pm</span><span>86°F</span></div>
+        <div className="flex items-center justify-between w-full pr-2"><span>5:00 pm</span><span>82°F</span></div>
+      </div>
     </div>
   );
 }
@@ -213,7 +219,7 @@ function DailyTags() {
   const ctx = useWeather();
   if (ctx?.brief) {
     return (
-      <div className="content-stretch flex gap-[11px] items-start relative shrink-0" data-name="Daily Tags">
+      <div className="content-stretch flex flex-wrap gap-[8px] items-start relative shrink-0" data-name="Daily Tags">
         {ctx.brief.tags.map((tagId, idx) => (
           <DailyTag key={idx} className="bg-[#d5cfc4] relative rounded-[166px] shrink-0" tagLabel={TAG_LABELS[tagId] || tagId} />
         ))}
@@ -222,7 +228,7 @@ function DailyTags() {
   }
 
   return (
-    <div className="content-stretch flex gap-[11px] items-start relative shrink-0" data-name="Daily Tags">
+    <div className="content-stretch flex flex-wrap gap-[8px] items-start relative shrink-0" data-name="Daily Tags">
       <DailyTag className="bg-[#d5cfc4] relative rounded-[166px] shrink-0" tagLabel="Warm" />
       <DailyTag className="bg-[#d5cfc4] relative rounded-[166px] shrink-0" tagLabel="Sunny" />
       <DailyTag className="bg-[#d5cfc4] relative rounded-[166px] shrink-0" tagLabel="Dry" />
@@ -235,8 +241,8 @@ function Frame10() {
   const desc = ctx?.brief?.hourly?.[0]?.description || "You can expect a cool morning. Chilly, bring a jacket that's packable.";
 
   return (
-    <div className="content-stretch flex flex-col gap-[8px] items-start relative shrink-0 w-full">
-      <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-[normal] min-w-full not-italic relative shrink-0 text-[#6b655b] text-[16px] w-[min-content]">{desc}</p>
+    <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full">
+      <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative shrink-0 text-[#6b655b] text-[15px]">{desc}</p>
       <DailyTags />
     </div>
   );
@@ -248,15 +254,21 @@ function TimeAndConditions() {
   const timeStr = `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}${now.getHours() < 12 ? "am" : "pm"}`;
 
   return (
-    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px overflow-y-auto relative rounded-[50px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]" data-name="Time and conditions">
-      <TimeStamps />
-      <div className="-translate-x-1/2 absolute bg-[#f0ece4] left-[calc(50%-5.5px)] rounded-[22px] top-[91px] w-[276px] z-10 shadow-[0px_2px_8px_rgba(28,42,68,0.06)]" data-name="Side Panel Descriptive Card">
-        <div className="overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex flex-col gap-[10px] items-start p-[16px] relative size-full">
-            <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px] whitespace-nowrap">Now: {timeStr}</p>
-            <Frame10 />
-          </div>
+    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px flex flex-col rounded-[50px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] overflow-hidden" data-name="Time and conditions">
+      {/* Top section: Descriptive Card in flow (does not block timestamps) */}
+      <div className="p-[18px] pb-[14px] shrink-0">
+        <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-[0px_2px_8px_rgba(28,42,68,0.06)]" data-name="Side Panel Descriptive Card">
+          <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[18px] whitespace-nowrap mb-[8px]">Now: {timeStr}</p>
+          <Frame10 />
         </div>
+      </div>
+
+      {/* Subtle divider */}
+      <div className="h-px bg-[#e4dfd6] mx-[18px] shrink-0" />
+
+      {/* Scrollable Hourly Timeline */}
+      <div className="flex-1 overflow-y-auto px-[18px] py-[16px]">
+        <TimeStamps />
       </div>
     </div>
   );
@@ -456,7 +468,6 @@ function Frame3() {
 }
 
 function Frame2() {
-  const ctx = useWeather();
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-end justify-between min-w-px relative">
       <div className="w-full flex justify-between items-start">
@@ -464,11 +475,6 @@ function Frame2() {
       </div>
       <div className="w-full flex justify-between items-end">
         <Frame3 />
-        <ClickableText
-          className="relative shrink-0 pb-1"
-          buttonLabel="Change Location"
-          onClick={() => ctx?.openLocationModal()}
-        />
       </div>
     </div>
   );

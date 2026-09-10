@@ -54,16 +54,6 @@ body,
   animation: overlaySlideIn 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Weather visual image swap — rainy night city */
-.weather-app-root [data-name="Weather Visual Display"] {
-  background-image: url('https://images.unsplash.com/photo-1618941240535-234c3212e3e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080');
-  background-size: cover;
-  background-position: center;
-}
-
-.weather-app-root [data-name="Weather Visual Display"] > img {
-  opacity: 0;
-}
 
 /* Confidence card — light pill, Inter Regular 16px, dark text */
 .weather-app-root [data-name="Confidence Card"] [class*="bg-\[#6b655b\]"] {
@@ -92,16 +82,9 @@ body,
   line-height: 1.1 !important;
 }
 
-/* Make side panel time container scrollable */
+/* Side panel container */
 .weather-app-root [data-name="Time and conditions"] {
-  overflow-y: auto !important;
   overflow-x: hidden !important;
-}
-
-.weather-app-root [data-name="Time and conditions"] [data-name="Time Stamps"] {
-  height: 1700px !important;
-  width: 130px !important;
-  white-space: nowrap !important;
 }
 
 /* Layout fixes for imported weather design */

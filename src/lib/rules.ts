@@ -48,7 +48,6 @@ export const RULES: RuleDefinition[] = [
   { id: "rain_boots", name: "Rain Boots", slot: "Wear", zone: "Feet", tempBasis: "Low", precipProbMin: 60.0, requires: "rain", priority: 1 },
   { id: "boots", name: "Boots", slot: "Wear", zone: "Feet", tempBasis: "Low", tempMax: 40.0, priority: 1 },
   { id: "closed_shoes", name: "Closed Shoes", slot: "Wear", zone: "Feet", tempBasis: "High", tempMin: 40.0, tempMax: 80.0, priority: 2 },
-  { id: "sandals", name: "Sandals", slot: "Wear", zone: "Feet", tempBasis: "High", tempMin: 80.0, priority: 2 },
   { id: "warm_socks", name: "Warm Socks", slot: "Wear", zone: "Feet", tempBasis: "Low", tempMax: 35.0, priority: 3 },
 
   // Head
