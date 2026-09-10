@@ -136,7 +136,10 @@ export default function WeatherApp() {
         open={chatOpen}
         initialMessage={chatSeed}
         brief={brief}
-        onClose={() => setChatOpen(false)}
+        onClose={() => {
+          setChatOpen(false);
+          setChatSeed(null);
+        }}
       />
     </WeatherContext.Provider>
   );

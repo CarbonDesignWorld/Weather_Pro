@@ -52,15 +52,16 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
     try {
       const res = await sendChatMessage(apiMessages, brief);
-      if (res.error) {
+      if (res.message) {
+        const agentMsg: MessageItem = {
+          id: Date.now() + 1,
+          role: "assistant",
+          text: res.message,
+        };
+        setMessages((prev) => [...prev, agentMsg]);
+      } else if (res.error) {
         setErrorMsg(res.error);
       }
-      const agentMsg: MessageItem = {
-        id: Date.now() + 1,
-        role: "assistant",
-        text: res.message || "I can only answer questions about today's weather.",
-      };
-      setMessages((prev) => [...prev, agentMsg]);
     } catch (err: any) {
       setErrorMsg(err?.message || "Failed to reach agent");
     } finally {
