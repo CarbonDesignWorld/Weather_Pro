@@ -38,14 +38,14 @@ export default function LocationSearchModal({ open, onClose, onSelect }: Props) 
       >
         <div className="flex justify-between items-center mb-[20px]">
           <h2
-            className="text-[28px] font-semibold text-[#2e2a26] m-0"
+            className="text-[28px] font-semibold text-[#6b655b] m-0"
             style={{ fontFamily: "'Source Serif 4', serif" }}
           >
             Change Location
           </h2>
           <button
             onClick={onClose}
-            className="text-[#6b655b] hover:text-[#2e2a26] text-[16px] underline cursor-pointer bg-transparent border-none"
+            className="text-[#6b655b] text-[16px] underline cursor-pointer bg-transparent border-none"
             style={{ fontFamily: "'Source Serif 4', serif" }}
           >
             Close
@@ -59,7 +59,7 @@ export default function LocationSearchModal({ open, onClose, onSelect }: Props) 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search city, e.g. London, Tokyo, Seattle"
-            className="flex-1 bg-white border border-[#e4dfd6] rounded-[16px] px-[16px] py-[12px] text-[16px] text-[#2e2a26] outline-none placeholder-[#8b8478]"
+            className="flex-1 bg-white border border-[#e4dfd6] rounded-[16px] px-[16px] py-[12px] text-[16px] text-[#6b655b] outline-none placeholder-[#8b8478]"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
           <button
@@ -83,7 +83,7 @@ export default function LocationSearchModal({ open, onClose, onSelect }: Props) 
                 }}
                 className="w-full text-left bg-white hover:bg-[#f0ece4] p-[14px] rounded-[14px] border border-[#e4dfd6] cursor-pointer transition-colors flex justify-between items-center"
               >
-                <span className="font-medium text-[#2e2a26] text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
+                <span className="font-medium text-[#6b655b] text-[16px]" style={{ fontFamily: "Inter, sans-serif" }}>
                   {r.city}
                 </span>
                 <span className="text-[#6b655b] text-[14px]" style={{ fontFamily: "Inter, sans-serif" }}>

@@ -35,7 +35,7 @@ function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps)
     >
       {icons}
       <h2
-        className="not-italic leading-tight text-[#2e2a26] m-0 text-[28px] lg:text-[40px]"
+        className="not-italic leading-tight text-[#6b655b] m-0 text-[28px] lg:text-[40px]"
         style={{ fontFamily: "'Source Serif 4', serif", fontWeight: 600 }}
       >
         {title}
@@ -58,7 +58,7 @@ function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps)
       </div>
       <button
         onClick={onCta}
-        className="underline text-[#2e2a26] text-[15px] lg:text-[16px] text-center cursor-pointer bg-transparent border-none w-full py-1"
+        className="underline text-[#6b655b] text-[15px] lg:text-[16px] text-center cursor-pointer bg-transparent border-none w-full py-1"
         style={{ fontFamily: "'Source Serif 4', serif" }}
       >
         {ctaLabel}

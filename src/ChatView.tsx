@@ -36,7 +36,7 @@ export function ChatCard({ className }: { className?: string }) {
           msg.role === "user" ? (
             <div key={msg.id} className="flex justify-end">
               <div
-                className="bg-[#faf8f4] text-[#2e2a26] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] leading-relaxed"
+                className="bg-[#faf8f4] text-[#6b655b] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] leading-relaxed"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 {msg.text}
@@ -45,7 +45,7 @@ export function ChatCard({ className }: { className?: string }) {
           ) : (
             <div key={msg.id} className="flex justify-start">
               <div
-                className="bg-white text-[#2e2a26] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] leading-relaxed"
+                className="bg-white text-[#6b655b] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] leading-relaxed"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 {msg.text}
@@ -98,7 +98,7 @@ export function ChatCard({ className }: { className?: string }) {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about today.."
             maxLength={500}
-            className="flex-1 bg-transparent border-none outline-none text-[#2e2a26] text-[16px] placeholder-[#6b655b]"
+            className="flex-1 bg-transparent border-none outline-none text-[#6b655b] text-[16px] placeholder-[#6b655b]"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
           <button
@@ -138,12 +138,12 @@ export default function ChatView({ open, onClose }: Props) {
     >
       {/* Mobile Header with Close button */}
       <div className="flex justify-between items-center px-4 h-[60px] border-b border-[#e4dfd6] shrink-0 bg-[#faf8f4]">
-        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[20px] text-[#2e2a26]">
+        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[20px] text-[#6b655b]">
           Today Assistant
         </span>
         <button
           onClick={onClose}
-          className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150 hover:text-[#2e2a26]"
+          className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150"
           style={{ fontFamily: "'Source Serif 4', serif" }}
         >
           Close

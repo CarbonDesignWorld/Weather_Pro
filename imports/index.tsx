@@ -76,7 +76,7 @@ function ClickableText({ className, buttonLabel = "Change Location", state = "De
         <div className="content-stretch flex flex-col items-center justify-center px-[24px] relative size-full">
           <p
             className="[text-decoration-skip-ink:none] [text-underline-position:from-font] [word-break:break-word] decoration-from-font decoration-solid font-['Source_Serif_Pro:Regular',sans-serif] leading-[normal] not-italic relative shrink-0 text-[16px] underline w-full transition-colors duration-150"
-            style={{ color: isHovered ? "#2e2a26" : "#6b655b" }}
+            style={{ color: isHovered ? "#8b8478" : "#6b655b" }}
           >
             {buttonLabel}
           </p>
@@ -135,7 +135,7 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
     <div className={className || "bg-[#faf8f4] h-[60px] lg:h-[93px] overflow-clip relative w-full shrink-0"}>
       {/* Mobile Top App Bar (< 1024px) */}
       <div className="flex lg:hidden justify-between items-center px-4 h-full bg-[#faf8f4] border-b border-[#e4dfd6] w-full">
-        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[22px] text-[#2e2a26] shrink-0">{brandName}</span>
+        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[22px] text-[#6b655b] shrink-0">{brandName}</span>
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-1.5 text-[13px] text-[#6b655b] font-medium font-['Source_Serif_Pro:Regular',sans-serif]">
             <span>{dateStr}</span>
@@ -146,7 +146,7 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
             type="button"
             onClick={() => ctx?.openChatWithPrompt("")}
             aria-label="Open Weather Chat Assistant"
-            className="flex items-center justify-center size-[36px] rounded-full bg-[#d5cfc4] hover:bg-[#c8c1b4] active:bg-[#bcb4a6] text-[#6b655b] hover:text-[#2e2a26] transition-colors cursor-pointer border-none shadow-none"
+            className="flex items-center justify-center size-[36px] rounded-full bg-[#d5cfc4] hover:bg-[#c8c1b4] active:bg-[#bcb4a6] text-[#6b655b] transition-colors cursor-pointer border-none shadow-none"
             title="Ask Today Assistant"
           >
             <svg className="size-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -160,7 +160,7 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
       <div className="hidden lg:flex content-stretch items-center justify-center min-h-px px-[16px] xl:px-[24px] relative w-full h-full">
         <div className="h-full shrink-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] flex items-center px-[14px] py-[13px] transition-[width] duration-200" data-name="Tab">
           <div className="content-stretch flex flex-[1_0_0] gap-[26px] items-center min-w-px relative" data-name="Data Frame">
-            <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
+            <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[16px] w-[140px]" data-name="Data">
               <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
               <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{dateStr}</p>
               <p className="font-['Source_Serif_Pro:Regular',sans-serif] relative shrink-0 w-full font-medium text-[#6b655b]">{tempStr}</p>
@@ -178,7 +178,7 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
             <button
               type="button"
               onClick={() => ctx.closeChat()}
-              className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150 hover:text-[#2e2a26]"
+              className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150 hover:text-[#8b8478]"
               style={{ fontFamily: "'Source Serif 4', serif" }}
             >
               Close
@@ -395,14 +395,12 @@ function LocationIndicator({ className }: { className?: string }) {
 
 function Frame9() {
   const ctx = useWeather();
-  const greeting = ctx?.brief?.greeting || "Hey,";
   const headline = ctx?.brief?.headline || "Dress light today";
 
   return (
-    <div className="content-stretch flex min-h-[80px] h-auto lg:h-[115px] lg:max-h-[115px] items-start justify-between relative shrink-0 w-full gap-2">
-      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#2e2a26]" data-name="Frame 53">
-        <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-        <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+    <div className="content-stretch flex min-h-[50px] items-center justify-between relative shrink-0 w-full gap-2">
+      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#6b655b]" data-name="Frame 53">
+        <p className="leading-[1.15] text-[24px] sm:text-[30px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
       <LocationIndicator className="ml-[4px] sm:ml-[12px] xl:ml-[16px]" />
     </div>
@@ -453,7 +451,7 @@ function Frame4() {
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#2e2a26]">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#6b655b]">{desc}</p>
     </div>
   );
 }
@@ -462,7 +460,7 @@ function Frame5({ conf = 94 }: { conf?: number }) {
   return (
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
       <div className="flex items-center justify-between w-full">
-        <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px]">Wear</p>
+        <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px]">Wear</p>
         <div className="lg:hidden">
           <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
         </div>
@@ -515,7 +513,7 @@ function Frame7() {
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#2e2a26]">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#6b655b]">{desc}</p>
     </div>
   );
 }
@@ -523,7 +521,7 @@ function Frame7() {
 function Frame6() {
   return (
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
-      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px] w-full">Pack</p>
+      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px] w-full">Pack</p>
       <Frame7 />
     </div>
   );
@@ -540,24 +538,24 @@ function Frame8({ conf = 94 }: { conf?: number }) {
 
 function Frame2() {
   const ctx = useWeather();
-  const greeting = ctx?.brief?.greeting || "Hey,";
   const headline = ctx?.brief?.headline || "Dress light today";
   const conf = ctx?.brief?.confidence ?? 94;
 
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full justify-between min-w-0 relative w-full" data-name="Detail Info Panel">
-      {/* Top Stack: Location Indicator on the far right, and Greeting + Wear/Pack starting at the bottom of the location frame */}
+      {/* Top Stack: Location Indicator on the far right, and Recommend Text + Wear/Pack starting at the bottom of the location frame */}
       <div className="w-full flex flex-col items-start shrink-0">
         {/* Top row: Location Indicator on the far right */}
         <div className="w-full flex justify-end items-start shrink-0">
           <LocationIndicator />
         </div>
 
-        {/* Greeting & Wear/Pack stack positioned at the top, starting directly at the bottom of the location frame */}
+        {/* Recommend text & Wear/Pack stack positioned at the top, starting directly at the bottom of the location frame */}
         <div className="flex flex-col gap-[12px] xl:gap-[16px] w-full max-w-[580px] mt-[4px] sm:mt-[6px]">
-          <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#2e2a26]" data-name="Frame 53">
-            <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[44px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-            <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[34px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+          <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#6b655b]" data-name="Frame 53">
+            <p className="leading-[1.15] text-[28px] sm:text-[34px] xl:text-[42px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>
+              {headline}
+            </p>
           </div>
           <Frame8 conf={conf} />
         </div>
@@ -684,7 +682,7 @@ function Main() {
               ) : (
                 <div className="flex flex-col gap-[20px] items-center justify-end size-full">
                   <div className="flex-1 min-h-[360px] max-h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
-                    <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
+                    <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-stretch relative size-full">
                       <WeatherVisualHero />
                       <Frame2 />
                     </div>
