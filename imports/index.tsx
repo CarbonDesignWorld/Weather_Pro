@@ -440,7 +440,7 @@ function Frame4() {
   return (
     <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
-        className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
+        className="bg-white relative rounded-[22px] shrink-0 w-[246px] min-h-[44px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
         onClick={() => ctx?.openOverlay("wear")}
         role="button"
@@ -497,7 +497,7 @@ function Frame7() {
   return (
     <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
-        className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
+        className="bg-white relative rounded-[22px] shrink-0 w-[246px] min-h-[44px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
         onClick={() => ctx?.openOverlay("pack")}
         role="button"
@@ -540,27 +540,31 @@ function Frame2() {
 
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full justify-between min-w-0 relative w-full" data-name="Detail Info Panel">
-      {/* Top Stack: Location Indicator on the far right, and Recommend Text + Wear/Pack starting at the bottom of the location frame */}
+      {/* Top Stack: Location Indicator on the far right, and Headline + Wear starting at bottom of location */}
       <div className="w-full flex flex-col items-start shrink-0">
-        {/* Top row: Location Indicator on the far right */}
         <div className="w-full flex justify-end items-start shrink-0">
           <LocationIndicator />
         </div>
 
-        {/* Recommend text & Wear/Pack stack positioned at the top, starting directly at the bottom of the location frame */}
         <div className="flex flex-col gap-[12px] xl:gap-[16px] w-full max-w-[580px] mt-[4px] sm:mt-[6px]">
           <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#6b655b]" data-name="Frame 53">
             <p className="leading-[1.15] text-[28px] sm:text-[34px] xl:text-[42px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>
               {headline}
             </p>
           </div>
-          <Frame8 conf={conf} />
+          <Frame5 conf={conf} />
         </div>
       </div>
 
-      {/* Bottom row: Confidence Card on the far right, vertically aligned with Location Indicator */}
-      <div className="w-full flex justify-end items-end shrink-0">
-        <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+      {/* Bottom row: Pack frame aligned at the top with Confidence Card */}
+      <div className="w-full flex flex-col gap-[9px] items-start shrink-0">
+        <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px] w-full">Pack</p>
+        <div className="w-full flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0 max-w-[555px]">
+            <Frame7 />
+          </div>
+          <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+        </div>
       </div>
     </div>
   );
