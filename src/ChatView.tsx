@@ -101,7 +101,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
       {/* Chat card */}
       <div
-        className="flex-1 flex flex-col mx-[12px] lg:mx-[24px] mb-[16px] lg:mb-[24px] min-h-0 rounded-[28px] lg:rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)] border border-[#e4dfd6] bg-white"
+        className="flex-1 flex flex-col mx-[12px] lg:mx-[24px] mb-[16px] lg:mb-[24px] min-h-0 rounded-[28px] lg:rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)] bg-[#f0ece4]"
       >
         {/* Message list */}
         <div className="flex-1 overflow-y-auto px-[16px] lg:px-[32px] pt-[20px] lg:pt-[32px] pb-[16px] flex flex-col gap-[14px] lg:gap-[16px] min-h-0">
@@ -115,7 +115,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             msg.role === "user" ? (
               <div key={msg.id} className="flex justify-end">
                 <div
-                  className="bg-[#faf8f4] text-[#6b655b] border border-[#e4dfd6] rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.04)]"
+                  className="bg-[#faf8f4] text-[#2e2a26] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_3px_rgba(28,42,68,0.05)] leading-relaxed"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -124,7 +124,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             ) : (
               <div key={msg.id} className="flex justify-start">
                 <div
-                  className="bg-[#f0ece4] text-[#6b655b] border border-[#e4dfd6] rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.04)] leading-relaxed"
+                  className="bg-white text-[#2e2a26] rounded-[22px] px-[18px] lg:px-[24px] py-[12px] lg:py-[15px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_3px_rgba(28,42,68,0.05)] leading-relaxed"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -136,7 +136,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
           {loading && (
             <div className="flex justify-start">
               <div
-                className="bg-[#f0ece4] border border-[#e4dfd6] rounded-[20px] px-[20px] py-[14px] text-[#6b655b] text-[14px] italic shadow-[0px_1px_4px_rgba(28,42,68,0.04)]"
+                className="bg-white rounded-[22px] px-[20px] py-[14px] text-[#6b655b] text-[14px] italic shadow-[0px_1px_3px_rgba(28,42,68,0.05)]"
                 style={{ fontFamily: "Inter, sans-serif" }}
               >
                 Thinking...
@@ -169,16 +169,15 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
               e.preventDefault();
               handleSend(input);
             }}
-            className="rounded-[22px] flex items-center px-[14px] lg:px-[20px] py-[10px] lg:py-[16px] gap-[10px] lg:gap-[12px] border border-[#e4dfd6]"
-            style={{ background: "#faf8f4" }}
+            className="rounded-[22px] flex items-center px-[18px] lg:px-[24px] py-[14px] lg:py-[18px] gap-[12px] bg-[#faf8f4] shadow-[0px_1px_3px_rgba(28,42,68,0.05)]"
           >
             <input
               autoFocus
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about today"
+              placeholder="Ask about today.."
               maxLength={500}
-              className="flex-1 bg-transparent border-none outline-none text-[#6b655b] text-[16px] placeholder-[#6b655b]"
+              className="flex-1 bg-transparent border-none outline-none text-[#2e2a26] text-[16px] placeholder-[#6b655b]"
               style={{ fontFamily: "Inter, sans-serif" }}
             />
             <button
@@ -187,7 +186,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
               className={`shrink-0 rounded-[14px] px-[16px] py-[8px] text-[14px] font-medium border-none transition-colors duration-150 ${
                 input.trim() && !loading
                   ? "bg-[#4a69a9] hover:bg-[#3a5384] active:bg-[#2a3d61] text-white cursor-pointer shadow-[0px_2px_8px_rgba(28,42,68,0.25)]"
-                  : "bg-[#d5cfc4] text-[#6b655b] cursor-not-allowed"
+                  : "bg-[#d5cfc4] text-[#6b655b] cursor-not-allowed opacity-60"
               }`}
               style={{ fontFamily: "Inter, sans-serif" }}
             >
