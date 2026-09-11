@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import HomeScreen from "#imports/index";
 import WearPackOverlay, { type OverlayType } from "./WearPackOverlay";
 import ChatView from "./ChatView";
-import { WeatherContext, WeatherContextValue } from "./context/WeatherContext";
 import { DayBrief, LocationInfo } from "./lib/types";
 import { resolveUserLocation, fetchDayBrief, saveLocation } from "./lib/weather";
-import { requestCopyGeneration } from "./lib/apiClient";
+import { requestCopyGeneration, sendChatMessage } from "./lib/apiClient";
+import { WeatherContext, WeatherContextValue, ChatMessageItem } from "./context/WeatherContext";
 
 export default function WeatherApp() {
   const [location, setLocation] = useState<LocationInfo | null>(null);
@@ -16,6 +16,9 @@ export default function WeatherApp() {
   const [overlay, setOverlay] = useState<OverlayType>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatSeed, setChatSeed] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessageItem[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   // Initial location resolution
   useEffect(() => {
@@ -98,10 +101,62 @@ export default function WeatherApp() {
     setLocation(newLoc);
   }, []);
 
+  const handleSendChatMessage = useCallback(async (text: string, customHistory?: ChatMessageItem[]) => {
+    if (!text.trim() || !brief) return;
+    const userMsg: ChatMessageItem = { id: Date.now(), role: "user", text: text.trim() };
+    const currentList = customHistory !== undefined ? customHistory : messages;
+    const updated = [...currentList, userMsg];
+    setMessages(updated);
+    setChatLoading(true);
+    setChatError(null);
+
+    const apiMessages = updated.map((m) => ({
+      role: m.role,
+      content: m.text,
+    }));
+
+    try {
+      const res = await sendChatMessage(apiMessages, brief);
+      if (res.message) {
+        const agentMsg: ChatMessageItem = {
+          id: Date.now() + 1,
+          role: "assistant",
+          text: res.message,
+        };
+        setMessages((prev) => [...prev, agentMsg]);
+      } else if (res.error) {
+        setChatError(res.error);
+      }
+    } catch (err: any) {
+      setChatError(err?.message || "Failed to reach agent");
+    } finally {
+      setChatLoading(false);
+    }
+  }, [brief, messages]);
+
   const openChatWithPrompt = useCallback((promptText: string) => {
     setChatSeed(promptText || null);
     setChatOpen(true);
+    if (promptText && promptText.trim()) {
+      handleSendChatMessage(promptText.trim(), []);
+    }
+  }, [handleSendChatMessage]);
+
+  const handleCloseChat = useCallback(() => {
+    setChatOpen(false);
+    setChatSeed(null);
   }, []);
+
+  // Close chat on Escape key
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && chatOpen) {
+        handleCloseChat();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [chatOpen, handleCloseChat]);
 
   const openOverlay = useCallback((type: "wear" | "pack") => {
     setOverlay(type);
@@ -116,6 +171,13 @@ export default function WeatherApp() {
     openLocationModal: () => {},
     openChatWithPrompt,
     openOverlay,
+    chatOpen,
+    chatSeed,
+    closeChat: handleCloseChat,
+    messages,
+    chatLoading,
+    chatError,
+    sendChatMessage: handleSendChatMessage,
   };
 
   return (
@@ -135,12 +197,7 @@ export default function WeatherApp() {
 
       <ChatView
         open={chatOpen}
-        initialMessage={chatSeed}
-        brief={brief}
-        onClose={() => {
-          setChatOpen(false);
-          setChatSeed(null);
-        }}
+        onClose={handleCloseChat}
       />
     </WeatherContext.Provider>
   );

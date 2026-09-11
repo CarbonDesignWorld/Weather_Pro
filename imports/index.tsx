@@ -5,6 +5,7 @@ import { useWeather } from "../src/context/WeatherContext";
 import WeatherIconItem from "../src/components/WeatherIconItem";
 import { TAG_LABELS } from "../src/lib/constants";
 import { getTemperatureColor, getTimelineGradient, getWeatherVisual } from "../src/lib/weatherVisuals";
+import { ChatCard } from "../src/ChatView";
 
 type PromptSuggestionProps = {
   className?: string;
@@ -159,19 +160,34 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
         </div>
       </div>
 
-      {/* Desktop Tab (>= 1024px) */}
-      <div className="hidden lg:flex absolute bg-[#faf8f4] content-stretch items-center justify-end left-0 overflow-clip px-[14px] py-[13px] top-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Tab">
-        <div className="content-stretch flex flex-[1_0_0] gap-[26px] items-center min-w-px relative" data-name="Data Frame">
-          <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
-            <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
-            <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{dateStr}</p>
-            <p className="font-['Source_Serif_Pro:Regular',sans-serif] relative shrink-0 w-full font-medium text-[#6b655b]">{tempStr}</p>
-          </div>
-          <div className="flex items-center justify-center relative shrink-0">
-            <div className="-scale-y-100 flex-none rotate-180">
-              <div className="relative size-[18px]" data-name="Drop Down Arrow" />
+      {/* Desktop Header Row (>= 1024px) */}
+      <div className="hidden lg:flex content-stretch items-center justify-center min-h-px px-[16px] xl:px-[24px] relative w-full h-full">
+        <div className="h-full shrink-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] flex items-center px-[14px] py-[13px] transition-[width] duration-200" data-name="Tab">
+          <div className="content-stretch flex flex-[1_0_0] gap-[26px] items-center min-w-px relative" data-name="Data Frame">
+            <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
+              <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
+              <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{dateStr}</p>
+              <p className="font-['Source_Serif_Pro:Regular',sans-serif] relative shrink-0 w-full font-medium text-[#6b655b]">{tempStr}</p>
+            </div>
+            <div className="flex items-center justify-center relative shrink-0">
+              <div className="-scale-y-100 flex-none rotate-180">
+                <div className="relative size-[18px]" data-name="Drop Down Arrow" />
+              </div>
             </div>
           </div>
+        </div>
+
+        <div className="h-full max-w-[1182px] flex-1 min-w-0 flex items-center justify-end px-[16px] xl:px-[24px]">
+          {ctx?.chatOpen && (
+            <button
+              type="button"
+              onClick={() => ctx.closeChat()}
+              className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150 hover:text-[#2e2a26]"
+              style={{ fontFamily: "'Source Serif 4', serif" }}
+            >
+              Close
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -654,20 +670,26 @@ function Main() {
         </div>
         <div className="h-full max-w-[1182px] flex-1 min-w-0 relative" data-name="Center Screen">
           <div className="flex flex-col items-center justify-end max-w-[inherit] size-full">
-            <div className="content-stretch flex flex-col gap-[20px] items-center justify-end max-w-[inherit] p-[16px] xl:p-[24px] relative size-full">
-              <div className="flex-1 min-h-[360px] max-h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
-                <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
-                  <WeatherVisualHero />
-                  <Frame2 />
-                </div>
-              </div>
-              <div className="h-[260px] xl:h-[300px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Chat Window">
-                <div className="flex flex-col items-center justify-end size-full">
-                  <div className="content-stretch flex flex-col items-center justify-end relative size-full">
-                    <ChatWindow />
+            <div className="content-stretch flex flex-col items-center justify-end max-w-[inherit] p-[16px] xl:p-[24px] relative size-full">
+              {ctx?.chatOpen ? (
+                <ChatCard />
+              ) : (
+                <div className="flex flex-col gap-[20px] items-center justify-end size-full">
+                  <div className="flex-1 min-h-[360px] max-h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
+                    <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
+                      <WeatherVisualHero />
+                      <Frame2 />
+                    </div>
+                  </div>
+                  <div className="h-[260px] xl:h-[300px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Chat Window">
+                    <div className="flex flex-col items-center justify-end size-full">
+                      <div className="content-stretch flex flex-col items-center justify-end relative size-full">
+                        <ChatWindow />
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
