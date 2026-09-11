@@ -372,10 +372,15 @@ function Frame4() {
   );
 }
 
-function Frame5() {
+function Frame5({ conf = 94 }: { conf?: number }) {
   return (
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
-      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px] w-full">Wear</p>
+      <div className="flex items-center justify-between w-full">
+        <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px]">Wear</p>
+        <div className="xl:hidden">
+          <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+        </div>
+      </div>
       <Frame4 />
     </div>
   );
@@ -438,10 +443,10 @@ function Frame6() {
   );
 }
 
-function Frame8() {
+function Frame8({ conf = 94 }: { conf?: number }) {
   return (
     <div className="content-stretch flex flex-col gap-[12px] xl:gap-[16px] items-start relative flex-1 min-w-0 max-w-[555px]">
-      <Frame5 />
+      <Frame5 conf={conf} />
       <Frame6 />
     </div>
   );
@@ -449,14 +454,14 @@ function Frame8() {
 
 function Frame3() {
   const ctx = useWeather();
-  const conf = ctx?.brief?.confidence;
+  const conf = ctx?.brief?.confidence ?? 94;
 
   return (
     <div className="content-stretch flex items-end justify-between relative shrink-0 w-full gap-[12px] xl:gap-[16px]">
-      <Frame8 />
-      {conf !== null && conf !== undefined && (
+      <Frame8 conf={conf} />
+      <div className="hidden xl:block">
         <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
-      )}
+      </div>
     </div>
   );
 }
