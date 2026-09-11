@@ -27,11 +27,11 @@ function PromptSuggestion({ className, promptText = "What if I am out all day?",
       onMouseLeave={() => { setHover(false); setPressed(false); }}
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
-      className={className || `relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] w-[333px] text-left cursor-pointer border-none transition-colors duration-150 ${activeState === "Pressing" ? "bg-[#2a3d61]" : activeState === "Hover" ? "bg-[#3a5384]" : "bg-[#4a69a9]"}`}
+      className={className || `relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] flex-1 min-w-0 text-left cursor-pointer border-none transition-colors duration-150 ${activeState === "Pressing" ? "bg-[#2a3d61]" : activeState === "Hover" ? "bg-[#3a5384]" : "bg-[#4a69a9]"}`}
     >
       <div className="overflow-clip rounded-[inherit] size-full">
-        <div className="content-stretch flex items-start px-[16px] py-[24px] relative size-full">
-          <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-[normal] not-italic relative shrink-0 text-[16px] text-white whitespace-nowrap">{promptText}</p>
+        <div className="content-stretch flex items-start px-[12px] xl:px-[16px] py-[16px] xl:py-[24px] relative size-full">
+          <p className="font-['Inter:Regular',sans-serif] font-normal leading-snug not-italic relative text-[13px] sm:text-[14px] xl:text-[16px] text-white truncate w-full" title={promptText}>{promptText}</p>
         </div>
       </div>
     </button>
@@ -134,8 +134,8 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
   const tempStr = ctx?.brief ? `${ctx.brief.current.tempF} F | ${ctx.brief.current.tempC} C` : temperatureLabel;
 
   return (
-    <div className={className || "bg-[#faf8f4] h-[93px] overflow-clip relative w-[1634px]"}>
-      <div className="absolute bg-[#faf8f4] content-stretch flex items-center justify-end left-0 overflow-clip px-[14px] py-[13px] top-0 w-[395px]" data-name="Tab">
+    <div className={className || "bg-[#faf8f4] h-[93px] overflow-clip relative w-full"}>
+      <div className="absolute bg-[#faf8f4] content-stretch flex items-center justify-end left-0 overflow-clip px-[14px] py-[13px] top-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Tab">
         <div className="content-stretch flex flex-[1_0_0] gap-[26px] items-center min-w-px relative" data-name="Data Frame">
           <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
             <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
@@ -308,10 +308,10 @@ function Frame9() {
   return (
     <div className="content-stretch flex h-[115px] max-h-[115px] items-start justify-between relative shrink-0 w-full overflow-hidden">
       <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#2e2a26] overflow-hidden" data-name="Frame 53">
-        <p className="leading-[1.1] mb-[2px] text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-        <p className="leading-[1.15] text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+        <p className="leading-[1.1] mb-[2px] text-[34px] xl:text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+        <p className="leading-[1.15] text-[26px] xl:text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
-      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[16px]" data-name="Location Indicator">
+      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[12px] xl:ml-[16px]" data-name="Location Indicator">
         <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
           <div className="content-stretch flex flex-col items-center justify-center px-[16px] py-[8px] relative size-full">
             <Frame1 />
@@ -352,9 +352,9 @@ function Frame4() {
   const desc = ctx?.brief?.wear?.description || "T-shirt, shorts, sandals, and a hat. Today is not the day for denim.";
 
   return (
-    <div className="content-stretch flex gap-[34px] items-start relative shrink-0 w-full">
+    <div className="content-stretch flex gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
-        className="bg-white relative rounded-[22px] shrink-0 w-[246px] cursor-pointer hover:shadow-md transition-shadow"
+        className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
         onClick={() => ctx?.openOverlay("wear")}
         role="button"
@@ -362,12 +362,12 @@ function Frame4() {
         aria-label="View details on what to wear"
       >
         <div className="overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex flex-col items-start px-[16px] py-[8px] relative size-full">
+          <div className="content-stretch flex flex-col items-start px-[12px] xl:px-[16px] py-[8px] relative size-full">
             <IconFrame />
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular',sans-serif] font-normal leading-relaxed min-w-px not-italic relative text-[16px] text-black">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[13px] xl:text-[15px] text-black">{desc}</p>
     </div>
   );
 }
@@ -409,9 +409,9 @@ function Frame7() {
   const desc = ctx?.brief?.pack?.description || "Water and sunscreen. UV is at 9, which burns unprotected skin in under fifteen minutes.";
 
   return (
-    <div className="content-stretch flex gap-[34px] items-start relative shrink-0 w-full">
+    <div className="content-stretch flex gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
-        className="bg-white relative rounded-[22px] shrink-0 w-[246px] cursor-pointer hover:shadow-md transition-shadow"
+        className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
         onClick={() => ctx?.openOverlay("pack")}
         role="button"
@@ -419,12 +419,12 @@ function Frame7() {
         aria-label="View details on what to pack"
       >
         <div className="overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex flex-col items-start px-[16px] py-[8px] relative size-full">
+          <div className="content-stretch flex flex-col items-start px-[12px] xl:px-[16px] py-[8px] relative size-full">
             <IconFrame1 />
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-[1_0_0] font-['Inter:Regular',sans-serif] font-normal leading-relaxed min-w-px not-italic relative text-[16px] text-black">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[13px] xl:text-[15px] text-black">{desc}</p>
     </div>
   );
 }
@@ -432,7 +432,7 @@ function Frame7() {
 function Frame6() {
   return (
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
-      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[20px] text-black w-full">Pack</p>
+      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px] w-full">Pack</p>
       <Frame7 />
     </div>
   );
@@ -440,7 +440,7 @@ function Frame6() {
 
 function Frame8() {
   return (
-    <div className="content-stretch flex flex-col gap-[16px] items-start relative shrink-0 w-[555px]">
+    <div className="content-stretch flex flex-col gap-[12px] xl:gap-[16px] items-start relative flex-1 min-w-0 max-w-[555px]">
       <Frame5 />
       <Frame6 />
     </div>
@@ -452,7 +452,7 @@ function Frame3() {
   const conf = ctx?.brief?.confidence;
 
   return (
-    <div className="content-stretch flex items-end justify-between relative shrink-0 w-full">
+    <div className="content-stretch flex items-end justify-between relative shrink-0 w-full gap-[12px] xl:gap-[16px]">
       <Frame8 />
       {conf !== null && conf !== undefined && (
         <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
@@ -463,7 +463,7 @@ function Frame3() {
 
 function Frame2() {
   return (
-    <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-end justify-between min-w-px relative">
+    <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-end justify-between min-w-0 relative">
       <div className="w-full flex justify-between items-start">
         <Frame9 />
       </div>
@@ -478,19 +478,19 @@ function SuggestionPrompt() {
   const ctx = useWeather();
 
   return (
-    <div className="content-stretch flex gap-[20px] items-start justify-center relative shrink-0 w-[1053px]" data-name="Suggestion Prompt">
+    <div className="content-stretch flex gap-[12px] xl:gap-[20px] items-stretch justify-center relative shrink-0 w-full max-w-[1053px]" data-name="Suggestion Prompt">
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-[1_0_32px] min-w-px relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
         promptText="What if I am out all day?"
         onClick={() => ctx?.openChatWithPrompt("What if I am out all day?")}
       />
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-[1_0_32px] min-w-px relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
         promptText="Can I skip the jacket?"
         onClick={() => ctx?.openChatWithPrompt("Can I skip the jacket?")}
       />
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-[1_0_32px] min-w-px relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
         promptText="Why the boots?"
         onClick={() => ctx?.openChatWithPrompt("Why the boots?")}
       />
@@ -505,7 +505,7 @@ function ChatWindow() {
     <div className="bg-[#f0ece4] content-stretch flex flex-[1_0_0] flex-col items-center justify-between min-h-px overflow-clip px-[16px] py-[24px] relative rounded-[42px] w-full" data-name="Chat Window">
       <SuggestionPrompt />
       <div
-        className="bg-[#faf8f4] min-h-[86px] relative rounded-[22px] shrink-0 w-[1053px] cursor-pointer hover:bg-white transition-colors"
+        className="bg-[#faf8f4] min-h-[86px] relative rounded-[22px] shrink-0 w-full max-w-[1053px] cursor-pointer hover:bg-white transition-colors"
         data-name="Chat Box"
         onClick={() => ctx?.openChatWithPrompt("")}
         role="button"
@@ -533,7 +533,7 @@ function WeatherVisualHero() {
   }, [ctx?.brief?.current.conditionCode, ctx?.brief?.current.isDay]);
 
   return (
-    <div className="h-full max-w-[506px] relative rounded-[22px] shrink-0 w-[270px] overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)]" data-name="Weather Visual Display">
+    <div className="h-full max-w-[506px] relative rounded-[22px] shrink-0 w-[240px] xl:w-[270px] overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)] transition-[width] duration-200" data-name="Weather Visual Display">
       <img
         alt={ctx?.brief?.current.condition || "Weather conditions"}
         className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[22px] size-full transition-opacity duration-700"
@@ -546,24 +546,24 @@ function WeatherVisualHero() {
 
 function Main() {
   return (
-    <div className="bg-[#faf8f4] content-stretch flex flex-[1_0_0] items-start justify-center min-h-px px-[24px] relative w-full" data-name="Main">
-      <div className="bg-[#faf8f4] h-full relative shrink-0 w-[395px]" data-name="Side Panel">
+    <div className="bg-[#faf8f4] content-stretch flex flex-[1_0_0] items-start justify-center min-h-px px-[16px] xl:px-[24px] relative w-full" data-name="Main">
+      <div className="bg-[#faf8f4] h-full relative shrink-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Side Panel">
         <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex items-center p-[24px] relative size-full">
+          <div className="content-stretch flex items-center p-[16px] xl:p-[24px] relative size-full">
             <TimeAndConditions />
           </div>
         </div>
       </div>
-      <div className="h-[839px] max-w-[1800px] relative shrink-0 w-[1182px]" data-name="Center Screen">
+      <div className="h-[839px] max-w-[1182px] flex-1 min-w-0 relative" data-name="Center Screen">
         <div className="flex flex-col items-center justify-end max-w-[inherit] size-full">
-          <div className="content-stretch flex flex-col gap-[20px] items-center justify-end max-w-[inherit] p-[24px] relative size-full">
-            <div className="h-[471px] relative shrink-0 w-[1134px]" data-name="Detail Display">
-              <div className="content-stretch flex gap-[24px] items-start relative size-full">
+          <div className="content-stretch flex flex-col gap-[20px] items-center justify-end max-w-[inherit] p-[16px] xl:p-[24px] relative size-full">
+            <div className="h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
+              <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
                 <WeatherVisualHero />
                 <Frame2 />
               </div>
             </div>
-            <div className="h-[300px] relative shrink-0 w-[1134px]" data-name="Chat Window">
+            <div className="h-[300px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Chat Window">
               <div className="flex flex-col items-center justify-end size-full">
                 <div className="content-stretch flex flex-col items-center justify-end relative size-full">
                   <ChatWindow />

@@ -96,17 +96,35 @@ body,
 
 .weather-app-root [data-name="Center Screen"] {
   height: 100% !important;
-  width: auto !important;
-  flex: 1 0 0 !important;
+  width: 100% !important;
+  max-width: 1182px !important;
+  flex: 1 1 0% !important;
+  min-width: 0 !important;
 }
 
 .weather-app-root [data-name="Detail Display"] {
-  flex: 1 1 0 !important;
+  flex: 1 1 0% !important;
+  width: 100% !important;
+  max-width: 1134px !important;
   height: auto !important;
   min-height: 0 !important;
+  min-width: 0 !important;
 }
 
 .weather-app-root [data-name="Chat Window"] {
+  width: 100% !important;
+  max-width: 1134px !important;
   flex-shrink: 0 !important;
   height: 300px !important;
+  min-width: 0 !important;
+}
+
+.weather-app-root [data-name="Chat Box"] {
+  width: 100% !important;
+  max-width: 1053px !important;
+}
+
+.weather-app-root [data-name="Suggestion Prompt"] {
+  width: 100% !important;
+  max-width: 1053px !important;
 }
