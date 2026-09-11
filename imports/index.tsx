@@ -398,11 +398,13 @@ function Frame9() {
   const headline = ctx?.brief?.headline || "Dress light today";
 
   return (
-    <div className="content-stretch flex min-h-[50px] items-center justify-between relative shrink-0 w-full gap-2">
-      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#6b655b]" data-name="Frame 53">
-        <p className="leading-[1.15] text-[24px] sm:text-[30px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+    <div className="flex flex-col items-start relative shrink-0 w-full gap-[8px]" data-name="Frame 9">
+      <div className="w-full flex justify-end items-center">
+        <LocationIndicator />
       </div>
-      <LocationIndicator className="ml-[4px] sm:ml-[12px] xl:ml-[16px]" />
+      <div className="w-full font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#6b655b]" data-name="Frame 53">
+        <p className="leading-[1.15] text-[26px] sm:text-[30px] font-semibold tracking-tight text-[#6b655b]" title={headline}>{headline}</p>
+      </div>
     </div>
   );
 }
@@ -459,12 +461,7 @@ function Frame4() {
 function Frame5({ conf = 94 }: { conf?: number }) {
   return (
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
-      <div className="flex items-center justify-between w-full">
-        <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px]">Wear</p>
-        <div className="lg:hidden">
-          <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
-        </div>
-      </div>
+      <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[20px] w-full">Wear</p>
       <Frame4 />
     </div>
   );
@@ -660,7 +657,13 @@ function Main() {
         <MobileHourlyTimeline />
 
         {/* 5. Wear & Pack Recommendations */}
-        <div className="bg-[#faf8f4] border border-[#e4dfd6] rounded-[24px] p-4 shadow-[0px_1px_4px_rgba(28,42,68,0.06)] w-full min-w-0">
+        <div className="bg-[#faf8f4] border border-[#e4dfd6] rounded-[24px] p-4 shadow-none w-full min-w-0 flex flex-col gap-3">
+          {/* Confidence percentage frame at top */}
+          <div className="w-full flex justify-end items-center">
+            <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+          </div>
+
+          {/* Underneath: Wear & Pack description frames */}
           <Frame8 conf={conf} />
         </div>
       </div>
