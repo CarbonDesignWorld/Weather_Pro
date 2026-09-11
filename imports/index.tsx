@@ -339,7 +339,7 @@ function TimeAndConditions() {
   const timeStr = `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}${now.getHours() < 12 ? "am" : "pm"}`;
 
   return (
-    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px flex flex-col rounded-[50px] shadow-none overflow-hidden" data-name="Time and conditions">
+    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px flex flex-col rounded-[36px] sm:rounded-[40px] lg:rounded-[44px] shadow-none overflow-hidden" data-name="Time and conditions">
       {/* Top section: Descriptive Card in flow (does not block timestamps) */}
       <div className="p-[18px] pb-[14px] shrink-0">
         <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-none" data-name="Side Panel Descriptive Card">
@@ -546,26 +546,26 @@ function Frame2() {
 
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full justify-between min-w-0 relative w-full" data-name="Detail Info Panel">
-      {/* Top row: Location Indicator on the far right */}
-      <div className="w-full flex justify-end items-start shrink-0">
-        <LocationIndicator />
-      </div>
+      {/* Top Stack: Location Indicator on the far right, and Greeting + Wear/Pack starting at the bottom of the location frame */}
+      <div className="w-full flex flex-col items-start shrink-0">
+        {/* Top row: Location Indicator on the far right */}
+        <div className="w-full flex justify-end items-start shrink-0">
+          <LocationIndicator />
+        </div>
 
-      {/* Main content body: Left stack (Greeting + Wear & Pack hugging) and Right column (Confidence Card) */}
-      <div className="w-full flex justify-between items-end min-w-0 gap-[16px] xl:gap-[24px]">
-        {/* Left stack: Frame 53 and Frame 27 hugging */}
-        <div className="flex flex-col gap-[14px] xl:gap-[18px] flex-1 min-w-0 max-w-[580px]">
+        {/* Greeting & Wear/Pack stack positioned at the top, starting directly at the bottom of the location frame */}
+        <div className="flex flex-col gap-[12px] xl:gap-[16px] w-full max-w-[580px] mt-[4px] sm:mt-[6px]">
           <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#2e2a26]" data-name="Frame 53">
             <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[44px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
             <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[34px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
           </div>
           <Frame8 conf={conf} />
         </div>
+      </div>
 
-        {/* Right column: Confidence Card, right-aligned to match Location Indicator */}
-        <div className="shrink-0 flex items-end">
-          <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
-        </div>
+      {/* Bottom row: Confidence Card on the far right, vertically aligned with Location Indicator */}
+      <div className="w-full flex justify-end items-end shrink-0">
+        <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
       </div>
     </div>
   );
