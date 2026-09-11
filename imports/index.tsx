@@ -3,7 +3,7 @@ import svgPaths from "./svg-7a2pt52j2y";
 import imgWeatherVisualDisplay from "./468d1251b756da2aa4f79a32648edd195a653df0.png";
 import { useWeather } from "../src/context/WeatherContext";
 import WeatherIconItem from "../src/components/WeatherIconItem";
-import { TAG_LABELS } from "../src/lib/constants";
+import { TAG_LABELS, cleanCopyText } from "../src/lib/constants";
 import { getTemperatureColor, getTimelineGradient, getWeatherVisual } from "../src/lib/weatherVisuals";
 import { ChatCard } from "../src/ChatView";
 
@@ -280,7 +280,7 @@ function DailyTags() {
 
 function Frame10() {
   const ctx = useWeather();
-  const desc = ctx?.brief?.nowDescription || ctx?.brief?.hourly?.[0]?.description || "You can expect a cool morning. Chilly, bring a jacket that's packable.";
+  const desc = cleanCopyText(ctx?.brief?.nowDescription || ctx?.brief?.hourly?.[0]?.description || "You can expect a cool morning. Chilly, bring a jacket that's packable.");
 
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full">
@@ -395,7 +395,7 @@ function LocationIndicator({ className }: { className?: string }) {
 
 function Frame9() {
   const ctx = useWeather();
-  const headline = ctx?.brief?.headline || "Dress light today";
+  const headline = cleanCopyText(ctx?.brief?.headline || "Dress light today");
 
   return (
     <div className="flex flex-col items-start relative shrink-0 w-full gap-[8px]" data-name="Frame 9">
@@ -435,7 +435,7 @@ function IconFrame() {
 
 function Frame4() {
   const ctx = useWeather();
-  const desc = ctx?.brief?.wear?.description || "T-shirt, shorts, sandals, and a hat. Today is not the day for denim.";
+  const desc = cleanCopyText(ctx?.brief?.wear?.description || "T-shirt, shorts, sandals, and a hat. Today is not the day for denim.");
 
   return (
     <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
@@ -492,7 +492,7 @@ function IconFrame1() {
 
 function Frame7() {
   const ctx = useWeather();
-  const desc = ctx?.brief?.pack?.description || "Water and sunscreen. UV is at 9, which burns unprotected skin in under fifteen minutes.";
+  const desc = cleanCopyText(ctx?.brief?.pack?.description || "Water and sunscreen. UV is at 9, which burns unprotected skin in under fifteen minutes.");
 
   return (
     <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
@@ -535,7 +535,7 @@ function Frame8({ conf = 94 }: { conf?: number }) {
 
 function Frame2() {
   const ctx = useWeather();
-  const headline = ctx?.brief?.headline || "Dress light today";
+  const headline = cleanCopyText(ctx?.brief?.headline || "Dress light today");
   const conf = ctx?.brief?.confidence ?? 94;
 
   return (

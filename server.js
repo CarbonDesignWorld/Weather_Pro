@@ -78,6 +78,60 @@ async function callGemini(apiKey, payload) {
   throw lastErr;
 }
 
+const ICON_NAMES = {
+  heavy_coat: "heavy coat",
+  light_coat: "light coat",
+  rain_jacket: "rain jacket",
+  wind_breaker: "windbreaker",
+  extra_layer: "extra layer",
+  long_sleeves: "long sleeves",
+  t_shirt: "t-shirt",
+  long_pants: "long pants",
+  shorts: "shorts",
+  boots: "boots",
+  rain_boots: "rain boots",
+  closed_shoes: "closed shoes",
+  sandals: "sandals",
+  warm_socks: "warm socks",
+  beanie: "beanie",
+  sun_hat: "sun hat",
+  scarf: "scarf",
+  gloves: "gloves",
+  shades: "shades",
+  umbrella: "umbrella",
+  water_bottle: "water bottle",
+  sun_screen: "sunscreen",
+  lip_balm: "lip balm",
+};
+
+function cleanCopyText(text) {
+  if (!text || typeof text !== "string") return text;
+  return text
+    .replace(/\bt_shirts?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "t-shirts" : "t-shirt"))
+    .replace(/\bsun_hats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "sun hats" : "sun hat"))
+    .replace(/\bwater_bottles?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "water bottles" : "water bottle"))
+    .replace(/\bsun_screens?\b/gi, "sunscreen")
+    .replace(/\brain_jackets?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "rain jackets" : "rain jacket"))
+    .replace(/\bwind_breakers?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "windbreakers" : "windbreaker"))
+    .replace(/\bheavy_coats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "heavy coats" : "heavy coat"))
+    .replace(/\blight_coats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "light coats" : "light coat"))
+    .replace(/\bextra_layers?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "extra layers" : "extra layer"))
+    .replace(/\blong_sleeves?\b/gi, "long sleeves")
+    .replace(/\blong_pants\b/gi, "long pants")
+    .replace(/\brain_boots?\b/gi, "rain boots")
+    .replace(/\bclosed_shoes?\b/gi, "closed shoes")
+    .replace(/\bwarm_socks?\b/gi, "warm socks")
+    .replace(/\blip_balms?\b/gi, "lip balm")
+    .replace(/([a-zA-Z]+)_([a-zA-Z]+)/g, (_match, p1, p2) => {
+      const lower1 = p1.toLowerCase();
+      const lower2 = p2.toLowerCase();
+      if (lower1 === "t" && lower2.startsWith("shirt")) return lower2.endsWith("s") ? "t-shirts" : "t-shirt";
+      if (lower1 === "sun" && lower2.startsWith("screen")) return "sunscreen";
+      if (lower1 === "wind" && lower2.startsWith("breaker")) return lower2.endsWith("s") ? "windbreakers" : "windbreaker";
+      return `${p1} ${p2}`;
+    });
+}
+
 async function handleChat(req, res) {
   try {
     const { messages, context } = await readJsonBody(req);
@@ -96,8 +150,14 @@ async function handleChat(req, res) {
       location: context?.location,
       current: context?.current,
       dayRange: context?.dayRange,
-      wear: context?.wear,
-      pack: context?.pack,
+      wear: {
+        ...context?.wear,
+        items: (context?.wear?.icons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")),
+      },
+      pack: {
+        ...context?.pack,
+        items: (context?.pack?.icons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")),
+      },
       tags: context?.tags,
       severity: context?.severity,
       hourly: context?.hourly?.map((h) => ({
@@ -112,6 +172,7 @@ async function handleChat(req, res) {
 Your job is to answer the user's questions about today's weather and what to wear or pack.
 
 You can only discuss TODAY, for the location in CONTEXT below. You have no ability to look up other days, other locations, or historical weather.
+
 If asked about other days or other locations, say: "I can only talk about today right now." and stop.
 
 Answer only from CONTEXT. Never invent a temperature, condition, or forecast. If CONTEXT doesn't contain the answer, say so.
@@ -123,7 +184,8 @@ RULES:
 2. If asked "What if I am out all day?", summarize the day's temperature progression and key advice based on the hourly timeline in CONTEXT.
 3. Maintain a natural, concise, and helpful tone. Do not output lone fragments like just a temperature number. Provide complete, helpful sentences.
 4. Keep answers under 60 words unless the user explicitly asks for detail.
-5. SAFETY: You do not give medical diagnoses or travel-safety verdicts.
+5. Use natural English phrasing for clothing and accessories. NEVER use underscores or raw code identifiers (write "t-shirt", "sun hat", "water bottle", "sunscreen").
+6. SAFETY: You do not give medical diagnoses or travel-safety verdicts.
    - If asked about medical symptoms (heat stroke, hypothermia, etc.): do not diagnose; point to medical professionals or emergency services immediately.
    - If asked whether it is safe to drive, fly, or travel: describe the conditions accurately, do not issue a safety verdict.
    - If asked about an active weather emergency: state conditions and direct to official local authorities.
@@ -158,7 +220,8 @@ ${contextJson}`;
       return;
     }
 
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    const rawReply = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    const reply = cleanCopyText(rawReply);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
       message: reply || "I can only answer questions about today's weather and recommendations."
@@ -188,6 +251,9 @@ async function handleGenerateCopy(req, res) {
       voiceTone = "Plain and factual only. No stylisation or humor of any kind. Dangerous weather conditions.";
     }
 
+    const wearNames = (wearIcons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")).join(", ");
+    const packNames = (packIcons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")).join(", ");
+
     const systemInstruction = `You write the editorial copy for Today.io, a weather utility app that tells people what to wear and pack today in one glance.
 
 TONE: ${voiceTone}
@@ -199,12 +265,13 @@ CRITICAL RULES:
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
    - nowDescription: 50 to 130 characters. An atmospheric summary of current conditions and the day's weather feel (e.g. "88° and climbing under direct sun. Peak UV at 9 this afternoon—find shade where you can.", "Cool and overcast at 58°. Light drizzle setting in with damp breezes.").
-3. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
+3. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
+4. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
     const prompt = `Current Weather: ${current?.condition}, ${current?.tempF}°F (Feels like ${current?.feelsLikeF}°F).
 Day Range: Low ${dayRange?.minTempF}°F / High ${dayRange?.maxTempF}°F. Rain probability: ${current?.precipProbability}%. Wind: ${current?.windMph} mph.
-WEAR_ITEMS: ${(wearIcons || []).join(', ') || "None"}
-PACK_ITEMS: ${(packIcons || []).join(', ') || "None"}
+WEAR_ITEMS: ${wearNames || "None"}
+PACK_ITEMS: ${packNames || "None"}
 Severity: ${severity}
 
 Return strict JSON:
@@ -234,10 +301,16 @@ Return strict JSON:
     const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     const parsed = rawText ? JSON.parse(rawText) : {};
     if (parsed.headline && typeof parsed.headline === 'string') {
-      parsed.headline = parsed.headline.trim().replace(/[\r\n]+/g, ' ').slice(0, 25);
+      parsed.headline = cleanCopyText(parsed.headline.trim().replace(/[\r\n]+/g, ' ').slice(0, 25));
+    }
+    if (parsed.wearDescription && typeof parsed.wearDescription === 'string') {
+      parsed.wearDescription = cleanCopyText(parsed.wearDescription.slice(0, 180));
+    }
+    if (parsed.packDescription && typeof parsed.packDescription === 'string') {
+      parsed.packDescription = cleanCopyText(parsed.packDescription.slice(0, 180));
     }
     if (parsed.nowDescription && typeof parsed.nowDescription === 'string') {
-      parsed.nowDescription = parsed.nowDescription.trim().slice(0, 140);
+      parsed.nowDescription = cleanCopyText(parsed.nowDescription.trim().slice(0, 140));
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(parsed));

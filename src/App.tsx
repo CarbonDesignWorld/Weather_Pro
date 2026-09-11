@@ -3,6 +3,7 @@ import HomeScreen from "#imports/index";
 import WearPackOverlay, { type OverlayType } from "./WearPackOverlay";
 import ChatView from "./ChatView";
 import { DayBrief, LocationInfo } from "./lib/types";
+import { cleanCopyText } from "./lib/constants";
 import { resolveUserLocation, fetchDayBrief, saveLocation } from "./lib/weather";
 import { requestCopyGeneration, sendChatMessage } from "./lib/apiClient";
 import { WeatherContext, WeatherContextValue, ChatMessageItem } from "./context/WeatherContext";
@@ -59,18 +60,18 @@ export default function WeatherApp() {
               if (!prev) return prev;
               return {
                 ...prev,
-                headline: (copy.headline && typeof copy.headline === "string" ? copy.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : prev.headline),
-                nowDescription: copy.nowDescription || prev.nowDescription,
+                headline: cleanCopyText(copy.headline && typeof copy.headline === "string" ? copy.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : prev.headline),
+                nowDescription: cleanCopyText(copy.nowDescription || prev.nowDescription),
                 wear: {
                   ...prev.wear,
-                  description: copy.wearDescription || prev.wear.description,
+                  description: cleanCopyText(copy.wearDescription || prev.wear.description),
                 },
                 pack: {
                   ...prev.pack,
-                  description: copy.packDescription || prev.pack.description,
+                  description: cleanCopyText(copy.packDescription || prev.pack.description),
                 },
                 hourly: prev.hourly.map((h, i) =>
-                  i === 0 && copy.nowDescription ? { ...h, description: copy.nowDescription } : h
+                  i === 0 && copy.nowDescription ? { ...h, description: cleanCopyText(copy.nowDescription) } : h
                 ),
                 meta: {
                   ...prev.meta,
@@ -121,7 +122,7 @@ export default function WeatherApp() {
         const agentMsg: ChatMessageItem = {
           id: Date.now() + 1,
           role: "assistant",
-          text: res.message,
+          text: cleanCopyText(res.message),
         };
         setMessages((prev) => [...prev, agentMsg]);
       } else if (res.error) {

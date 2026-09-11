@@ -5,7 +5,7 @@ import {
   DayRange,
   HourlySlot,
 } from "./types";
-import { getWMOInfo, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "./constants";
+import { getWMOInfo, cleanCopyText, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "./constants";
 import { evaluateRules } from "./rules";
 
 const WEATHER_CACHE_KEY = "today_io_weather_cache";
@@ -144,6 +144,10 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     if (cached) {
       const parsed: { timestamp: number; brief: DayBrief } = JSON.parse(cached);
       if (Date.now() - parsed.timestamp < CACHE_TTL_MS) {
+        if (parsed.brief.wear) parsed.brief.wear.description = cleanCopyText(parsed.brief.wear.description);
+        if (parsed.brief.pack) parsed.brief.pack.description = cleanCopyText(parsed.brief.pack.description);
+        if (parsed.brief.headline) parsed.brief.headline = cleanCopyText(parsed.brief.headline);
+        if (parsed.brief.nowDescription) parsed.brief.nowDescription = cleanCopyText(parsed.brief.nowDescription);
         return parsed.brief;
       }
     }

@@ -1,6 +1,7 @@
 import React from "react";
 import { DayBrief } from "./lib/types";
 import WeatherIconItem from "./components/WeatherIconItem";
+import { cleanCopyText } from "./lib/constants";
 
 export type OverlayType = "wear" | "pack" | null;
 
@@ -31,7 +32,7 @@ const DESKTOP_CARD_W = 700;
 function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps) {
   return (
     <div
-      className="flex flex-col gap-[16px] lg:gap-[24px] pt-[24px] lg:pt-[40px] pb-[24px] lg:pb-[36px] px-[20px] lg:px-[48px] shrink-0 w-[85vw] max-w-[700px]"
+      className="flex flex-col gap-[16px] lg:gap-[24px] pt-[24px] lg:pt-[40px] pb-[24px] lg:pb-[36px] px-[20px] lg:px-[48px] shrink-0 w-full max-w-[700px]"
     >
       {icons}
       <h2
@@ -44,7 +45,7 @@ function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps)
         className="text-[#6b655b] text-[15px] lg:text-[16px] leading-relaxed m-0 max-w-[560px]"
         style={{ fontFamily: "Inter, sans-serif" }}
       >
-        {description}
+        {cleanCopyText(description)}
       </p>
       <div className="flex gap-[8px] lg:gap-[12px] overflow-x-auto pb-1 no-scrollbar">
         {images.map((src, i) => (
@@ -52,7 +53,9 @@ function Card({ title, icons, description, images, ctaLabel, onCta }: CardProps)
             key={i}
             src={src}
             alt=""
-            className="object-cover rounded-[12px] border border-[#e4dfd6] size-[110px] lg:size-[160px] shrink-0"
+            className={`object-cover rounded-[12px] border border-[#e4dfd6] size-[110px] lg:size-[160px] shrink-0 ${
+              i >= 2 ? "hidden sm:block" : ""
+            }`}
           />
         ))}
       </div>
@@ -133,9 +136,9 @@ export default function WearPackOverlay({ open, brief, onClose, onSwitch }: Prop
           </div>
         </div>
 
-        {/* Right-edge gradient fading the peeking card */}
+        {/* Right-edge gradient fading the peeking card (hidden on mobile) */}
         <div
-          className="pointer-events-none absolute top-0 right-0 h-full w-[220px]"
+          className="hidden lg:block pointer-events-none absolute top-0 right-0 h-full w-[220px]"
           style={{
             background: "linear-gradient(to left, rgba(255,255,255,1) 30%, rgba(255,255,255,0))",
           }}

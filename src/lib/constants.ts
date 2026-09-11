@@ -58,28 +58,28 @@ export interface IconMeta {
 }
 
 export const ICONS: Record<IconId, IconMeta> = {
-  heavy_coat: { id: "heavy_coat", name: "Heavy Coat", slot: "Wear", zone: "Outer", ariaLabel: "Heavy coat" },
-  light_coat: { id: "light_coat", name: "Light Coat", slot: "Wear", zone: "Outer", ariaLabel: "Light coat" },
-  rain_jacket: { id: "rain_jacket", name: "Rain Jacket", slot: "Wear", zone: "Outer", ariaLabel: "Rain jacket" },
-  wind_breaker: { id: "wind_breaker", name: "Wind Breaker", slot: "Wear", zone: "Outer", ariaLabel: "Windbreaker" },
+  heavy_coat: { id: "heavy_coat", name: "Heavy coat", slot: "Wear", zone: "Outer", ariaLabel: "Heavy coat" },
+  light_coat: { id: "light_coat", name: "Light coat", slot: "Wear", zone: "Outer", ariaLabel: "Light coat" },
+  rain_jacket: { id: "rain_jacket", name: "Rain jacket", slot: "Wear", zone: "Outer", ariaLabel: "Rain jacket" },
+  wind_breaker: { id: "wind_breaker", name: "Windbreaker", slot: "Wear", zone: "Outer", ariaLabel: "Windbreaker" },
   extra_layer: { id: "extra_layer", name: "Extra layer", slot: "Wear", zone: "Outer", ariaLabel: "Extra layer" },
-  long_sleeves: { id: "long_sleeves", name: "Long Sleeves", slot: "Wear", zone: "Top", ariaLabel: "Long sleeves" },
-  t_shirt: { id: "t_shirt", name: "T Shirt", slot: "Wear", zone: "Top", ariaLabel: "T-shirt" },
-  long_pants: { id: "long_pants", name: "Long Pants", slot: "Wear", zone: "Bottom", ariaLabel: "Long pants" },
+  long_sleeves: { id: "long_sleeves", name: "Long sleeves", slot: "Wear", zone: "Top", ariaLabel: "Long sleeves" },
+  t_shirt: { id: "t_shirt", name: "T-shirt", slot: "Wear", zone: "Top", ariaLabel: "T-shirt" },
+  long_pants: { id: "long_pants", name: "Long pants", slot: "Wear", zone: "Bottom", ariaLabel: "Long pants" },
   shorts: { id: "shorts", name: "Shorts", slot: "Wear", zone: "Bottom", ariaLabel: "Shorts" },
   boots: { id: "boots", name: "Boots", slot: "Wear", zone: "Feet", ariaLabel: "Boots" },
-  rain_boots: { id: "rain_boots", name: "Rain Boots", slot: "Wear", zone: "Feet", ariaLabel: "Rain boots" },
-  closed_shoes: { id: "closed_shoes", name: "Closed Shoes", slot: "Wear", zone: "Feet", ariaLabel: "Closed shoes" },
+  rain_boots: { id: "rain_boots", name: "Rain boots", slot: "Wear", zone: "Feet", ariaLabel: "Rain boots" },
+  closed_shoes: { id: "closed_shoes", name: "Closed shoes", slot: "Wear", zone: "Feet", ariaLabel: "Closed shoes" },
   sandals: { id: "sandals", name: "Sandals", slot: "Wear", zone: "Feet", ariaLabel: "Sandals" },
-  warm_socks: { id: "warm_socks", name: "Warm Socks", slot: "Wear", zone: "Feet", ariaLabel: "Warm socks" },
+  warm_socks: { id: "warm_socks", name: "Warm socks", slot: "Wear", zone: "Feet", ariaLabel: "Warm socks" },
   beanie: { id: "beanie", name: "Beanie", slot: "Wear", zone: "Head", ariaLabel: "Beanie" },
   sun_hat: { id: "sun_hat", name: "Sun hat", slot: "Wear", zone: "Head", ariaLabel: "Sun hat" },
   scarf: { id: "scarf", name: "Scarf", slot: "Wear", zone: "Accessory", ariaLabel: "Scarf" },
   gloves: { id: "gloves", name: "Gloves", slot: "Wear", zone: "Accessory", ariaLabel: "Gloves" },
   shades: { id: "shades", name: "Shades", slot: "Wear", zone: "Accessory", ariaLabel: "Sunglasses" },
   umbrella: { id: "umbrella", name: "Umbrella", slot: "Pack", zone: "Accessory", ariaLabel: "Umbrella" },
-  water_bottle: { id: "water_bottle", name: "Water Bottle", slot: "Pack", zone: "Accessory", ariaLabel: "Water bottle" },
-  sun_screen: { id: "sun_screen", name: "Sun Screen", slot: "Pack", zone: "Accessory", ariaLabel: "Sunscreen" },
+  water_bottle: { id: "water_bottle", name: "Water bottle", slot: "Pack", zone: "Accessory", ariaLabel: "Water bottle" },
+  sun_screen: { id: "sun_screen", name: "Sunscreen", slot: "Pack", zone: "Accessory", ariaLabel: "Sunscreen" },
   lip_balm: { id: "lip_balm", name: "Lip balm", slot: "Pack", zone: "Accessory", ariaLabel: "Lip balm" },
 };
 
@@ -96,6 +96,38 @@ export const TAG_LABELS: Record<TemperatureTagId | SkyTagId | MoistureTagId, str
   dry: "Dry",
 };
 
+/**
+ * Removes underscores and converts raw icon identifiers or code tokens into natural English phrases.
+ * e.g. "t_shirt" -> "t-shirt", "sun_hat" -> "sun hat", "water_bottle" -> "water bottle", "sun_screen" -> "sunscreen"
+ */
+export function cleanCopyText(text: string): string {
+  if (!text || typeof text !== "string") return text;
+  return text
+    .replace(/\bt_shirts?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "t-shirts" : "t-shirt"))
+    .replace(/\bsun_hats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "sun hats" : "sun hat"))
+    .replace(/\bwater_bottles?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "water bottles" : "water bottle"))
+    .replace(/\bsun_screens?\b/gi, "sunscreen")
+    .replace(/\brain_jackets?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "rain jackets" : "rain jacket"))
+    .replace(/\bwind_breakers?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "windbreakers" : "windbreaker"))
+    .replace(/\bheavy_coats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "heavy coats" : "heavy coat"))
+    .replace(/\blight_coats?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "light coats" : "light coat"))
+    .replace(/\bextra_layers?\b/gi, (m) => (m.toLowerCase().endsWith("s") ? "extra layers" : "extra layer"))
+    .replace(/\blong_sleeves?\b/gi, "long sleeves")
+    .replace(/\blong_pants\b/gi, "long pants")
+    .replace(/\brain_boots?\b/gi, "rain boots")
+    .replace(/\bclosed_shoes?\b/gi, "closed shoes")
+    .replace(/\bwarm_socks?\b/gi, "warm socks")
+    .replace(/\blip_balms?\b/gi, "lip balm")
+    .replace(/([a-zA-Z]+)_([a-zA-Z]+)/g, (_match, p1, p2) => {
+      const lower1 = p1.toLowerCase();
+      const lower2 = p2.toLowerCase();
+      if (lower1 === "t" && lower2.startsWith("shirt")) return lower2.endsWith("s") ? "t-shirts" : "t-shirt";
+      if (lower1 === "sun" && lower2.startsWith("screen")) return "sunscreen";
+      if (lower1 === "wind" && lower2.startsWith("breaker")) return lower2.endsWith("s") ? "windbreakers" : "windbreaker";
+      return `${p1} ${p2}`;
+    });
+}
+
 export function getFallbackHeadline(condition: string, tempF: number, severity: SeverityLevel): string {
   if (severity === "extreme") return "Extreme conditions";
   if (tempF >= 80) return "Dress light today";
@@ -107,13 +139,13 @@ export function getFallbackHeadline(condition: string, tempF: number, severity: 
 export function getFallbackWearDescription(icons: IconId[]): string {
   const names = icons.map((id) => ICONS[id]?.name ?? id);
   if (names.length === 0) return "Dress comfortably for today's weather.";
-  return `Wear ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`;
+  return cleanCopyText(`Wear ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`);
 }
 
 export function getFallbackPackDescription(icons: IconId[]): string {
   const names = icons.map((id) => ICONS[id]?.name ?? id);
   if (names.length === 0) return "No extra items needed today.";
-  return `Pack ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`;
+  return cleanCopyText(`Pack ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`);
 }
 
 export function getFallbackNowDescription(condition: string, tempF: number, maxTempF?: number, windMph?: number): string {
@@ -121,17 +153,17 @@ export function getFallbackNowDescription(condition: string, tempF: number, maxT
   const condLower = condition.toLowerCase();
 
   if (rounded >= 85 || (maxTempF && maxTempF >= 88)) {
-    return `${rounded}° and climbing under ${condLower}. High heat and peak UV through the afternoon—find shade where you can.`;
+    return cleanCopyText(`${rounded}° and climbing under ${condLower}. High heat and peak UV through the afternoon—find shade where you can.`);
   }
   if (condLower.includes("rain") || condLower.includes("drizzle") || condLower.includes("shower")) {
-    return `${rounded}°, ${condLower}. Steady damp conditions with slick roads and wet pavement through the evening.`;
+    return cleanCopyText(`${rounded}°, ${condLower}. Steady damp conditions with slick roads and wet pavement through the evening.`);
   }
   if (condLower.includes("thunder") || condLower.includes("storm")) {
-    return `${rounded}° with active storm systems. Expect gusty winds and sudden heavy downpours.`;
+    return cleanCopyText(`${rounded}° with active storm systems. Expect gusty winds and sudden heavy downpours.`);
   }
   if (rounded <= 45) {
     const windNote = windMph && windMph > 15 ? ` Gusts up to ${Math.round(windMph)} mph add a sharp bite.` : "";
-    return `Currently ${rounded}° and brisk.${windNote} Dress warmly if you'll be out past sunset.`;
+    return cleanCopyText(`Currently ${rounded}° and brisk.${windNote} Dress warmly if you'll be out past sunset.`);
   }
-  return `${condition} and ${rounded}°. Mild, steady conditions with comfortable temperatures continuing through tonight.`;
+  return cleanCopyText(`${condition} and ${rounded}°. Mild, steady conditions with comfortable temperatures continuing through tonight.`);
 }

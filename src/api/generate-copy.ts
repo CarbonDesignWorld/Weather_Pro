@@ -1,5 +1,5 @@
 import { DayBrief, GeneratedCopyResponse, IconId, SeverityLevel } from "../lib/types";
-import { ICONS, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "../lib/constants";
+import { ICONS, cleanCopyText, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "../lib/constants";
 
 export interface GenerateCopyInput {
   current: DayBrief["current"];
@@ -16,10 +16,10 @@ export async function generateCopy(
   const { current, dayRange, wearIcons, packIcons, severity } = input;
 
   const fallback: GeneratedCopyResponse = {
-    headline: getFallbackHeadline(current.condition, current.tempF, severity),
-    wearDescription: getFallbackWearDescription(wearIcons),
-    packDescription: getFallbackPackDescription(packIcons),
-    nowDescription: getFallbackNowDescription(current.condition, current.tempF),
+    headline: cleanCopyText(getFallbackHeadline(current.condition, current.tempF, severity)),
+    wearDescription: cleanCopyText(getFallbackWearDescription(wearIcons)),
+    packDescription: cleanCopyText(getFallbackPackDescription(packIcons)),
+    nowDescription: cleanCopyText(getFallbackNowDescription(current.condition, current.tempF)),
   };
 
   const key = apiKey || (typeof process !== "undefined" ? process.env?.GEMINI_API_KEY : undefined);
@@ -27,8 +27,8 @@ export async function generateCopy(
     return fallback;
   }
 
-  const wearNames = wearIcons.map((id) => ICONS[id]?.name || id).join(", ");
-  const packNames = packIcons.map((id) => ICONS[id]?.name || id).join(", ");
+  const wearNames = wearIcons.map((id) => ICONS[id]?.name?.toLowerCase() || id.replace(/_/g, " ")).join(", ");
+  const packNames = packIcons.map((id) => ICONS[id]?.name?.toLowerCase() || id.replace(/_/g, " ")).join(", ");
 
   let voiceTone = "Blunt, dry, and confident. Short declarative sentences. Specific over intense. No exclamation marks, no hedging, no personified weather, no clichés, no emoji.";
   if (severity === "elevated") {
@@ -48,7 +48,8 @@ CRITICAL RULES:
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
    - nowDescription: 50 to 130 characters. An atmospheric summary of current conditions and the day's weather feel (e.g. "88° and climbing under direct sun. Peak UV at 9 this afternoon—find shade where you can.", "Cool and overcast at 58°. Light drizzle setting in with damp breezes.").
-3. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
+3. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
+4. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
   const prompt = `Current Weather: ${current.condition}, ${current.tempF}°F (Feels like ${current.feelsLikeF}°F).
 Day Range: Low ${dayRange.minTempF}°F / High ${dayRange.maxTempF}°F. Rain probability: ${current.precipProbability}%. Wind: ${current.windMph} mph.
@@ -93,10 +94,10 @@ Return strict JSON:
 
     // Validate budget lengths and sanity
     return {
-      headline: (parsed.headline && typeof parsed.headline === "string" ? parsed.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : fallback.headline),
-      wearDescription: (parsed.wearDescription && parsed.wearDescription.slice(0, 180)) || fallback.wearDescription,
-      packDescription: (parsed.packDescription && parsed.packDescription.slice(0, 180)) || fallback.packDescription,
-      nowDescription: (parsed.nowDescription && parsed.nowDescription.slice(0, 140)) || fallback.nowDescription,
+      headline: cleanCopyText(parsed.headline && typeof parsed.headline === "string" ? parsed.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : fallback.headline),
+      wearDescription: cleanCopyText((parsed.wearDescription && parsed.wearDescription.slice(0, 180)) || fallback.wearDescription),
+      packDescription: cleanCopyText((parsed.packDescription && parsed.packDescription.slice(0, 180)) || fallback.packDescription),
+      nowDescription: cleanCopyText((parsed.nowDescription && parsed.nowDescription.slice(0, 140)) || fallback.nowDescription),
     };
   } catch (err) {
     console.error("Copy generation error", err);
