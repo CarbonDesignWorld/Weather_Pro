@@ -109,7 +109,7 @@ function DailyTag({ className, tagLabel = "Warm" }: DailyTagProps) {
     <div className={className || "bg-[#d5cfc4] relative rounded-[166px]"} data-name="Daily Tag">
       <div className="flex flex-row items-center justify-center overflow-clip rounded-[inherit] size-full">
         <div className="content-stretch flex items-center justify-center px-[8px] py-[4px] relative size-full">
-          <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] whitespace-nowrap">{tagLabel}</p>
+          <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[16px] whitespace-nowrap">{tagLabel}</p>
         </div>
       </div>
     </div>
