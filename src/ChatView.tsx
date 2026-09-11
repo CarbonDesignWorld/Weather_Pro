@@ -101,8 +101,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
       {/* Chat card */}
       <div
-        className="flex-1 flex flex-col mx-[12px] lg:mx-[24px] mb-[16px] lg:mb-[24px] min-h-0 rounded-[28px] lg:rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)]"
-        style={{ background: "#f0ece4" }}
+        className="flex-1 flex flex-col mx-[12px] lg:mx-[24px] mb-[16px] lg:mb-[24px] min-h-0 rounded-[28px] lg:rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)] border border-[#e4dfd6] bg-white"
       >
         {/* Message list */}
         <div className="flex-1 overflow-y-auto px-[16px] lg:px-[32px] pt-[20px] lg:pt-[32px] pb-[16px] flex flex-col gap-[14px] lg:gap-[16px] min-h-0">
@@ -116,7 +115,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             msg.role === "user" ? (
               <div key={msg.id} className="flex justify-end">
                 <div
-                  className="bg-[#4a69a9] text-white rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.1)]"
+                  className="bg-[#faf8f4] text-[#6b655b] border border-[#e4dfd6] rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.04)]"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -125,7 +124,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             ) : (
               <div key={msg.id} className="flex justify-start">
                 <div
-                  className="bg-white rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[#2e2a26] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)] leading-relaxed"
+                  className="bg-[#f0ece4] text-[#6b655b] border border-[#e4dfd6] rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.04)] leading-relaxed"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -136,7 +135,10 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white/80 rounded-[20px] px-[20px] py-[14px] text-[#6b655b] text-[14px] italic">
+              <div
+                className="bg-[#f0ece4] border border-[#e4dfd6] rounded-[20px] px-[20px] py-[14px] text-[#6b655b] text-[14px] italic shadow-[0px_1px_4px_rgba(28,42,68,0.04)]"
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
                 Thinking...
               </div>
             </div>
@@ -176,7 +178,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about today"
               maxLength={500}
-              className="flex-1 bg-transparent border-none outline-none text-[#2e2a26] text-[16px] placeholder-[#6b655b]"
+              className="flex-1 bg-transparent border-none outline-none text-[#6b655b] text-[16px] placeholder-[#6b655b]"
               style={{ fontFamily: "Inter, sans-serif" }}
             />
             <button

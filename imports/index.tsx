@@ -143,13 +143,13 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
           <div className="flex items-center gap-1.5 text-[13px] text-[#6b655b] font-medium font-['Source_Serif_Pro:Regular',sans-serif]">
             <span>{dateStr}</span>
             <span>•</span>
-            <span className="font-semibold text-[#2e2a26]">{tempStr}</span>
+            <span className="font-semibold text-[#6b655b]">{tempStr}</span>
           </div>
           <button
             type="button"
             onClick={() => ctx?.openChatWithPrompt("")}
             aria-label="Open Weather Chat Assistant"
-            className="flex items-center justify-center size-[36px] rounded-full bg-[#4a69a9] hover:bg-[#3a5384] active:bg-[#2a3d61] text-white shadow-[0px_2px_6px_rgba(42,61,97,0.25)] transition-all cursor-pointer border-none"
+            className="flex items-center justify-center size-[36px] rounded-full bg-[#d5cfc4] hover:bg-[#c8c1b4] active:bg-[#bcb4a6] text-[#6b655b] hover:text-[#2e2a26] transition-colors cursor-pointer border-none shadow-none"
             title="Ask Today Assistant"
           >
             <svg className="size-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -165,7 +165,7 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
           <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
             <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
             <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{dateStr}</p>
-            <p className="font-['Source_Serif_Pro:Regular',sans-serif] relative shrink-0 w-full font-medium">{tempStr}</p>
+            <p className="font-['Source_Serif_Pro:Regular',sans-serif] relative shrink-0 w-full font-medium text-[#6b655b]">{tempStr}</p>
           </div>
           <div className="flex items-center justify-center relative shrink-0">
             <div className="-scale-y-100 flex-none rotate-180">
@@ -312,7 +312,7 @@ function MobileHourlyTimeline() {
                 className="w-2.5 h-2.5 rounded-full my-2.5"
                 style={{ backgroundColor: tempColor }}
               />
-              <span className="text-[15px] font-bold text-[#2e2a26]">{h.tempF}°</span>
+              <span className="text-[15px] font-bold text-[#6b655b]">{h.tempF}°</span>
             </div>
           );
         })}
