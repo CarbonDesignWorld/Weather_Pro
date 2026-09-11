@@ -48,12 +48,8 @@ type ConfidenceCardProps = {
 function ConfidenceCard({ className, confidenceLabel = "Confidence 94%" }: ConfidenceCardProps) {
   return (
     <div className={className || "relative"} data-name="Confidence Card">
-      <div className="flex flex-col items-end justify-center size-full">
-        <div className="content-stretch flex flex-col items-end justify-center relative size-full">
-          <div className="bg-[#6b655b] content-stretch flex flex-col h-[31px] items-center justify-center px-[12px] relative rounded-[99px] shrink-0 w-full">
-            <p className="[word-break:break-word] font-['Inter:Semi_Bold',sans-serif] font-semibold leading-[normal] not-italic relative shrink-0 text-[20px] text-white whitespace-nowrap">{confidenceLabel}</p>
-          </div>
-        </div>
+      <div className="bg-[#d5cfc4] flex items-center justify-center px-[14px] py-[6px] rounded-[99px] shrink-0 w-fit">
+        <p className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[13px] sm:text-[14px] text-[#6b655b] whitespace-nowrap">{confidenceLabel}</p>
       </div>
     </div>
   );
@@ -221,7 +217,7 @@ function TimeStamps() {
                   </span>
                 )}
                 <div className="flex items-center justify-between w-full pr-2">
-                  <span className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[#2e2a26] text-[18px]">
+                  <span className="font-['Inter:Semi_Bold',sans-serif] font-semibold text-[#6b655b] text-[18px]">
                     {h.displayTime}
                   </span>
 
@@ -300,7 +296,7 @@ function MobileConditionsCard() {
   const timeStr = `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}${now.getHours() < 12 ? "am" : "pm"}`;
 
   return (
-    <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-[0px_2px_8px_rgba(28,42,68,0.06)] w-full" data-name="Mobile Conditions Card">
+    <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-none w-full" data-name="Mobile Conditions Card">
       <p className="font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic text-[#6b655b] text-[17px] mb-[8px]">Now: {timeStr}</p>
       <Frame10 />
     </div>
@@ -321,7 +317,7 @@ function MobileHourlyTimeline() {
           return (
             <div
               key={i}
-              className="flex flex-col items-center justify-between min-w-[76px] bg-[#f0ece4] rounded-[18px] py-3 px-2 shrink-0 shadow-xs"
+              className="flex flex-col items-center justify-between min-w-[76px] bg-[#f0ece4] rounded-[18px] py-3 px-2 shrink-0 shadow-none"
             >
               <span className="text-[12px] font-semibold text-[#6b655b] whitespace-nowrap">{h.displayTime}</span>
               <div
@@ -343,10 +339,10 @@ function TimeAndConditions() {
   const timeStr = `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}${now.getHours() < 12 ? "am" : "pm"}`;
 
   return (
-    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px flex flex-col rounded-[50px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] overflow-hidden" data-name="Time and conditions">
+    <div className="bg-[#faf8f4] border border-[#e4dfd6] border-solid flex-[1_0_0] h-full min-w-px flex flex-col rounded-[50px] shadow-none overflow-hidden" data-name="Time and conditions">
       {/* Top section: Descriptive Card in flow (does not block timestamps) */}
       <div className="p-[18px] pb-[14px] shrink-0">
-        <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-[0px_2px_8px_rgba(28,42,68,0.06)]" data-name="Side Panel Descriptive Card">
+        <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-none" data-name="Side Panel Descriptive Card">
           <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[18px] whitespace-nowrap mb-[8px]">Now: {timeStr}</p>
           <Frame10 />
         </div>
@@ -384,6 +380,19 @@ function Frame1() {
   );
 }
 
+function LocationIndicator({ className }: { className?: string }) {
+  return (
+    <div className={`bg-white relative rounded-[90px] shrink-0 w-fit ${className || ""}`} data-name="Location Indicator">
+      <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
+        <div className="content-stretch flex flex-col items-center justify-center px-[10px] sm:px-[16px] py-[6px] sm:py-[8px] relative size-full">
+          <Frame1 />
+        </div>
+      </div>
+      <div aria-hidden className="absolute border border-[#e4dfd6] border-solid inset-0 pointer-events-none rounded-[90px]" />
+    </div>
+  );
+}
+
 function Frame9() {
   const ctx = useWeather();
   const greeting = ctx?.brief?.greeting || "Hey,";
@@ -395,14 +404,7 @@ function Frame9() {
         <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
         <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
-      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[4px] sm:ml-[12px] xl:ml-[16px]" data-name="Location Indicator">
-        <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex flex-col items-center justify-center px-[10px] sm:px-[16px] py-[6px] sm:py-[8px] relative size-full">
-            <Frame1 />
-          </div>
-        </div>
-        <div aria-hidden className="absolute border border-[#e4dfd6] border-solid inset-0 pointer-events-none rounded-[90px]" />
-      </div>
+      <LocationIndicator className="ml-[4px] sm:ml-[12px] xl:ml-[16px]" />
     </div>
   );
 }
@@ -461,7 +463,7 @@ function Frame5({ conf = 94 }: { conf?: number }) {
     <div className="content-stretch flex flex-col gap-[9px] items-start relative shrink-0 w-full">
       <div className="flex items-center justify-between w-full">
         <p className="[word-break:break-word] font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[20px]">Wear</p>
-        <div className="xl:hidden">
+        <div className="lg:hidden">
           <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
         </div>
       </div>
@@ -536,28 +538,34 @@ function Frame8({ conf = 94 }: { conf?: number }) {
   );
 }
 
-function Frame3() {
+function Frame2() {
   const ctx = useWeather();
+  const greeting = ctx?.brief?.greeting || "Hey,";
+  const headline = ctx?.brief?.headline || "Dress light today";
   const conf = ctx?.brief?.confidence ?? 94;
 
   return (
-    <div className="content-stretch flex items-end justify-between relative shrink-0 w-full gap-[12px] xl:gap-[16px]">
-      <Frame8 conf={conf} />
-      <div className="hidden xl:block">
-        <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+    <div className="content-stretch flex flex-[1_0_0] flex-col h-full justify-between min-w-0 relative w-full" data-name="Detail Info Panel">
+      {/* Top row: Location Indicator on the far right */}
+      <div className="w-full flex justify-end items-start shrink-0">
+        <LocationIndicator />
       </div>
-    </div>
-  );
-}
 
-function Frame2() {
-  return (
-    <div className="content-stretch flex flex-[1_0_0] flex-col h-full items-end justify-between min-w-0 relative">
-      <div className="w-full flex justify-between items-start">
-        <Frame9 />
-      </div>
-      <div className="w-full flex justify-between items-end">
-        <Frame3 />
+      {/* Main content body: Left stack (Greeting + Wear & Pack hugging) and Right column (Confidence Card) */}
+      <div className="w-full flex justify-between items-end min-w-0 gap-[16px] xl:gap-[24px]">
+        {/* Left stack: Frame 53 and Frame 27 hugging */}
+        <div className="flex flex-col gap-[14px] xl:gap-[18px] flex-1 min-w-0 max-w-[580px]">
+          <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#2e2a26]" data-name="Frame 53">
+            <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[44px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+            <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[34px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+          </div>
+          <Frame8 conf={conf} />
+        </div>
+
+        {/* Right column: Confidence Card, right-aligned to match Location Indicator */}
+        <div className="shrink-0 flex items-end">
+          <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
+        </div>
       </div>
     </div>
   );
@@ -622,10 +630,10 @@ function WeatherVisualHero() {
   }, [ctx?.brief?.current.conditionCode, ctx?.brief?.current.isDay]);
 
   return (
-    <div className="h-[180px] sm:h-[220px] lg:h-full w-full lg:w-[240px] xl:w-[270px] max-w-none lg:max-w-[506px] relative rounded-[22px] shrink-0 overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)] transition-[width] duration-200" data-name="Weather Visual Display">
+    <div className="h-[180px] sm:h-[220px] lg:h-full w-full lg:w-[240px] xl:w-[270px] max-w-none lg:max-w-[506px] relative rounded-[36px] sm:rounded-[40px] lg:rounded-[44px] shrink-0 overflow-hidden shadow-none transition-[width] duration-200" data-name="Weather Visual Display">
       <img
         alt={ctx?.brief?.current.condition || "Weather conditions"}
-        className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[22px] size-full transition-opacity duration-700"
+        className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[inherit] size-full transition-opacity duration-700"
         src={imgSrc}
         onError={() => setImgSrc(imgWeatherVisualDisplay)}
       />
