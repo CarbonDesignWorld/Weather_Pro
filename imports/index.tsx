@@ -138,11 +138,24 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
     <div className={className || "bg-[#faf8f4] h-[60px] lg:h-[93px] overflow-clip relative w-full shrink-0"}>
       {/* Mobile Top App Bar (< 1024px) */}
       <div className="flex lg:hidden justify-between items-center px-4 h-full bg-[#faf8f4] border-b border-[#e4dfd6] w-full">
-        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[22px] text-[#2e2a26]">{brandName}</span>
-        <div className="flex items-center gap-2 text-[14px] text-[#6b655b] font-medium font-['Source_Serif_Pro:Regular',sans-serif]">
-          <span>{dateStr}</span>
-          <span>•</span>
-          <span className="font-semibold text-[#2e2a26]">{tempStr}</span>
+        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[22px] text-[#2e2a26] shrink-0">{brandName}</span>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 text-[13px] text-[#6b655b] font-medium font-['Source_Serif_Pro:Regular',sans-serif]">
+            <span>{dateStr}</span>
+            <span>•</span>
+            <span className="font-semibold text-[#2e2a26]">{tempStr}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => ctx?.openChatWithPrompt("")}
+            aria-label="Open Weather Chat Assistant"
+            className="flex items-center justify-center size-[36px] rounded-full bg-[#4a69a9] hover:bg-[#3a5384] active:bg-[#2a3d61] text-white shadow-[0px_2px_6px_rgba(42,61,97,0.25)] transition-all cursor-pointer border-none"
+            title="Ask Today Assistant"
+          >
+            <svg className="size-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -628,9 +641,6 @@ function Main() {
         <div className="bg-[#faf8f4] border border-[#e4dfd6] rounded-[24px] p-4 shadow-[0px_1px_4px_rgba(28,42,68,0.06)] w-full min-w-0">
           <Frame8 conf={conf} />
         </div>
-
-        {/* 6. Chat Suggestions & Input */}
-        <ChatWindow />
       </div>
 
       {/* DESKTOP FLOW (>= 1024px) */}
