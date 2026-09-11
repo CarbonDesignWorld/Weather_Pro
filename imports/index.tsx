@@ -18,6 +18,7 @@ function PromptSuggestion({ className, promptText = "What if I am out all day?",
   const [pressed, setPressed] = useState(false);
 
   const activeState = pressed ? "Pressing" : hover ? "Hover" : state;
+  const bgClass = activeState === "Pressing" ? "bg-[#2a3d61]" : activeState === "Hover" ? "bg-[#3a5384]" : "bg-[#4a69a9]";
 
   return (
     <button
@@ -27,11 +28,11 @@ function PromptSuggestion({ className, promptText = "What if I am out all day?",
       onMouseLeave={() => { setHover(false); setPressed(false); }}
       onMouseDown={() => setPressed(true)}
       onMouseUp={() => setPressed(false)}
-      className={className || `relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] flex-1 min-w-0 text-left cursor-pointer border-none transition-colors duration-150 ${activeState === "Pressing" ? "bg-[#2a3d61]" : activeState === "Hover" ? "bg-[#3a5384]" : "bg-[#4a69a9]"}`}
+      className={`relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)] text-left cursor-pointer border-none transition-colors duration-150 ${bgClass} ${className || "flex-1 min-w-0"}`}
     >
       <div className="overflow-clip rounded-[inherit] size-full">
-        <div className="content-stretch flex items-start px-[12px] xl:px-[16px] py-[16px] xl:py-[24px] relative size-full">
-          <p className="font-['Inter:Regular',sans-serif] font-normal leading-snug not-italic relative text-[13px] sm:text-[14px] xl:text-[16px] text-white truncate w-full" title={promptText}>{promptText}</p>
+        <div className="content-stretch flex items-start px-[14px] xl:px-[16px] py-[14px] xl:py-[24px] relative size-full">
+          <p className="font-['Inter:Regular',sans-serif] font-normal leading-snug not-italic relative text-[13px] sm:text-[14px] xl:text-[16px] text-white whitespace-nowrap sm:truncate w-full" title={promptText}>{promptText}</p>
         </div>
       </div>
     </button>
@@ -134,8 +135,19 @@ function Header({ className, brandName = "Today.io", dateLabel, status = "Closed
   const tempStr = ctx?.brief ? `${ctx.brief.current.tempF} F | ${ctx.brief.current.tempC} C` : temperatureLabel;
 
   return (
-    <div className={className || "bg-[#faf8f4] h-[93px] overflow-clip relative w-full"}>
-      <div className="absolute bg-[#faf8f4] content-stretch flex items-center justify-end left-0 overflow-clip px-[14px] py-[13px] top-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Tab">
+    <div className={className || "bg-[#faf8f4] h-[60px] lg:h-[93px] overflow-clip relative w-full shrink-0"}>
+      {/* Mobile Top App Bar (< 1024px) */}
+      <div className="flex lg:hidden justify-between items-center px-4 h-full bg-[#faf8f4] border-b border-[#e4dfd6] w-full">
+        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[22px] text-[#2e2a26]">{brandName}</span>
+        <div className="flex items-center gap-2 text-[14px] text-[#6b655b] font-medium font-['Source_Serif_Pro:Regular',sans-serif]">
+          <span>{dateStr}</span>
+          <span>•</span>
+          <span className="font-semibold text-[#2e2a26]">{tempStr}</span>
+        </div>
+      </div>
+
+      {/* Desktop Tab (>= 1024px) */}
+      <div className="hidden lg:flex absolute bg-[#faf8f4] content-stretch items-center justify-end left-0 overflow-clip px-[14px] py-[13px] top-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Tab">
         <div className="content-stretch flex flex-[1_0_0] gap-[26px] items-center min-w-px relative" data-name="Data Frame">
           <div className="[word-break:break-word] content-stretch flex flex-col gap-[3px] items-start leading-[normal] not-italic relative shrink-0 text-[#2e2a26] text-[16px] w-[140px]" data-name="Data">
             <p className="font-['Source_Serif_Pro:Light',sans-serif] relative shrink-0 w-full">{brandName}</p>
@@ -243,12 +255,55 @@ function DailyTags() {
 
 function Frame10() {
   const ctx = useWeather();
-  const desc = ctx?.brief?.hourly?.[0]?.description || "You can expect a cool morning. Chilly, bring a jacket that's packable.";
+  const desc = ctx?.brief?.nowDescription || ctx?.brief?.hourly?.[0]?.description || "You can expect a cool morning. Chilly, bring a jacket that's packable.";
 
   return (
     <div className="content-stretch flex flex-col gap-[10px] items-start relative shrink-0 w-full">
       <p className="[word-break:break-word] font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative shrink-0 text-[#6b655b] text-[15px]">{desc}</p>
       <DailyTags />
+    </div>
+  );
+}
+
+function MobileConditionsCard() {
+  const ctx = useWeather();
+  const now = new Date();
+  const timeStr = `${now.getHours() % 12 || 12}:${now.getMinutes().toString().padStart(2, "0")}${now.getHours() < 12 ? "am" : "pm"}`;
+
+  return (
+    <div className="bg-[#f0ece4] rounded-[22px] p-[16px] shadow-[0px_2px_8px_rgba(28,42,68,0.06)] w-full" data-name="Mobile Conditions Card">
+      <p className="font-['Inter:Medium',sans-serif] font-medium leading-[normal] not-italic text-[#6b655b] text-[17px] mb-[8px]">Now: {timeStr}</p>
+      <Frame10 />
+    </div>
+  );
+}
+
+function MobileHourlyTimeline() {
+  const ctx = useWeather();
+  const hourly = ctx?.brief?.hourly;
+  if (!hourly || hourly.length === 0) return null;
+
+  return (
+    <div className="w-full min-w-0 flex flex-col gap-2">
+      <p className="font-['Inter:Medium',sans-serif] font-medium text-[#6b655b] text-[15px] px-1">Today's Forecast</p>
+      <div className="w-full min-w-0 overflow-x-auto no-scrollbar py-1 flex gap-3">
+        {hourly.map((h, i) => {
+          const tempColor = getTemperatureColor(h.tempF);
+          return (
+            <div
+              key={i}
+              className="flex flex-col items-center justify-between min-w-[76px] bg-[#f0ece4] rounded-[18px] py-3 px-2 shrink-0 shadow-xs"
+            >
+              <span className="text-[12px] font-semibold text-[#6b655b] whitespace-nowrap">{h.displayTime}</span>
+              <div
+                className="w-2.5 h-2.5 rounded-full my-2.5"
+                style={{ backgroundColor: tempColor }}
+              />
+              <span className="text-[15px] font-bold text-[#2e2a26]">{h.tempF}°</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -285,9 +340,9 @@ function Frame() {
   const locText = loc ? `${loc.city}, ${loc.region}` : "New York, New York";
 
   return (
-    <div className="content-stretch flex gap-[14px] items-center relative shrink-0">
-      <LocationIcon className="h-[20px] relative shrink-0 w-[15px]" />
-      <p className="[word-break:break-word] font-['Source_Serif_Pro:Regular',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[16px] whitespace-nowrap">{locText}</p>
+    <div className="content-stretch flex gap-[8px] sm:gap-[14px] items-center relative shrink-0">
+      <LocationIcon className="h-[16px] sm:h-[20px] relative shrink-0 w-[12px] sm:w-[15px]" />
+      <p className="[word-break:break-word] font-['Source_Serif_Pro:Regular',sans-serif] leading-[normal] not-italic relative shrink-0 text-[#6b655b] text-[13px] sm:text-[16px] whitespace-nowrap">{locText}</p>
     </div>
   );
 }
@@ -306,14 +361,14 @@ function Frame9() {
   const headline = ctx?.brief?.headline || "Dress light today";
 
   return (
-    <div className="content-stretch flex h-[115px] max-h-[115px] items-start justify-between relative shrink-0 w-full overflow-hidden">
-      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#2e2a26] overflow-hidden" data-name="Frame 53">
-        <p className="leading-[1.1] mb-[2px] text-[34px] xl:text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
-        <p className="leading-[1.15] text-[26px] xl:text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
+    <div className="content-stretch flex min-h-[80px] h-auto lg:h-[115px] lg:max-h-[115px] items-start justify-between relative shrink-0 w-full gap-2">
+      <div className="flex-1 font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic relative text-[#2e2a26]" data-name="Frame 53">
+        <p className="leading-[1.1] mb-[2px] text-[28px] sm:text-[34px] xl:text-[48px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis">{greeting}</p>
+        <p className="leading-[1.15] text-[20px] sm:text-[26px] xl:text-[36px] font-semibold whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>{headline}</p>
       </div>
-      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[12px] xl:ml-[16px]" data-name="Location Indicator">
+      <div className="bg-white relative rounded-[90px] shrink-0 w-fit ml-[4px] sm:ml-[12px] xl:ml-[16px]" data-name="Location Indicator">
         <div className="flex flex-col items-center justify-center overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex flex-col items-center justify-center px-[16px] py-[8px] relative size-full">
+          <div className="content-stretch flex flex-col items-center justify-center px-[10px] sm:px-[16px] py-[6px] sm:py-[8px] relative size-full">
             <Frame1 />
           </div>
         </div>
@@ -352,7 +407,7 @@ function Frame4() {
   const desc = ctx?.brief?.wear?.description || "T-shirt, shorts, sandals, and a hat. Today is not the day for denim.";
 
   return (
-    <div className="content-stretch flex gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
+    <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
         className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
@@ -367,7 +422,7 @@ function Frame4() {
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[13px] xl:text-[15px] text-black">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#2e2a26]">{desc}</p>
     </div>
   );
 }
@@ -414,7 +469,7 @@ function Frame7() {
   const desc = ctx?.brief?.pack?.description || "Water and sunscreen. UV is at 9, which burns unprotected skin in under fifteen minutes.";
 
   return (
-    <div className="content-stretch flex gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
+    <div className="content-stretch flex flex-col sm:flex-row gap-[10px] sm:gap-[14px] xl:gap-[24px] items-start relative shrink-0 w-full">
       <div
         className="bg-white relative rounded-[22px] shrink-0 w-fit max-w-[246px] cursor-pointer hover:shadow-md transition-shadow"
         data-name="Frame Background Cell"
@@ -429,7 +484,7 @@ function Frame7() {
           </div>
         </div>
       </div>
-      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[13px] xl:text-[15px] text-black">{desc}</p>
+      <p className="[word-break:break-word] flex-1 min-w-0 font-['Inter:Regular',sans-serif] font-normal leading-relaxed not-italic relative text-[14px] xl:text-[15px] text-[#2e2a26]">{desc}</p>
     </div>
   );
 }
@@ -445,7 +500,7 @@ function Frame6() {
 
 function Frame8({ conf = 94 }: { conf?: number }) {
   return (
-    <div className="content-stretch flex flex-col gap-[12px] xl:gap-[16px] items-start relative flex-1 min-w-0 max-w-[555px]">
+    <div className="content-stretch flex flex-col gap-[14px] xl:gap-[16px] items-start relative flex-1 min-w-0 max-w-[555px] w-full">
       <Frame5 conf={conf} />
       <Frame6 />
     </div>
@@ -483,19 +538,19 @@ function SuggestionPrompt() {
   const ctx = useWeather();
 
   return (
-    <div className="content-stretch flex gap-[12px] xl:gap-[20px] items-stretch justify-center relative shrink-0 w-full max-w-[1053px]" data-name="Suggestion Prompt">
+    <div className="content-stretch flex overflow-x-auto no-scrollbar sm:overflow-visible gap-[10px] xl:gap-[20px] items-stretch sm:justify-center relative shrink-0 w-full min-w-0 max-w-[1053px] py-1" data-name="Suggestion Prompt">
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="shrink-0 sm:shrink sm:flex-1 min-w-[200px] sm:min-w-0"
         promptText="What if I am out all day?"
         onClick={() => ctx?.openChatWithPrompt("What if I am out all day?")}
       />
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="shrink-0 sm:shrink sm:flex-1 min-w-[180px] sm:min-w-0"
         promptText="Can I skip the jacket?"
         onClick={() => ctx?.openChatWithPrompt("Can I skip the jacket?")}
       />
       <PromptSuggestion
-        className="bg-[#4a69a9] flex-1 min-w-0 relative rounded-[22px] shadow-[0px_1px_4px_1px_rgba(28,42,68,0.2)]"
+        className="shrink-0 sm:shrink sm:flex-1 min-w-[150px] sm:min-w-0"
         promptText="Why the boots?"
         onClick={() => ctx?.openChatWithPrompt("Why the boots?")}
       />
@@ -507,18 +562,18 @@ function ChatWindow() {
   const ctx = useWeather();
 
   return (
-    <div className="bg-[#f0ece4] content-stretch flex flex-[1_0_0] flex-col items-center justify-between min-h-px overflow-clip px-[16px] py-[24px] relative rounded-[42px] w-full" data-name="Chat Window">
+    <div className="bg-[#f0ece4] content-stretch flex flex-col items-center justify-between overflow-hidden px-[14px] sm:px-[16px] py-[16px] sm:py-[24px] gap-[14px] sm:gap-[20px] relative rounded-[28px] sm:rounded-[42px] w-full min-w-0" data-name="Chat Window">
       <SuggestionPrompt />
       <div
-        className="bg-[#faf8f4] min-h-[86px] relative rounded-[22px] shrink-0 w-full max-w-[1053px] cursor-pointer hover:bg-white transition-colors"
+        className="bg-[#faf8f4] min-h-[64px] sm:min-h-[86px] relative rounded-[22px] shrink-0 w-full max-w-[1053px] cursor-pointer hover:bg-white transition-colors"
         data-name="Chat Box"
         onClick={() => ctx?.openChatWithPrompt("")}
         role="button"
         tabIndex={0}
       >
         <div className="min-h-[inherit] overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex items-center min-h-[inherit] px-[20px] py-[16px] relative size-full">
-            <p className="font-['Inter:Regular',sans-serif] font-normal text-[#6b655b] text-[16px] m-0">Ask about today</p>
+          <div className="content-stretch flex items-center min-h-[inherit] px-[18px] sm:px-[20px] py-[14px] sm:py-[16px] relative size-full">
+            <p className="font-['Inter:Regular',sans-serif] font-normal text-[#6b655b] text-[15px] sm:text-[16px] m-0">Ask about today</p>
           </div>
         </div>
       </div>
@@ -538,7 +593,7 @@ function WeatherVisualHero() {
   }, [ctx?.brief?.current.conditionCode, ctx?.brief?.current.isDay]);
 
   return (
-    <div className="h-full max-w-[506px] relative rounded-[22px] shrink-0 w-[240px] xl:w-[270px] overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)] transition-[width] duration-200" data-name="Weather Visual Display">
+    <div className="h-[180px] sm:h-[220px] lg:h-full w-full lg:w-[240px] xl:w-[270px] max-w-none lg:max-w-[506px] relative rounded-[22px] shrink-0 overflow-hidden shadow-[0px_4px_20px_rgba(28,42,68,0.12)] transition-[width] duration-200" data-name="Weather Visual Display">
       <img
         alt={ctx?.brief?.current.condition || "Weather conditions"}
         className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[22px] size-full transition-opacity duration-700"
@@ -550,28 +605,57 @@ function WeatherVisualHero() {
 }
 
 function Main() {
+  const ctx = useWeather();
+  const conf = ctx?.brief?.confidence ?? 94;
+
   return (
-    <div className="bg-[#faf8f4] content-stretch flex flex-[1_0_0] items-start justify-center min-h-px px-[16px] xl:px-[24px] relative w-full" data-name="Main">
-      <div className="bg-[#faf8f4] h-full relative shrink-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Side Panel">
-        <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
-          <div className="content-stretch flex items-center p-[16px] xl:p-[24px] relative size-full">
-            <TimeAndConditions />
+    <div className="bg-[#faf8f4] w-full flex-1 min-w-0" data-name="Main">
+      {/* MOBILE & TABLET PORTRAIT FLOW (< 1024px) */}
+      <div className="flex flex-col lg:hidden w-full min-w-0 px-4 py-4 gap-5 max-w-[640px] mx-auto pb-12 overflow-x-hidden">
+        {/* 1. Greeting & Location Indicator */}
+        <Frame9 />
+
+        {/* 2. Visual Weather Hero Banner */}
+        <WeatherVisualHero />
+
+        {/* 3. Conditions Card ("Now: time" + description + tags) */}
+        <MobileConditionsCard />
+
+        {/* 4. Hourly Horizontal Swipe Timeline */}
+        <MobileHourlyTimeline />
+
+        {/* 5. Wear & Pack Recommendations */}
+        <div className="bg-[#faf8f4] border border-[#e4dfd6] rounded-[24px] p-4 shadow-[0px_1px_4px_rgba(28,42,68,0.06)] w-full min-w-0">
+          <Frame8 conf={conf} />
+        </div>
+
+        {/* 6. Chat Suggestions & Input */}
+        <ChatWindow />
+      </div>
+
+      {/* DESKTOP FLOW (>= 1024px) */}
+      <div className="hidden lg:flex content-stretch flex-[1_0_0] items-start justify-center min-h-px px-[16px] xl:px-[24px] relative w-full h-[calc(100vh-93px)] min-h-[750px]">
+        <div className="bg-[#faf8f4] h-full relative shrink-0 w-[300px] lg:w-[320px] xl:w-[360px] 2xl:w-[395px] transition-[width] duration-200" data-name="Side Panel">
+          <div className="flex flex-row items-center overflow-clip rounded-[inherit] size-full">
+            <div className="content-stretch flex items-center p-[16px] xl:p-[24px] relative size-full">
+              <TimeAndConditions />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="h-[839px] max-w-[1182px] flex-1 min-w-0 relative" data-name="Center Screen">
-        <div className="flex flex-col items-center justify-end max-w-[inherit] size-full">
-          <div className="content-stretch flex flex-col gap-[20px] items-center justify-end max-w-[inherit] p-[16px] xl:p-[24px] relative size-full">
-            <div className="h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
-              <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
-                <WeatherVisualHero />
-                <Frame2 />
+        <div className="h-full max-w-[1182px] flex-1 min-w-0 relative" data-name="Center Screen">
+          <div className="flex flex-col items-center justify-end max-w-[inherit] size-full">
+            <div className="content-stretch flex flex-col gap-[20px] items-center justify-end max-w-[inherit] p-[16px] xl:p-[24px] relative size-full">
+              <div className="flex-1 min-h-[360px] max-h-[471px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Detail Display">
+                <div className="content-stretch flex gap-[16px] xl:gap-[24px] items-start relative size-full">
+                  <WeatherVisualHero />
+                  <Frame2 />
+                </div>
               </div>
-            </div>
-            <div className="h-[300px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Chat Window">
-              <div className="flex flex-col items-center justify-end size-full">
-                <div className="content-stretch flex flex-col items-center justify-end relative size-full">
-                  <ChatWindow />
+              <div className="h-[260px] xl:h-[300px] relative shrink-0 w-full max-w-[1134px] min-w-0" data-name="Chat Window">
+                <div className="flex flex-col items-center justify-end size-full">
+                  <div className="content-stretch flex flex-col items-center justify-end relative size-full">
+                    <ChatWindow />
+                  </div>
                 </div>
               </div>
             </div>
@@ -584,8 +668,8 @@ function Main() {
 
 export default function HomeScreen() {
   return (
-    <div className="bg-white content-stretch flex flex-col items-start relative size-full" data-name="Home Screen">
-      <Header className="bg-[#faf8f4] h-[93px] overflow-clip relative shrink-0 w-full" />
+    <div className="bg-[#faf8f4] content-stretch flex flex-col items-start relative size-full min-h-screen min-w-0" data-name="Home Screen">
+      <Header className="bg-[#faf8f4] h-[60px] lg:h-[93px] overflow-clip relative shrink-0 w-full" />
       <Main />
     </div>
   );

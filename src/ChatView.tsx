@@ -80,21 +80,16 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
   return (
     <div
-      className="fixed z-40 flex flex-col"
+      className="fixed inset-0 lg:top-[93px] lg:left-[320px] xl:left-[360px] 2xl:left-[395px] z-50 flex flex-col bg-[#faf8f4]"
       style={{
-        top: 93,
-        left: 395,
-        right: 0,
-        bottom: 0,
-        background: "#faf8f4",
         opacity: open ? 1 : 0,
         transform: open ? "translateY(0)" : "translateY(20px)",
         pointerEvents: open ? "auto" : "none",
-        transition: "opacity 600ms cubic-bezier(0.16, 1, 0.3, 1), transform 600ms cubic-bezier(0.16, 1, 0.3, 1)",
+        transition: "opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
       }}
     >
       {/* Close button */}
-      <div className="flex justify-end px-[32px] pt-[16px] pb-[8px] shrink-0">
+      <div className="flex justify-end px-[16px] lg:px-[32px] pt-[12px] lg:pt-[16px] pb-[8px] shrink-0">
         <button
           onClick={onClose}
           className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150 hover:text-[#2e2a26]"
@@ -106,11 +101,11 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
 
       {/* Chat card */}
       <div
-        className="flex-1 flex flex-col mx-[24px] mb-[24px] min-h-0 rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)]"
+        className="flex-1 flex flex-col mx-[12px] lg:mx-[24px] mb-[16px] lg:mb-[24px] min-h-0 rounded-[28px] lg:rounded-[42px] overflow-hidden shadow-[0px_2px_12px_rgba(28,42,68,0.06)]"
         style={{ background: "#f0ece4" }}
       >
         {/* Message list */}
-        <div className="flex-1 overflow-y-auto px-[32px] pt-[32px] pb-[16px] flex flex-col gap-[16px] min-h-0">
+        <div className="flex-1 overflow-y-auto px-[16px] lg:px-[32px] pt-[20px] lg:pt-[32px] pb-[16px] flex flex-col gap-[14px] lg:gap-[16px] min-h-0">
           {messages.length === 0 && (
             <div className="text-center py-12 text-[#6b655b] text-[15px]" style={{ fontFamily: "Inter, sans-serif" }}>
               Ask anything about today&apos;s weather, what to wear, or item substitutions.
@@ -121,7 +116,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             msg.role === "user" ? (
               <div key={msg.id} className="flex justify-end">
                 <div
-                  className="bg-[#4a69a9] text-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.1)]"
+                  className="bg-[#4a69a9] text-white rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.1)]"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -130,7 +125,7 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
             ) : (
               <div key={msg.id} className="flex justify-start">
                 <div
-                  className="bg-white rounded-[20px] px-[20px] py-[14px] max-w-[60%] text-[#2e2a26] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)] leading-relaxed"
+                  className="bg-white rounded-[20px] px-[16px] lg:px-[20px] py-[12px] lg:py-[14px] max-w-[85%] lg:max-w-[60%] text-[#2e2a26] text-[15px] shadow-[0px_1px_4px_rgba(28,42,68,0.08)] leading-relaxed"
                   style={{ fontFamily: "Inter, sans-serif" }}
                 >
                   {msg.text}
@@ -166,13 +161,13 @@ export default function ChatView({ open, initialMessage, brief, onClose }: Props
         </div>
 
         {/* Input bar */}
-        <div className="shrink-0 px-[24px] pb-[24px]">
+        <div className="shrink-0 px-[14px] lg:px-[24px] pb-[14px] lg:pb-[24px]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSend(input);
             }}
-            className="rounded-[22px] flex items-center px-[20px] py-[16px] gap-[12px] border border-[#e4dfd6]"
+            className="rounded-[22px] flex items-center px-[14px] lg:px-[20px] py-[10px] lg:py-[16px] gap-[10px] lg:gap-[12px] border border-[#e4dfd6]"
             style={{ background: "#faf8f4" }}
           >
             <input

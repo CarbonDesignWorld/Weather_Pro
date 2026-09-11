@@ -120,8 +120,8 @@ export default function WeatherApp() {
 
   return (
     <WeatherContext.Provider value={contextValue}>
-      <div className="size-full overflow-x-hidden">
-        <div className="weather-app-root h-full w-full min-w-0">
+      <div className="size-full overflow-x-hidden overflow-y-auto">
+        <div className="weather-app-root min-h-full w-full min-w-0">
           <HomeScreen />
         </div>
       </div>

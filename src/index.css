@@ -55,7 +55,7 @@ body,
 }
 
 
-/* Confidence card — light pill, Inter Regular 16px, dark text */
+/* Confidence card — light pill, Inter Regular, dark text */
 .weather-app-root [data-name="Confidence Card"] [class*="bg-\[#6b655b\]"] {
   background-color: #d5cfc4 !important;
 }
@@ -63,15 +63,28 @@ body,
 .weather-app-root [data-name="Confidence Card"] p {
   color: #6b655b !important;
   font-family: Inter, sans-serif !important;
-  font-size: 16px !important;
-  font-weight: 400 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
 }
 
-/* Location pill: city name + Change Location link — Source Serif 4 Regular 16px */
+@media (min-width: 1024px) {
+  .weather-app-root [data-name="Confidence Card"] p {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+  }
+}
+
+/* Location pill: city name + Change Location link — Source Serif 4 */
 .weather-app-root [data-name="Location Indicator"] p {
   font-family: 'Source Serif 4', serif !important;
   font-weight: 400 !important;
-  font-size: 16px !important;
+  font-size: 13px !important;
+}
+
+@media (min-width: 1024px) {
+  .weather-app-root [data-name="Location Indicator"] p {
+    font-size: 16px !important;
+  }
 }
 
 /* Frame 53 Greeting & Headline: Source Serif Pro Semibold (weight 600) */
@@ -94,37 +107,50 @@ body,
   padding-right: 0 !important;
 }
 
-.weather-app-root [data-name="Center Screen"] {
-  height: 100% !important;
-  width: 100% !important;
-  max-width: 1182px !important;
-  flex: 1 1 0% !important;
-  min-width: 0 !important;
-}
+@media (min-width: 1024px) {
+  .weather-app-root [data-name="Center Screen"] {
+    height: 100% !important;
+    width: 100% !important;
+    max-width: 1182px !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+  }
 
-.weather-app-root [data-name="Detail Display"] {
-  flex: 1 1 0% !important;
-  width: 100% !important;
-  max-width: 1134px !important;
-  height: auto !important;
-  min-height: 0 !important;
-  min-width: 0 !important;
-}
+  .weather-app-root [data-name="Detail Display"] {
+    flex: 1 1 0% !important;
+    width: 100% !important;
+    max-width: 1134px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+  }
 
-.weather-app-root [data-name="Chat Window"] {
-  width: 100% !important;
-  max-width: 1134px !important;
-  flex-shrink: 0 !important;
-  height: 300px !important;
-  min-width: 0 !important;
+  .weather-app-root [data-name="Chat Window"] {
+    width: 100% !important;
+    max-width: 1134px !important;
+    flex-shrink: 0 !important;
+    height: 300px !important;
+    min-width: 0 !important;
+  }
 }
 
 .weather-app-root [data-name="Chat Box"] {
   width: 100% !important;
   max-width: 1053px !important;
+  min-width: 0 !important;
 }
 
 .weather-app-root [data-name="Suggestion Prompt"] {
   width: 100% !important;
   max-width: 1053px !important;
+  min-width: 0 !important;
+}
+
+/* Hide scrollbars for clean horizontal swipes */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
