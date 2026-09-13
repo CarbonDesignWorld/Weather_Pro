@@ -27,8 +27,15 @@ export async function generateCopy(
     return fallback;
   }
 
-  const wearNames = wearIcons.map((id) => ICONS[id]?.name?.toLowerCase() || id.replace(/_/g, " ")).join(", ");
-  const packNames = packIcons.map((id) => ICONS[id]?.name?.toLowerCase() || id.replace(/_/g, " ")).join(", ");
+  const wearDescriptions = wearIcons.map((id) => {
+    const meta = ICONS[id];
+    return meta ? `${meta.name.toLowerCase()} [fabric: ${meta.fabric}; sensation: ${meta.weatherFeel}]` : (id.replace(/_/g, " "));
+  }).join("; ");
+
+  const packDescriptions = packIcons.map((id) => {
+    const meta = ICONS[id];
+    return meta ? `${meta.name.toLowerCase()} [fabric: ${meta.fabric}; sensation: ${meta.weatherFeel}]` : (id.replace(/_/g, " "));
+  }).join("; ");
 
   let voiceTone = "Blunt, dry, and confident. Short declarative sentences. Specific over intense. No exclamation marks, no hedging, no personified weather, no clichés, no emoji.";
   if (severity === "elevated") {
@@ -43,26 +50,31 @@ TONE: ${voiceTone}
 
 CRITICAL RULES:
 1. You MUST describe ONLY the exact items in WEAR_ITEMS and PACK_ITEMS. Never recommend or name any garment or item not in those lists.
-2. Character limits (STRICT):
+2. FASHION, FABRICS & SENSORY DEPTH:
+   - For wearDescription, describe the outfit intentionally: evoke fabric textures (cotton, linen, wool, ripstop nylon), fit (boxy, tailored, relaxed), and the physical sensation of the weather against skin and garments.
+   - Do NOT simply list item names like a grocery list. Explain how these specific pieces and fabrics work together to keep the body comfortable today.
+   - nowDescription must capture the immediate 3-hour atmospheric feel (temperature momentum, breeze, UV intensity, or dampness).
+3. Character limits (STRICT):
    - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
-   - nowDescription: 50 to 130 characters. An atmospheric summary of current conditions and the day's weather feel (e.g. "88° and climbing under direct sun. Peak UV at 9 this afternoon—find shade where you can.", "Cool and overcast at 58°. Light drizzle setting in with damp breezes.").
-3. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
-4. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
+   - nowDescription: 50 to 130 characters.
+4. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
+5. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
+  const shortTermPrecip = dayRange.next3hMaxPrecipProb !== undefined ? dayRange.next3hMaxPrecipProb : current.precipProbability;
   const prompt = `Current Weather: ${current.condition}, ${current.tempF}°F (Feels like ${current.feelsLikeF}°F).
-Day Range: Low ${dayRange.minTempF}°F / High ${dayRange.maxTempF}°F. Rain probability: ${current.precipProbability}%. Wind: ${current.windMph} mph.
-WEAR_ITEMS: ${wearNames || "None"}
-PACK_ITEMS: ${packNames || "None"}
+Day Range: Low ${dayRange.minTempF}°F / High ${dayRange.maxTempF}°F. Rain probability (next 3 hours): ${shortTermPrecip}%. Wind: ${current.windMph} mph.
+WEAR_ITEMS: ${wearDescriptions || "None"}
+PACK_ITEMS: ${packDescriptions || "None"}
 Severity: ${severity}
 
 Return strict JSON:
 {
   "headline": "Short single-line punchy headline (10-25 chars)",
-  "wearDescription": "Why to wear these specific items (30-180 chars)",
+  "wearDescription": "Why and how to wear these specific fabrics and items (30-180 chars)",
   "packDescription": "Why to pack these specific items (30-180 chars)",
-  "nowDescription": "Atmospheric conditions summary for the weather card (50-130 chars)"
+  "nowDescription": "Immediate 3-hour atmospheric conditions summary (50-130 chars)"
 }`;
 
   try {

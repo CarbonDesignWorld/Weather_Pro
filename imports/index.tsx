@@ -4,7 +4,7 @@ import imgWeatherVisualDisplay from "./468d1251b756da2aa4f79a32648edd195a653df0.
 import { useWeather } from "../src/context/WeatherContext";
 import WeatherIconItem from "../src/components/WeatherIconItem";
 import { TAG_LABELS, cleanCopyText } from "../src/lib/constants";
-import { getTemperatureColor, getTimelineGradient, getWeatherVisual } from "../src/lib/weatherVisuals";
+import { getTemperatureColor, getTimelineGradient, getWeatherVisual, getOutfitVisual } from "../src/lib/weatherVisuals";
 import { ChatCard } from "../src/ChatView";
 
 type PromptSuggestionProps = {
@@ -613,22 +613,49 @@ function ChatWindow() {
 
 function WeatherVisualHero() {
   const ctx = useWeather();
-  const [imgSrc, setImgSrc] = useState(imgWeatherVisualDisplay);
+  const brief = ctx?.brief;
+  const initialVisual = getOutfitVisual(
+    brief?.dayRange?.maxTempF ?? 75,
+    brief?.current?.conditionCode ?? 0,
+    brief?.current?.windMph ?? 0,
+    brief?.current?.uvIndex ?? 5,
+    brief?.current?.humidity ?? 50,
+    brief?.dayRange?.next3hMaxPrecipProb ?? brief?.current?.precipProbability ?? 0
+  );
+  const [visualObj, setVisualObj] = useState(initialVisual);
 
   useEffect(() => {
-    if (ctx?.brief) {
-      const visual = getWeatherVisual(ctx.brief.current.conditionCode, ctx.brief.current.isDay);
-      setImgSrc(visual);
+    if (brief) {
+      const selected = getOutfitVisual(
+        brief.dayRange?.maxTempF ?? brief.current.tempF,
+        brief.current.conditionCode,
+        brief.current.windMph,
+        brief.current.uvIndex,
+        brief.current.humidity,
+        brief.dayRange?.next3hMaxPrecipProb ?? brief.current.precipProbability
+      );
+      setVisualObj(selected);
     }
-  }, [ctx?.brief?.current.conditionCode, ctx?.brief?.current.isDay]);
+  }, [
+    brief?.dayRange?.maxTempF,
+    brief?.current?.tempF,
+    brief?.current?.conditionCode,
+    brief?.current?.windMph,
+    brief?.current?.uvIndex,
+    brief?.current?.humidity,
+    brief?.dayRange?.next3hMaxPrecipProb,
+    brief?.current?.precipProbability,
+  ]);
 
   return (
-    <div className="h-[180px] sm:h-[220px] lg:h-full w-full lg:w-[240px] xl:w-[270px] max-w-none lg:max-w-[506px] relative rounded-[36px] sm:rounded-[40px] lg:rounded-[44px] shrink-0 overflow-hidden shadow-none transition-[width] duration-200" data-name="Weather Visual Display">
+    <div className="h-[360px] sm:h-[400px] lg:h-full w-full lg:w-[240px] xl:w-[270px] max-w-none lg:max-w-[506px] relative rounded-[36px] sm:rounded-[40px] lg:rounded-[44px] shrink-0 overflow-hidden shadow-none transition-[width] duration-200 bg-[#f0ece4]" data-name="Weather Visual Display">
       <img
-        alt={ctx?.brief?.current.condition || "Weather conditions"}
-        className="absolute inset-0 max-w-none object-cover pointer-events-none rounded-[inherit] size-full transition-opacity duration-700"
-        src={imgSrc}
-        onError={() => setImgSrc(imgWeatherVisualDisplay)}
+        alt={visualObj.alt}
+        className="absolute inset-0 max-w-none object-cover object-top pointer-events-none rounded-[inherit] size-full transition-opacity duration-700"
+        src={visualObj.src}
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).src = imgWeatherVisualDisplay;
+        }}
       />
     </div>
   );

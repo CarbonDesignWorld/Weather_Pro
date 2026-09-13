@@ -104,6 +104,32 @@ const ICON_NAMES = {
   lip_balm: "lip balm",
 };
 
+const ICON_FASHION_META = {
+  heavy_coat: { name: "heavy coat", fabric: "insulated wool or down", feel: "seals body heat against freezing drafts" },
+  light_coat: { name: "light coat", fabric: "unlined wool blend or cotton twill", feel: "takes the edge off a brisk morning without overheating" },
+  rain_jacket: { name: "rain jacket", fabric: "waterproof breathable nylon shell", feel: "repels steady rain while letting heat escape" },
+  wind_breaker: { name: "windbreaker", fabric: "ultralight ripstop nylon", feel: "blocks gusts without trapping heat" },
+  extra_layer: { name: "extra layer", fabric: "lightweight merino knit or cardigan", feel: "bridges the gap between cool morning and mild afternoon" },
+  long_sleeves: { name: "long sleeves", fabric: "cotton jersey or waffle knit", feel: "shields arms from cool air and mild sun" },
+  t_shirt: { name: "t-shirt", fabric: "breathable organic cotton or linen", feel: "lets skin breathe in direct heat" },
+  long_pants: { name: "long pants", fabric: "structured dark denim or tailored trousers", feel: "shields legs against wind and damp air" },
+  shorts: { name: "shorts", fabric: "linen or lightweight washed cotton twill", feel: "maximum airflow for warm lower body comfort" },
+  boots: { name: "boots", fabric: "oiled leather or combat lug-sole", feel: "locks out cold pavement and ground chill" },
+  rain_boots: { name: "rain boots", fabric: "waterproof rubber with lugged traction", feel: "keeps feet completely dry through standing water" },
+  closed_shoes: { name: "closed shoes", fabric: "leather derbies or canvas sneakers", feel: "versatile everyday foot protection" },
+  sandals: { name: "sandals", fabric: "leather slides or minimal open-toe straps", feel: "lets feet breathe freely on warm sidewalks" },
+  warm_socks: { name: "warm socks", fabric: "heavy merino wool knit", feel: "essential thermal barrier inside boots" },
+  beanie: { name: "beanie", fabric: "ribbed wool or cashmere knit", feel: "stops rapid heat loss from ears and crown" },
+  sun_hat: { name: "sun hat", fabric: "woven straw or UPF canvas wide brim", feel: "portable shade shielding face and neck from high UV" },
+  scarf: { name: "scarf", fabric: "chunky oatmeal wool knit", feel: "seals the open coat collar against cold wind drafts" },
+  gloves: { name: "gloves", fabric: "lined leather or windproof fleece", feel: "preserves finger warmth in biting air" },
+  shades: { name: "shades", fabric: "dark UV400 frames", feel: "cuts harsh glare and protects eyes from direct sun" },
+  umbrella: { name: "umbrella", fabric: "water-repellent canopy", feel: "overhead protection against downpours" },
+  water_bottle: { name: "water bottle", fabric: "insulated flask", feel: "keeps hydration cold through heat" },
+  sun_screen: { name: "sunscreen", fabric: "broad-spectrum SPF 50", feel: "invisible barrier against burning UV rays" },
+  lip_balm: { name: "lip balm", fabric: "protective beeswax & SPF balm", feel: "prevents wind-chapping and dry lips" },
+};
+
 function cleanCopyText(text) {
   if (!text || typeof text !== "string") return text;
   return text
@@ -251,8 +277,15 @@ async function handleGenerateCopy(req, res) {
       voiceTone = "Plain and factual only. No stylisation or humor of any kind. Dangerous weather conditions.";
     }
 
-    const wearNames = (wearIcons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")).join(", ");
-    const packNames = (packIcons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")).join(", ");
+    const wearDescriptions = (wearIcons || []).map((id) => {
+      const meta = ICON_FASHION_META[id];
+      return meta ? `${meta.name} [fabric: ${meta.fabric}; sensation: ${meta.feel}]` : (ICON_NAMES[id] || id.replace(/_/g, " "));
+    }).join("; ");
+
+    const packDescriptions = (packIcons || []).map((id) => {
+      const meta = ICON_FASHION_META[id];
+      return meta ? `${meta.name} [fabric: ${meta.fabric}; sensation: ${meta.feel}]` : (ICON_NAMES[id] || id.replace(/_/g, " "));
+    }).join("; ");
 
     const systemInstruction = `You write the editorial copy for Today.io, a weather utility app that tells people what to wear and pack today in one glance.
 
@@ -260,26 +293,31 @@ TONE: ${voiceTone}
 
 CRITICAL RULES:
 1. You MUST describe ONLY the exact items in WEAR_ITEMS and PACK_ITEMS. Never recommend or name any garment or item not in those lists.
-2. Character limits (STRICT):
+2. FASHION, FABRICS & SENSORY DEPTH:
+   - For wearDescription, describe the outfit intentionally: evoke fabric textures (cotton, linen, wool, ripstop nylon), fit (boxy, tailored, relaxed), and the physical sensation of the weather against skin and garments.
+   - Do NOT simply list item names like a grocery list. Explain how these specific pieces and fabrics work together to keep the body comfortable today.
+   - nowDescription must capture the immediate 3-hour atmospheric feel (temperature momentum, breeze, UV intensity, or dampness).
+3. Character limits (STRICT):
    - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
    - wearDescription: 30 to 180 characters.
    - packDescription: 30 to 180 characters.
-   - nowDescription: 50 to 130 characters. An atmospheric summary of current conditions and the day's weather feel (e.g. "88° and climbing under direct sun. Peak UV at 9 this afternoon—find shade where you can.", "Cool and overcast at 58°. Light drizzle setting in with damp breezes.").
-3. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
-4. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
+   - nowDescription: 50 to 130 characters.
+4. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
+5. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
+    const shortTermPrecip = dayRange?.next3hMaxPrecipProb !== undefined ? dayRange.next3hMaxPrecipProb : current?.precipProbability;
     const prompt = `Current Weather: ${current?.condition}, ${current?.tempF}°F (Feels like ${current?.feelsLikeF}°F).
-Day Range: Low ${dayRange?.minTempF}°F / High ${dayRange?.maxTempF}°F. Rain probability: ${current?.precipProbability}%. Wind: ${current?.windMph} mph.
-WEAR_ITEMS: ${wearNames || "None"}
-PACK_ITEMS: ${packNames || "None"}
+Day Range: Low ${dayRange?.minTempF}°F / High ${dayRange?.maxTempF}°F. Rain probability (next 3 hours): ${shortTermPrecip}%. Wind: ${current?.windMph} mph.
+WEAR_ITEMS: ${wearDescriptions || "None"}
+PACK_ITEMS: ${packDescriptions || "None"}
 Severity: ${severity}
 
 Return strict JSON:
 {
   "headline": "Short single-line punchy headline (10-25 chars)",
-  "wearDescription": "Why to wear these specific items (30-180 chars)",
+  "wearDescription": "Why and how to wear these specific fabrics and items (30-180 chars)",
   "packDescription": "Why to pack these specific items (30-180 chars)",
-  "nowDescription": "Atmospheric conditions summary for the weather card (50-130 chars)"
+  "nowDescription": "Immediate 3-hour atmospheric conditions summary (50-130 chars)"
 }`;
 
     let data;

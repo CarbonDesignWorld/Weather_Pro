@@ -1,6 +1,9 @@
 /**
  * Today.io — Weather Visuals & Temperature Color Gradients
+ * Outfit-based Photography & Thermal Timeline
  */
+
+import { getWMOInfo } from "./constants";
 
 export interface TempColorStop {
   tempF: number;
@@ -39,53 +42,128 @@ export function getTimelineGradient(hourly: Array<{ tempF: number }>): string {
   return `linear-gradient(to bottom, ${stops.join(", ")})`;
 }
 
-// Curated high-res atmospheric loops (reliable Unsplash visual scenes)
-export const WEATHER_VISUALS = {
-  clear_day: "https://images.unsplash.com/photo-1601297183305-6df142704ea2?auto=format&fit=crop&w=1200&q=80",
-  clear_night: "https://images.unsplash.com/photo-1509773896068-7fd415d91e2e?auto=format&fit=crop&w=1200&q=80",
-  partly_cloudy_day: "https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=1200&q=80",
-  partly_cloudy_night: "https://images.unsplash.com/photo-1517685352821-92cf88aee5a5?auto=format&fit=crop&w=1200&q=80",
-  cloudy: "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?auto=format&fit=crop&w=1200&q=80",
-  fog: "https://images.unsplash.com/photo-1487621167305-5d248087c724?auto=format&fit=crop&w=1200&q=80",
-  rain: "https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?auto=format&fit=crop&w=1200&q=80",
-  heavy_rain: "https://images.unsplash.com/photo-1519692933481-e162a57d6721?auto=format&fit=crop&w=1200&q=80",
-  thunderstorm: "https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?auto=format&fit=crop&w=1200&q=80",
-  snow: "https://images.unsplash.com/photo-1491002052546-bf38f186af56?auto=format&fit=crop&w=1200&q=80",
+export interface OutfitVisual {
+  id: string;
+  src: string;
+  alt: string;
+  outfitDescription: string;
+}
+
+export const OUTFIT_VISUALS: Record<string, OutfitVisual> = {
+  hot_sunny: {
+    id: "hot_sunny",
+    src: "/visuals/hot_sunny.jpg",
+    alt: "Summer outfit — boxy black cotton tee, bone linen shorts, minimal leather slide sandals, angular black wraparound sunglasses",
+    outfitDescription: "Oversized boxy black cotton tee tucked loosely into tailored mid-thigh shorts in bone linen, minimal leather slide sandals, angular black wraparound sunglasses.",
+  },
+  warm_rain: {
+    id: "warm_rain",
+    src: "/visuals/warm_rain.jpg",
+    alt: "Warm rain outfit — black tee and bone linen shorts, translucent clear PVC raincoat, chunky black rain boots, matte black umbrella",
+    outfitDescription: "Black cotton tee and linen shorts, glossy chunky black rain boots mid-calf, translucent clear PVC raincoat worn open over the outfit, holding a matte black umbrella open above the head.",
+  },
+  mild_clear: {
+    id: "mild_clear",
+    src: "/visuals/mild_clear.jpg",
+    alt: "Mild weather outfit — fitted charcoal long-sleeve crewneck, cropped black trousers, chunky black leather derbies, rectangular sunglasses",
+    outfitDescription: "Fitted charcoal long-sleeve crewneck, straight-leg black trousers cropped at the ankle, chunky black leather derbies, thin rectangular dark sunglasses.",
+  },
+  cool_overcast: {
+    id: "cool_overcast",
+    src: "/visuals/cool_overcast.jpg",
+    alt: "Cool overcast outfit — heavyweight oversized slate grey hoodie, relaxed dark denim, scuffed black combat boots",
+    outfitDescription: "Heavyweight oversized hoodie in washed slate grey, hood down, relaxed dark denim, scuffed black leather combat boots laced high.",
+  },
+  cold_dry: {
+    id: "cold_dry",
+    src: "/visuals/cold_dry.jpg",
+    alt: "Cold weather outfit — boxy oversized charcoal wool overcoat, tapered black trousers, ribbed beanie, chunky oatmeal scarf",
+    outfitDescription: "Boxy oversized heavy wool overcoat in deep charcoal, layered long-sleeve underneath, tapered black wool trousers, ribbed black beanie, oversized chunky knit scarf in oatmeal wrapped twice.",
+  },
+  cold_rain: {
+    id: "cold_rain",
+    src: "/visuals/cold_rain.jpg",
+    alt: "Cold rain outfit — long black waterproof trench, knit sweater, dark slim trousers, waterproof boots, umbrella, gloves",
+    outfitDescription: "Long black waterproof trench shell over a knit sweater, dark slim trousers, waterproof lace-up boots, black umbrella, leather gloves.",
+  },
+  snow_freezing: {
+    id: "snow_freezing",
+    src: "/visuals/snow_freezing.jpg",
+    alt: "Snow and freezing outfit — cropped puffer parka with fur-trimmed hood, insulated black snow pants, heavy lug-sole winter boots, thick gloves, neck gaiter",
+    outfitDescription: "Cropped puffer parka with fur-trimmed hood up, insulated black snow pants, heavy lug-sole winter boots, thick gloves, neck gaiter pulled to the chin.",
+  },
+  windy_transitional: {
+    id: "windy_transitional",
+    src: "/visuals/windy_transitional.jpg",
+    alt: "Windy outfit — cropped nylon windbreaker shell collar up, layered tee, wide-leg cargo pants, sneakers",
+    outfitDescription: "Cropped nylon windbreaker shell, collar up, layered over a tee, wide-leg cargo pants, low-profile sneakers, hair visibly moving.",
+  },
+  high_sun_arid: {
+    id: "high_sun_arid",
+    src: "/visuals/high_sun_arid.jpg",
+    alt: "High sun and heat outfit — loose bone linen long-sleeve, relaxed linen trousers, wide-brim black hat, dark sunglasses, woven mules",
+    outfitDescription: "Loose bone-colored linen long-sleeve shirt, relaxed linen trousers, wide-brim black hat, dark sunglasses, woven mules.",
+  },
 };
 
-export function getWeatherVisual(conditionCode: number, isDay: boolean): string {
-  // Clear sky
-  if (conditionCode === 0 || conditionCode === 1) {
-    return isDay ? WEATHER_VISUALS.clear_day : WEATHER_VISUALS.clear_night;
-  }
-  // Partly cloudy
-  if (conditionCode === 2) {
-    return isDay ? WEATHER_VISUALS.partly_cloudy_day : WEATHER_VISUALS.partly_cloudy_night;
-  }
-  // Overcast
-  if (conditionCode === 3) {
-    return WEATHER_VISUALS.cloudy;
-  }
-  // Fog
-  if (conditionCode === 45 || conditionCode === 48) {
-    return WEATHER_VISUALS.fog;
-  }
-  // Drizzle / light rain
-  if ([51, 53, 55, 61, 80].includes(conditionCode)) {
-    return WEATHER_VISUALS.rain;
-  }
-  // Heavy rain
-  if ([63, 65, 66, 67, 81, 82].includes(conditionCode)) {
-    return WEATHER_VISUALS.heavy_rain;
-  }
-  // Snow
-  if ([71, 73, 75, 77, 85, 86].includes(conditionCode)) {
-    return WEATHER_VISUALS.snow;
-  }
-  // Thunderstorm
-  if ([95, 96, 99].includes(conditionCode)) {
-    return WEATHER_VISUALS.thunderstorm;
+/**
+ * Selects the definitive 24-hour daily outfit visual based on compound weather forecast metrics.
+ */
+export function getOutfitVisual(
+  highF: number,
+  conditionCode: number,
+  windMph: number = 0,
+  uvIndex: number = 0,
+  humidity: number = 50,
+  precipProb: number = 0,
+): OutfitVisual {
+  const wmo = getWMOInfo(conditionCode);
+
+  // 1. Freezing or Snow always takes top priority
+  if (wmo.isSnow || highF <= 28) {
+    return OUTFIT_VISUALS.snow_freezing;
   }
 
-  return isDay ? WEATHER_VISUALS.partly_cloudy_day : WEATHER_VISUALS.partly_cloudy_night;
+  // 2. Cold + Rain
+  if (highF < 52 && (wmo.isRain || precipProb >= 45)) {
+    return OUTFIT_VISUALS.cold_rain;
+  }
+
+  // 3. Cold dry weather
+  if (highF < 48) {
+    return OUTFIT_VISUALS.cold_dry;
+  }
+
+  // 4. Warm + Rain (raincoat, umbrella, rain boots over summer shorts)
+  if (highF >= 65 && (wmo.isRain || precipProb >= 45)) {
+    return OUTFIT_VISUALS.warm_rain;
+  }
+
+  // 5. Windy transitional weather
+  if (windMph >= 18 && highF >= 50 && highF <= 76 && !wmo.isRain) {
+    return OUTFIT_VISUALS.windy_transitional;
+  }
+
+  // 6. High sun / Arid intense heat (high UV, hot, dry air)
+  if (highF >= 86 && (uvIndex >= 7 || humidity < 40)) {
+    return OUTFIT_VISUALS.high_sun_arid;
+  }
+
+  // 7. Hot / Sunny summer day
+  if (highF >= 76) {
+    return OUTFIT_VISUALS.hot_sunny;
+  }
+
+  // 8. Cool / Overcast weather
+  if (highF >= 48 && highF < 60) {
+    return OUTFIT_VISUALS.cool_overcast;
+  }
+
+  // 9. Mild / Clear (comfortable 60-75°F)
+  return OUTFIT_VISUALS.mild_clear;
+}
+
+// Backward-compatible getWeatherVisual wrapper
+export function getWeatherVisual(conditionCode: number, isDay: boolean = true): string {
+  return OUTFIT_VISUALS.mild_clear.src;
 }

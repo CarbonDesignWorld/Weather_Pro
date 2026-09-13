@@ -48,6 +48,7 @@ export const RULES: RuleDefinition[] = [
   { id: "rain_boots", name: "Rain Boots", slot: "Wear", zone: "Feet", tempBasis: "Low", precipProbMin: 60.0, requires: "rain", priority: 1 },
   { id: "boots", name: "Boots", slot: "Wear", zone: "Feet", tempBasis: "Low", tempMax: 40.0, priority: 1 },
   { id: "closed_shoes", name: "Closed Shoes", slot: "Wear", zone: "Feet", tempBasis: "High", tempMin: 40.0, tempMax: 80.0, priority: 2 },
+  { id: "sandals", name: "Sandals", slot: "Wear", zone: "Feet", tempBasis: "High", tempMin: 80.0, priority: 1 },
   { id: "warm_socks", name: "Warm Socks", slot: "Wear", zone: "Feet", tempBasis: "Low", tempMax: 35.0, priority: 3 },
 
   // Head
@@ -222,7 +223,9 @@ export function evaluateRules(input: RulesEngineInput): RulesEngineOutput {
   }
 
   const severity = computeSeverity(highF, lowF, windMph, current.conditionCode);
-  const tags = computeDailyTags(highF, current.conditionCode, precipProb, current.humidity);
+  const shortTermPrecip = dayRange.next3hMaxPrecipProb !== undefined ? dayRange.next3hMaxPrecipProb : current.precipProbability;
+  const shortTermHumidity = dayRange.next3hMaxHumidity !== undefined ? dayRange.next3hMaxHumidity : current.humidity;
+  const tags = computeDailyTags(highF, current.conditionCode, shortTermPrecip, shortTermHumidity);
 
   return {
     wearIcons,

@@ -73,6 +73,8 @@ export interface DayRange {
   maxWindMph: number;
   maxUvIndex: number;
   maxPrecipProb: number;
+  next3hMaxPrecipProb?: number;
+  next3hMaxHumidity?: number;
 }
 
 export interface HourlySlot {

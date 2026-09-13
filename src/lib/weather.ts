@@ -218,10 +218,15 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     isDay: Boolean(data.current.is_day),
   };
 
-  // Daily range
-  // Day max precipitation probability across next 24 hours
+  // Daily range & 24-hour max precipitation probability
   const next24Precip = (data.hourly.precipitation_probability || []).slice(currentHourIdx, currentHourIdx + 24);
   const maxPrecipProb = next24Precip.length > 0 ? Math.max(...next24Precip) : 0;
+
+  // 3-hour forward window for immediate conditions, tags, and side panel description
+  const next3hPrecipSlice = (data.hourly.precipitation_probability || []).slice(currentHourIdx, currentHourIdx + 3);
+  const next3hMaxPrecipProb = next3hPrecipSlice.length > 0 ? Math.max(...next3hPrecipSlice) : currentPrecipProb;
+  const next3hHumiditySlice = (data.hourly.relative_humidity_2m || []).slice(currentHourIdx, currentHourIdx + 3);
+  const next3hMaxHumidity = next3hHumiditySlice.length > 0 ? Math.max(...next3hHumiditySlice) : current.humidity;
 
   const dayRange: DayRange = {
     minTempF: Math.round(data.daily.temperature_2m_min[0]),
@@ -230,18 +235,20 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     maxWindMph: Math.round(data.daily.wind_speed_10m_max?.[0] ?? current.windMph),
     maxUvIndex: Math.round(data.daily.uv_index_max?.[0] ?? current.uvIndex),
     maxPrecipProb,
+    next3hMaxPrecipProb,
+    next3hMaxHumidity,
   };
 
   // Run Rules Engine
   const rulesResult = evaluateRules({ current, dayRange });
 
-  // Compute 9-hour forward window crossing midnight
+  // Compute 24-hour forward timeline spaced every 3 hours (8 slots total, uncrowded and scrollable)
   const hourly: HourlySlot[] = [];
   let foundMidnight = false;
   const todayDay = new Date(data.current.time).getDate();
 
-  for (let i = 0; i < 9; i++) {
-    const idx = currentHourIdx + i;
+  for (let i = 0; i < 8; i++) {
+    const idx = currentHourIdx + i * 3;
     if (idx >= hourlyTimes.length) break;
 
     const t = hourlyTimes[idx];
@@ -264,13 +271,13 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
       tempC,
       conditionCode: code,
       condition: wmo.condition,
-      description: i === 0 ? getFallbackNowDescription(wmo.condition, tempF) : "",
+      description: i === 0 ? getFallbackNowDescription(wmo.condition, tempF, dayRange.maxTempF, current.windMph, next3hMaxPrecipProb) : "",
       isDateBoundary,
     });
   }
 
   const headline = getFallbackHeadline(current.condition, current.tempF, rulesResult.severity);
-  const nowDescription = getFallbackNowDescription(current.condition, current.tempF, dayRange.maxTempF, current.windMph);
+  const nowDescription = getFallbackNowDescription(current.condition, current.tempF, dayRange.maxTempF, current.windMph, next3hMaxPrecipProb);
   const wearDescription = getFallbackWearDescription(rulesResult.wearIcons);
   const packDescription = getFallbackPackDescription(rulesResult.packIcons);
 
