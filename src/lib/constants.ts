@@ -496,6 +496,38 @@ export function cleanCopyText(text: string): string {
     });
 }
 
+/**
+ * Safely trims text to fit within a character budget without chopping words in half.
+ * Prefers ending at a completed sentence (. ! ?). Otherwise trims cleanly at the last full word.
+ */
+export function smartTrim(text: string, maxLen: number): string {
+  if (!text || typeof text !== "string") return text;
+  const cleaned = cleanCopyText(text.trim());
+  if (cleaned.length <= maxLen) return cleaned;
+
+  const sub = cleaned.slice(0, maxLen);
+  const lastPeriod = sub.lastIndexOf(". ");
+  const lastExcl = sub.lastIndexOf("! ");
+  const lastQ = sub.lastIndexOf("? ");
+  const lastEnd = Math.max(lastPeriod, lastExcl, lastQ);
+
+  if (lastEnd >= maxLen * 0.45) {
+    return cleaned.slice(0, lastEnd + 1).trim();
+  }
+
+  if (/[.!?]$/.test(sub)) {
+    return sub.trim();
+  }
+
+  const lastSpace = sub.lastIndexOf(" ");
+  if (lastSpace > 0) {
+    const trimmed = sub.slice(0, lastSpace).replace(/[,;:\s]+$/, "").trim();
+    return trimmed + ".";
+  }
+
+  return sub;
+}
+
 export function getFallbackHeadline(condition: string, tempF: number, severity: SeverityLevel): string {
   if (severity === "extreme") return "Extreme conditions";
   if (tempF >= 80) return "Dress light today";

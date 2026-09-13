@@ -540,24 +540,24 @@ function Frame2() {
 
   return (
     <div className="content-stretch flex flex-[1_0_0] flex-col h-full justify-between min-w-0 relative w-full" data-name="Detail Info Panel">
-      {/* Top Stack: Location Indicator on the far right, and Headline + Recommendations (Wear & Pack) pinned to top-left */}
-      <div className="w-full flex flex-col items-start shrink-0">
-        <div className="w-full flex justify-end items-start shrink-0">
-          <LocationIndicator />
-        </div>
-
-        <div className="flex flex-col gap-[12px] xl:gap-[16px] w-full max-w-[580px] mt-[4px] sm:mt-[6px] items-start">
-          <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#6b655b]" data-name="Frame 53">
-            <p className="leading-[1.15] text-[28px] sm:text-[34px] xl:text-[42px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis" title={headline}>
+      {/* Top Stack: Headline on left, Location Indicator on right, Recommendations below */}
+      <div className="w-full flex flex-col items-start shrink-0 gap-[14px] xl:gap-[18px]">
+        <div className="w-full flex items-center justify-between gap-4 shrink-0">
+          <div className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold min-w-0 not-italic text-[#6b655b] flex-1">
+            <p className="leading-[1.15] text-[28px] sm:text-[34px] xl:text-[42px] font-semibold tracking-tight whitespace-nowrap overflow-hidden text-ellipsis m-0" title={headline}>
               {headline}
             </p>
           </div>
+          <LocationIndicator className="shrink-0" />
+        </div>
+
+        <div className="w-full max-w-[580px]">
           <Frame8 conf={conf} />
         </div>
       </div>
 
-      {/* Bottom row: Confidence Card on the far right, vertically aligned with Location Indicator */}
-      <div className="w-full flex justify-end items-end shrink-0">
+      {/* Bottom row: Confidence Card aligned on bottom right */}
+      <div className="w-full flex justify-end items-end shrink-0 pt-2">
         <ConfidenceCard className="relative shrink-0" confidenceLabel={`Confidence ${conf}%`} />
       </div>
     </div>
@@ -620,7 +620,8 @@ function WeatherVisualHero() {
     brief?.current?.windMph ?? 0,
     brief?.current?.uvIndex ?? 5,
     brief?.current?.humidity ?? 50,
-    brief?.dayRange?.next3hMaxPrecipProb ?? brief?.current?.precipProbability ?? 0
+    brief?.dayRange?.next3hMaxPrecipProb ?? brief?.current?.precipProbability ?? 0,
+    brief?.wear?.icons ?? []
   );
   const [visualObj, setVisualObj] = useState(initialVisual);
 
@@ -632,7 +633,8 @@ function WeatherVisualHero() {
         brief.current.windMph,
         brief.current.uvIndex,
         brief.current.humidity,
-        brief.dayRange?.next3hMaxPrecipProb ?? brief.current.precipProbability
+        brief.dayRange?.next3hMaxPrecipProb ?? brief.current.precipProbability,
+        brief.wear?.icons ?? []
       );
       setVisualObj(selected);
     }
@@ -645,6 +647,7 @@ function WeatherVisualHero() {
     brief?.current?.humidity,
     brief?.dayRange?.next3hMaxPrecipProb,
     brief?.current?.precipProbability,
+    brief?.wear?.icons,
   ]);
 
   return (

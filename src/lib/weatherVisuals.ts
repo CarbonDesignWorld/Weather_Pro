@@ -1,9 +1,5 @@
-/**
- * Today.io — Weather Visuals & Temperature Color Gradients
- * Outfit-based Photography & Thermal Timeline
- */
-
 import { getWMOInfo } from "./constants";
+import { IconId } from "./types";
 
 export interface TempColorStop {
   tempF: number;
@@ -116,6 +112,7 @@ export function getOutfitVisual(
   uvIndex: number = 0,
   humidity: number = 50,
   precipProb: number = 0,
+  wearIcons: IconId[] = [],
 ): OutfitVisual {
   const wmo = getWMOInfo(conditionCode);
 
@@ -125,41 +122,44 @@ export function getOutfitVisual(
   }
 
   // 2. Cold + Rain
-  if (highF < 52 && (wmo.isRain || precipProb >= 45)) {
+  if ((wmo.isRain || precipProb >= 45) && (wearIcons.includes("heavy_coat") || highF < 52)) {
     return OUTFIT_VISUALS.cold_rain;
   }
 
   // 3. Cold dry weather
-  if (highF < 48) {
+  if (wearIcons.includes("heavy_coat") || highF < 48) {
     return OUTFIT_VISUALS.cold_dry;
   }
 
   // 4. Warm + Rain (raincoat, umbrella, rain boots over summer shorts)
-  if (highF >= 65 && (wmo.isRain || precipProb >= 45)) {
+  if (
+    (wmo.isRain || precipProb >= 45 || wearIcons.includes("rain_jacket") || wearIcons.includes("rain_boots")) &&
+    (wearIcons.includes("shorts") || highF >= 65)
+  ) {
     return OUTFIT_VISUALS.warm_rain;
   }
 
   // 5. Windy transitional weather
-  if (windMph >= 18 && highF >= 50 && highF <= 76 && !wmo.isRain) {
+  if (wearIcons.includes("wind_breaker") || (windMph >= 18 && highF >= 50 && highF <= 72 && !wmo.isRain)) {
     return OUTFIT_VISUALS.windy_transitional;
   }
 
-  // 6. High sun / Arid intense heat (high UV, hot, dry air)
-  if (highF >= 86 && (uvIndex >= 7 || humidity < 40)) {
+  // 6. High sun / Arid intense heat (high UV, hot, dry air, or sun hat)
+  if (wearIcons.includes("sun_hat") || (highF >= 86 && (uvIndex >= 7 || humidity < 40))) {
     return OUTFIT_VISUALS.high_sun_arid;
   }
 
-  // 7. Hot / Sunny summer day
-  if (highF >= 76) {
+  // 7. Hot / Summer (shorts or t-shirt recommended)
+  if (wearIcons.includes("shorts") || highF >= 72) {
     return OUTFIT_VISUALS.hot_sunny;
   }
 
-  // 8. Cool / Overcast weather
+  // 8. Cool / Overcast weather (extra layer / cool chill)
   if (highF >= 48 && highF < 60) {
     return OUTFIT_VISUALS.cool_overcast;
   }
 
-  // 9. Mild / Clear (comfortable 60-75°F)
+  // 9. Mild / Clear (comfortable 60-72°F)
   return OUTFIT_VISUALS.mild_clear;
 }
 

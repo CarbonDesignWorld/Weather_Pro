@@ -1,5 +1,5 @@
 import { DayBrief, GeneratedCopyResponse, IconId, SeverityLevel } from "../lib/types";
-import { ICONS, cleanCopyText, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "../lib/constants";
+import { ICONS, cleanCopyText, smartTrim, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "../lib/constants";
 
 export interface GenerateCopyInput {
   current: DayBrief["current"];
@@ -56,9 +56,9 @@ CRITICAL RULES:
    - nowDescription must capture the immediate 3-hour atmospheric feel (temperature momentum, breeze, UV intensity, or dampness).
 3. Character limits (STRICT):
    - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
-   - wearDescription: 30 to 180 characters.
-   - packDescription: 30 to 180 characters.
-   - nowDescription: 50 to 130 characters.
+   - wearDescription: 40 to 110 characters STRICT MAX. Exactly 1 or 2 concise, complete sentences describing fabric textures and how it feels. Never exceed 110 characters. Must finish the sentence completely.
+   - packDescription: 30 to 85 characters STRICT MAX.
+   - nowDescription: 40 to 105 characters STRICT MAX.
 4. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
 5. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
@@ -72,9 +72,9 @@ Severity: ${severity}
 Return strict JSON:
 {
   "headline": "Short single-line punchy headline (10-25 chars)",
-  "wearDescription": "Why and how to wear these specific fabrics and items (30-180 chars)",
-  "packDescription": "Why to pack these specific items (30-180 chars)",
-  "nowDescription": "Immediate 3-hour atmospheric conditions summary (50-130 chars)"
+  "wearDescription": "Why and how to wear these specific fabrics and items (40-110 chars)",
+  "packDescription": "Why to pack these specific items (30-85 chars)",
+  "nowDescription": "Immediate 3-hour atmospheric conditions summary (40-105 chars)"
 }`;
 
   try {
@@ -107,12 +107,12 @@ Return strict JSON:
     // Validate budget lengths and sanity
     return {
       headline: cleanCopyText(parsed.headline && typeof parsed.headline === "string" ? parsed.headline.trim().replace(/[\r\n]+/g, " ").slice(0, 25) : fallback.headline),
-      wearDescription: cleanCopyText((parsed.wearDescription && parsed.wearDescription.slice(0, 180)) || fallback.wearDescription),
-      packDescription: cleanCopyText((parsed.packDescription && parsed.packDescription.slice(0, 180)) || fallback.packDescription),
-      nowDescription: cleanCopyText((parsed.nowDescription && parsed.nowDescription.slice(0, 140)) || fallback.nowDescription),
+      wearDescription: (parsed.wearDescription && smartTrim(parsed.wearDescription, 115)) || fallback.wearDescription,
+      packDescription: (parsed.packDescription && smartTrim(parsed.packDescription, 90)) || fallback.packDescription,
+      nowDescription: (parsed.nowDescription && smartTrim(parsed.nowDescription, 110)) || fallback.nowDescription,
     };
   } catch (err) {
-    console.error("Copy generation error", err);
+    console.error("Gemini copy generation error, using fallback:", err);
     return fallback;
   }
 }

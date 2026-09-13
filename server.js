@@ -158,6 +158,34 @@ function cleanCopyText(text) {
     });
 }
 
+function smartTrim(text, maxLen) {
+  if (!text || typeof text !== 'string') return text;
+  const cleaned = cleanCopyText(text.trim());
+  if (cleaned.length <= maxLen) return cleaned;
+
+  const sub = cleaned.slice(0, maxLen);
+  const lastPeriod = sub.lastIndexOf('. ');
+  const lastExcl = sub.lastIndexOf('! ');
+  const lastQ = sub.lastIndexOf('? ');
+  const lastEnd = Math.max(lastPeriod, lastExcl, lastQ);
+
+  if (lastEnd >= maxLen * 0.45) {
+    return cleaned.slice(0, lastEnd + 1).trim();
+  }
+
+  if (/[.!?]$/.test(sub)) {
+    return sub.trim();
+  }
+
+  const lastSpace = sub.lastIndexOf(' ');
+  if (lastSpace > 0) {
+    const trimmed = sub.slice(0, lastSpace).replace(/[,;:\s]+$/, '').trim();
+    return trimmed + '.';
+  }
+
+  return sub;
+}
+
 async function handleChat(req, res) {
   try {
     const { messages, context } = await readJsonBody(req);
@@ -299,9 +327,9 @@ CRITICAL RULES:
    - nowDescription must capture the immediate 3-hour atmospheric feel (temperature momentum, breeze, UV intensity, or dampness).
 3. Character limits (STRICT):
    - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
-   - wearDescription: 30 to 180 characters.
-   - packDescription: 30 to 180 characters.
-   - nowDescription: 50 to 130 characters.
+   - wearDescription: 40 to 110 characters STRICT MAX. Exactly 1 or 2 concise, complete sentences describing fabric textures and how it feels. Never exceed 110 characters. Must finish the sentence completely.
+   - packDescription: 30 to 85 characters STRICT MAX.
+   - nowDescription: 40 to 105 characters STRICT MAX.
 4. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
 5. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
 
@@ -315,9 +343,9 @@ Severity: ${severity}
 Return strict JSON:
 {
   "headline": "Short single-line punchy headline (10-25 chars)",
-  "wearDescription": "Why and how to wear these specific fabrics and items (30-180 chars)",
-  "packDescription": "Why to pack these specific items (30-180 chars)",
-  "nowDescription": "Immediate 3-hour atmospheric conditions summary (50-130 chars)"
+  "wearDescription": "Why and how to wear these specific fabrics and items (40-110 chars)",
+  "packDescription": "Why to pack these specific items (30-85 chars)",
+  "nowDescription": "Immediate 3-hour atmospheric conditions summary (40-105 chars)"
 }`;
 
     let data;
@@ -342,13 +370,13 @@ Return strict JSON:
       parsed.headline = cleanCopyText(parsed.headline.trim().replace(/[\r\n]+/g, ' ').slice(0, 25));
     }
     if (parsed.wearDescription && typeof parsed.wearDescription === 'string') {
-      parsed.wearDescription = cleanCopyText(parsed.wearDescription.slice(0, 180));
+      parsed.wearDescription = smartTrim(parsed.wearDescription, 115);
     }
     if (parsed.packDescription && typeof parsed.packDescription === 'string') {
-      parsed.packDescription = cleanCopyText(parsed.packDescription.slice(0, 180));
+      parsed.packDescription = smartTrim(parsed.packDescription, 90);
     }
     if (parsed.nowDescription && typeof parsed.nowDescription === 'string') {
-      parsed.nowDescription = cleanCopyText(parsed.nowDescription.trim().slice(0, 140));
+      parsed.nowDescription = smartTrim(parsed.nowDescription, 110);
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(parsed));
