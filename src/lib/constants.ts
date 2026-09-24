@@ -583,3 +583,33 @@ export function getFallbackNowDescription(
 
   return cleanCopyText(`${condition} and ${rounded}°. Mild, steady conditions with comfortable temperatures continuing through the next few hours.`);
 }
+
+export function getNarrativeWearDescription(icons: IconId[], tempF: number, condition: string): string {
+  if (tempF <= 35 || condition.toLowerCase().includes("snow")) {
+    return "Today you should wear something warm. A heavy jacket, long insulated pants, warm and insulated boots. If you are going to be outside for a long time, you'll want to wear a warm hat and gloves.";
+  }
+  if (condition.toLowerCase().includes("rain")) {
+    return "Damp air and persistent rain call for a waterproof jacket or raincoat, breathable layers underneath, and water-resistant boots or closed shoes with good grip on slick streets.";
+  }
+  if (tempF >= 78) {
+    return "Light, breathable fabrics are your best friend today. A loose cotton tee or linen shirt, tailored shorts, and comfortable open or slip-on footwear will keep you cool in the heat.";
+  }
+  if (tempF >= 65) {
+    return "A comfortable, temperate day ideal for breathable layers. A relaxed long-sleeve or light tee with straight-leg trousers and versatile everyday shoes.";
+  }
+  return "Cooler conditions call for medium-weight layering. A classic crewneck or sweater over a soft tee, durable denim or chinos, and sturdy closed leather shoes.";
+}
+
+export function getNarrativeBringDescription(icons: IconId[], tempF: number, condition: string): string {
+  if (condition.toLowerCase().includes("rain") || icons.includes("umbrella")) {
+    return "Keep an umbrella within arm's reach and consider a compact waterproof bag cover to protect your everyday carry from sudden rain bursts.";
+  }
+  if (tempF <= 35) {
+    return "Always pack water, but you can also pack hot tea or water as an alternative. Pack your gloves, maybe a scarf, if you plan to be outside for a long period of time.";
+  }
+  if (tempF >= 78) {
+    return "Stay hydrated with a cold water bottle, pack your sunglasses for peak afternoon glare, and keep sunscreen handy if you will be under direct sun.";
+  }
+  return "Bring a reusable water bottle and sunglasses for changing light conditions throughout the afternoon.";
+}
+

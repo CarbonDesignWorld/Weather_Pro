@@ -4,9 +4,11 @@ import {
   CurrentConditions,
   DayRange,
   HourlySlot,
+  DailyForecastSlot,
 } from "./types";
 import { getWMOInfo, cleanCopyText, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "./constants";
 import { evaluateRules } from "./rules";
+import { resolveWeatherTheme } from "./backgrounds";
 
 const WEATHER_CACHE_KEY = "today_io_weather_cache";
 const LOCATION_KEY = "today_io_location";
@@ -158,11 +160,11 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     longitude: location.lon.toString(),
     current: "temperature_2m,apparent_temperature,weather_code,wind_speed_10m,relative_humidity_2m,is_day",
     hourly: "temperature_2m,weather_code,precipitation_probability,uv_index,relative_humidity_2m",
-    daily: "temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,uv_index_max",
     temperature_unit: "fahrenheit",
     wind_speed_unit: "mph",
     precipitation_unit: "mm",
-    forecast_days: "2",
+    forecast_days: "7",
     timezone: location.timezone || "auto",
   });
 
@@ -281,12 +283,41 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
   const wearDescription = getFallbackWearDescription(rulesResult.wearIcons);
   const packDescription = getFallbackPackDescription(rulesResult.packIcons);
 
+  // Compute 5-day daily forecast
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const weekly: DailyForecastSlot[] = [];
+  const dailyTimes: string[] = data.daily?.time || [];
+  for (let i = 0; i < Math.min(5, dailyTimes.length); i++) {
+    const dDate = new Date(dailyTimes[i] + "T00:00:00");
+    const dCode = data.daily.weather_code?.[i] ?? 0;
+    const maxF = Math.round(data.daily.temperature_2m_max[i]);
+    const minF = Math.round(data.daily.temperature_2m_min[i]);
+    weekly.push({
+      date: dailyTimes[i],
+      dayName: dayNames[dDate.getDay()],
+      maxTempF: maxF,
+      minTempF: minF,
+      maxTempC: Math.round(((maxF - 32) * 5) / 9),
+      minTempC: Math.round(((minF - 32) * 5) / 9),
+      conditionCode: dCode,
+      condition: getWMOInfo(dCode).condition,
+    });
+  }
+
+  const weatherTheme = resolveWeatherTheme(
+    current.conditionCode,
+    current.precipProbability,
+    current.windMph,
+    current.humidity,
+    current.uvIndex
+  );
+
   const brief: DayBrief = {
     location,
     current,
     dayRange,
     headline,
-    greeting: "Hey,",
+    greeting: "Welcome Sandra, I'm your Daily Preparation partner.",
     nowDescription,
     wear: {
       icons: rulesResult.wearIcons,
@@ -299,6 +330,8 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
     confidence: rulesResult.confidence,
     tags: rulesResult.tags,
     hourly,
+    weekly,
+    weatherTheme,
     severity: rulesResult.severity,
     meta: {
       generatedAt: new Date().toISOString(),

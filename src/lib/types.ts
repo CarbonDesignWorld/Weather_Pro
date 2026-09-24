@@ -88,6 +88,19 @@ export interface HourlySlot {
   isDateBoundary: boolean; // true on first slot after midnight
 }
 
+export interface DailyForecastSlot {
+  date: string;
+  dayName: string;
+  maxTempF: number;
+  minTempF: number;
+  maxTempC: number;
+  minTempC: number;
+  conditionCode: number;
+  condition: string;
+}
+
+export type WeatherTheme = "cloudy" | "snowy" | "rainy" | "clear_sky" | "sunny" | "humid" | "windy";
+
 export interface DayBrief {
   location: LocationInfo;
   current: CurrentConditions;
@@ -106,6 +119,8 @@ export interface DayBrief {
   confidence: number | null; // 70-99, null if below 70
   tags: [TemperatureTagId, SkyTagId, MoistureTagId]; // exactly 3
   hourly: HourlySlot[]; // 9-hour forward window crossing midnight
+  weekly?: DailyForecastSlot[];
+  weatherTheme?: WeatherTheme;
   severity: SeverityLevel;
   meta: {
     generatedAt: string;
