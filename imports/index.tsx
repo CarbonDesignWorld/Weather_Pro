@@ -45,7 +45,7 @@ export default function HomeScreen() {
 
               {/* Weekly Forecast & Planning Agent Container */}
               <div
-                className="w-full max-w-[390px] rounded-[24px] p-5 shadow-lg border border-white/50 space-y-4"
+                className="w-full max-w-[390px] rounded-[24px] p-2 shadow-lg border border-white/50 space-y-2"
                 style={{
                   backgroundColor: "rgba(240, 236, 228, 0.92)",
                   backdropFilter: "blur(16px)",
@@ -83,7 +83,7 @@ export default function HomeScreen() {
 
             {/* 4. Weekly Forecast & Planning Agent */}
             <div
-              className="w-full rounded-[24px] p-5 shadow-md border border-white/50 space-y-4"
+              className="w-full rounded-[24px] p-2 shadow-md border border-white/50 space-y-2"
               style={{
                 backgroundColor: "rgba(240, 236, 228, 0.94)",
                 backdropFilter: "blur(16px)",

@@ -8,6 +8,79 @@ body,
   height: 100%;
 }
 
+/* ================= FIGMA PREPARE DESIGN SYSTEM TYPOGRAPHY SCALE ================= */
+.font-h1 {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 300;
+  font-size: 39.82px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+}
+
+.font-mobile-h1 {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 300;
+  font-size: 27.65px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+}
+
+.font-h2 {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 700;
+  font-size: 33.18px;
+  line-height: 130%;
+  letter-spacing: -0.02em;
+}
+
+.font-h3 {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 600;
+  font-size: 27.65px;
+  line-height: 150%;
+  letter-spacing: 0em;
+}
+
+.font-h4 {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 500;
+  font-size: 23.04px;
+  line-height: 150%;
+  letter-spacing: 0em;
+}
+
+.font-b1 {
+  font-family: 'PT Serif', serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: -0.01em;
+}
+
+.font-b2 {
+  font-family: 'PT Serif', serif;
+  font-weight: 400;
+  font-size: 13.33px;
+  line-height: 150%;
+  letter-spacing: 0.01em;
+}
+
+.font-b3 {
+  font-family: 'PT Serif', serif;
+  font-weight: 400;
+  font-size: 11.11px;
+  line-height: 150%;
+  letter-spacing: 0.02em;
+}
+
+.font-btn {
+  font-family: 'Fira Sans', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: -0.03em;
+}
+
 /* Wear / Pack icon cards — hover state */
 .weather-app-root [data-name="Frame Background Cell"] {
   cursor: pointer;

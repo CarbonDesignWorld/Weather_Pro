@@ -25,29 +25,34 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
 
   return (
     <div className="w-full">
-      <h2 className="text-[#2E2A26] text-base font-semibold tracking-tight mb-2.5 font-sans">
+      <h2 className="font-h4 text-[#6B655B] mb-2">
         Weekly Forecast
       </h2>
-      <div className="grid grid-cols-5 gap-2 w-full">
+      <div className="grid grid-cols-5 gap-1.5 w-full">
         {displaySlots.map((slot, idx) => (
           <div
             key={idx}
-            className="bg-white/95 rounded-[14px] p-2 flex flex-col items-center justify-between border border-[#E4DFD6] shadow-xs min-h-[96px] transition-transform hover:scale-[1.02]"
+            data-name="Weather Cell"
+            className="bg-[#FAF8F4] rounded-[12px] py-2 px-1 flex flex-col items-center gap-1.5 border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.02]"
           >
-            <span className="text-[11px] font-medium text-[#6B655B] tracking-tight">
-              {slot.dayName.slice(0, 3)}
+            {/* Day Name */}
+            <span className="font-b3 text-[#2E2A26] font-normal tracking-[0.02em] truncate w-full text-center">
+              {slot.dayName}
             </span>
-            <div
-              className="w-5 h-5 rounded-full my-1 shadow-xs"
-              style={{ background: getConditionColor(slot.conditionCode) }}
-              title={slot.condition || "Weather"}
-            />
-            <div className="text-center">
-              <div className="text-xs font-semibold text-[#2E2A26] leading-none">
-                {slot.maxTempF}°F
-              </div>
-              <div className="text-[10px] text-[#8C857B] mt-0.5 leading-none">
-                {slot.maxTempC}°C
+
+            {/* Divider Line 2 */}
+            <div className="w-full border-t border-[#E4DFD6]" />
+
+            {/* Icon and Temp Frame */}
+            <div className="flex items-center justify-center gap-1.5 w-full px-0.5">
+              <div
+                className="w-[19px] h-[19px] rounded-full flex-shrink-0 shadow-xs"
+                style={{ background: getConditionColor(slot.conditionCode) }}
+                title={slot.condition || "Weather"}
+              />
+              <div className="flex flex-col font-b3 text-[#6B655B] leading-[1.2] text-left">
+                <span>{slot.maxTempF}°F</span>
+                <span>{slot.maxTempC}°C</span>
               </div>
             </div>
           </div>

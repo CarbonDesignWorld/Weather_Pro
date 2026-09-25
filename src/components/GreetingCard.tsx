@@ -15,7 +15,7 @@ export default function GreetingCard({ name = "Mandy" }: GreetingCardProps) {
         WebkitBackdropFilter: "blur(16px)",
       }}
     >
-      <h1 className="text-white text-[24px] lg:text-[27px] font-light leading-[1.3] tracking-normal font-sans">
+      <h1 className="text-white font-mobile-h1 lg:font-h1">
         Welcome {name}, I’m your Daily Preparation partner. Together we’ll ensure you are always ready!
       </h1>
     </div>

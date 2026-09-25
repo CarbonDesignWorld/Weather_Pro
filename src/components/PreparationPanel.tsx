@@ -115,29 +115,29 @@ export default function PreparationPanel() {
 
         {/* Today's Overview */}
         <div className="space-y-1.5">
-          <h3 className="font-serif-editorial font-bold text-[15px] text-[#2E2A26]">
+          <h3 className="font-h4 text-[#6B655B]">
             Today’s Overview
           </h3>
-          <p className="font-serif-editorial text-[12.5px] text-[#4A453E] leading-[1.5]">
+          <p className="font-b1 text-[#2E2A26]">
             {overviewCopy}
           </p>
         </div>
 
         {/* Weather Tag Chips */}
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="bg-[#5076B8] text-white text-[11px] px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shadow-xs">
+          <span className="bg-[#5076B8] text-white font-b2 px-3 py-1 rounded-full flex items-center gap-1 shadow-2xs">
             <span>✦</span> {condition.split(" ")[0]}
           </span>
-          <span className="bg-[#5076B8] text-white text-[11px] px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shadow-xs">
+          <span className="bg-[#5076B8] text-white font-b2 px-3 py-1 rounded-full flex items-center gap-1 shadow-2xs">
             <span>❄</span> {auraLabel}
           </span>
-          <span className="bg-[#5076B8] text-white text-[11px] px-2.5 py-1 rounded-full font-medium flex items-center gap-1 shadow-xs">
+          <span className="bg-[#5076B8] text-white font-b2 px-3 py-1 rounded-full flex items-center gap-1 shadow-2xs">
             <span>༄</span> {current?.windMph ? `${current.windMph} mph` : "Calm"}
           </span>
         </div>
 
         {/* Date, Time & Current Temperature */}
-        <div className="space-y-1 text-xs text-[#6B655B] font-medium pt-1">
+        <div className="space-y-1 font-b2 text-[#6B655B] pt-1">
           <div className="flex items-center gap-2">
             <span>📅</span>
             <span>{dateStr}</span>
@@ -148,7 +148,7 @@ export default function PreparationPanel() {
           </div>
           <div className="flex items-center gap-2">
             <span>🌡</span>
-            <span className="font-semibold text-[#2E2A26]">
+            <span className="font-b1 text-[#2E2A26]">
               {tempF}°F | {tempC}°C
             </span>
           </div>
@@ -158,7 +158,7 @@ export default function PreparationPanel() {
 
         {/* Hourly Forecast */}
         <div className="space-y-2">
-          <h4 className="font-serif-editorial font-bold text-[14px] text-[#2E2A26]">
+          <h4 className="font-h4 text-[#6B655B]">
             Hourly Forecast
           </h4>
           <div className="grid grid-cols-4 gap-1.5">
@@ -168,7 +168,7 @@ export default function PreparationPanel() {
                 className="bg-[#FAF8F4] border border-[#E4DFD6] rounded-xl p-2 flex flex-col items-center gap-1 shadow-2xs"
               >
                 <div
-                  className="w-4 h-4 rounded-full shadow-xs"
+                  className="w-[18px] h-[18px] rounded-full shadow-xs"
                   style={{
                     background:
                       h.tempF >= 75
@@ -176,15 +176,15 @@ export default function PreparationPanel() {
                         : "radial-gradient(circle, #7FA9C7 0%, #4A69A9 100%)",
                   }}
                 />
-                <div className="text-center">
-                  <div className="text-[11px] font-semibold text-[#2E2A26] leading-none">
+                <div className="text-center font-b3">
+                  <div className="text-[#2E2A26]">
                     {h.tempF}°F
                   </div>
-                  <div className="text-[9px] text-[#8C857B] mt-0.5 leading-none">
+                  <div className="text-[#8C857B]">
                     {h.tempC}°C
                   </div>
                 </div>
-                <span className="text-[9px] text-[#6B655B] leading-none mt-0.5">
+                <span className="font-b3 text-[#6B655B]">
                   {h.displayTime.split(" ")[0]}
                 </span>
               </div>
@@ -195,27 +195,27 @@ export default function PreparationPanel() {
 
       {/* Confidence Indicator */}
       <div className="text-center py-1">
-        <span className="font-sans font-bold text-[18px] text-[#C45A45] tracking-tight">
+        <span className="font-h4 text-[#A6412C]">
           Confidence {confidence}%
         </span>
       </div>
 
       {/* What to wear */}
       <div className="space-y-1.5">
-        <h3 className="font-serif-editorial font-bold text-[16px] text-[#2E2A26]">
+        <h3 className="font-h4 text-[#6B655B]">
           What to wear
         </h3>
-        <p className="font-serif-editorial text-[12.5px] text-[#4A453E] leading-[1.5]">
+        <p className="font-b1 text-[#2E2A26]">
           {wearNarrative}
         </p>
       </div>
 
       {/* What to bring */}
       <div className="space-y-1.5">
-        <h3 className="font-serif-editorial font-bold text-[16px] text-[#2E2A26]">
+        <h3 className="font-h4 text-[#6B655B]">
           What to bring
         </h3>
-        <p className="font-serif-editorial text-[12.5px] text-[#4A453E] leading-[1.5]">
+        <p className="font-b1 text-[#2E2A26]">
           {bringNarrative}
         </p>
       </div>
