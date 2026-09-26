@@ -149,11 +149,11 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                     color: "var(--text-primary, #2E2A26)",
                     textAlign: "center",
                     fontFamily: '"PT Serif", serif',
-                    fontSize: "11.108px",
+                    fontSize: "11.11px",
                     fontStyle: "normal",
                     fontWeight: 400,
                     lineHeight: "150%",
-                    letterSpacing: "0.222px",
+                    letterSpacing: "0.02em",
                     whiteSpace: "nowrap",
                   }}
                   className="w-full text-center block"
@@ -182,11 +182,11 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                     style={{
                       color: "var(--text-secondary, #6B655B)",
                       fontFamily: '"PT Serif", serif',
-                      fontSize: "11.108px",
+                      fontSize: "11.11px",
                       fontStyle: "normal",
                       fontWeight: 400,
                       lineHeight: "130%",
-                      letterSpacing: "0.222px",
+                      letterSpacing: "0.02em",
                     }}
                   >
                     <span>{slot.maxTempF}°F</span>

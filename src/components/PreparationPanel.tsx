@@ -247,11 +247,11 @@ export default function PreparationPanel() {
                         style={{
                           color: "var(--text-secondary, #6B655B)",
                           fontFamily: '"PT Serif", serif',
-                          fontSize: "11.108px",
+                          fontSize: "11.11px",
                           fontStyle: "normal",
                           fontWeight: 400,
                           lineHeight: "130%",
-                          letterSpacing: "0.222px",
+                          letterSpacing: "0.02em",
                         }}
                       >
                         <span>{h.tempF}°F</span>
@@ -268,11 +268,11 @@ export default function PreparationPanel() {
                         color: "var(--text-primary, #2E2A26)",
                         textAlign: "center",
                         fontFamily: '"PT Serif", serif',
-                        fontSize: "11.108px",
+                        fontSize: "11.11px",
                         fontStyle: "normal",
                         fontWeight: 400,
                         lineHeight: "150%",
-                        letterSpacing: "0.222px",
+                        letterSpacing: "0.02em",
                         whiteSpace: "nowrap",
                       }}
                       className="w-full text-center block"
