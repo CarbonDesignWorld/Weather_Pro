@@ -283,11 +283,11 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
   const wearDescription = getFallbackWearDescription(rulesResult.wearIcons);
   const packDescription = getFallbackPackDescription(rulesResult.packIcons);
 
-  // Compute 5-day daily forecast
+  // Compute 7-day daily forecast
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const weekly: DailyForecastSlot[] = [];
   const dailyTimes: string[] = data.daily?.time || [];
-  for (let i = 0; i < Math.min(5, dailyTimes.length); i++) {
+  for (let i = 0; i < Math.min(7, dailyTimes.length); i++) {
     const dDate = new Date(dailyTimes[i] + "T00:00:00");
     const dCode = data.daily.weather_code?.[i] ?? 0;
     const maxF = Math.round(data.daily.temperature_2m_max[i]);

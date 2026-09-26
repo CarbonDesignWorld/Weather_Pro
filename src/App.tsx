@@ -159,6 +159,10 @@ export default function WeatherApp() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [chatOpen, handleCloseChat]);
 
+  const openChat = useCallback(() => {
+    setChatOpen(true);
+  }, []);
+
   const openOverlay = useCallback((type: "wear" | "pack") => {
     setOverlay(type);
   }, []);
@@ -170,6 +174,7 @@ export default function WeatherApp() {
     location: location || { city: "Locating...", region: "", lat: 0, lon: 0, timezone: "auto" },
     setLocation: handleSelectLocation,
     openLocationModal: () => {},
+    openChat,
     openChatWithPrompt,
     openOverlay,
     chatOpen,

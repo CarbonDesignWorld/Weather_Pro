@@ -17,30 +17,34 @@ export default function CenterHero() {
   );
 
   return (
-    <div className="relative flex flex-col items-center justify-end w-full max-w-[440px] h-[520px] lg:h-[640px] select-none">
-      {/* Model Silhouette */}
+    <div
+      data-name="Frame 171"
+      className="relative flex flex-col items-center justify-end w-full max-w-[353px] lg:max-w-[467px] h-[386px] lg:h-[641px] select-none"
+    >
+      {/* Model Silhouette touching the floor baseline */}
       <div className="relative w-full h-full flex items-end justify-center">
         <img
           src={visual.src}
           alt={visual.alt}
-          className="max-h-[92%] w-auto object-contain drop-shadow-[0_12px_24px_rgba(46,42,38,0.22)] transition-all duration-500"
+          className="h-full w-auto object-contain object-bottom drop-shadow-[0_12px_24px_rgba(46,42,38,0.22)] transition-all duration-500"
         />
       </div>
 
-      {/* Floating Pack Item Card */}
+      {/* Floating Pack Item Card (Figma node 431:21782 / Frame 172) - Aligned to floor */}
       <div
-        className="absolute bottom-4 right-2 lg:right-6 bg-white/95 backdrop-blur-md rounded-2xl p-2.5 shadow-md border border-white/80 flex flex-col items-center gap-1.5 transition-transform hover:scale-105 cursor-pointer"
+        data-name="Frame 172"
+        className="absolute bottom-0 right-0 lg:right-2 w-[102px] h-[102px] rounded-[12px] shadow-full-card transition-transform hover:scale-105 active:scale-95 cursor-pointer select-none z-10"
+        style={{
+          boxShadow: "0px -2px 4px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px 1px rgba(0, 0, 0, 0.05)",
+        }}
         onClick={() => ctx?.openOverlay("pack")}
         title="View packed items"
       >
         <img
           src="/pack_umbrella.png"
-          alt="Pack item"
-          className="w-14 h-14 object-contain"
+          alt="Pack umbrella alert"
+          className="w-full h-full object-contain rounded-[12px]"
         />
-        <span className="bg-[#4A453E] text-white text-[10px] font-semibold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-          Pack
-        </span>
       </div>
     </div>
   );

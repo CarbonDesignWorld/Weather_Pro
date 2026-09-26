@@ -125,35 +125,5 @@ type Props = {
 };
 
 export default function ChatView({ open, onClose }: Props) {
-  if (!open) return null;
-
-  return (
-    <div
-      className="lg:hidden fixed inset-0 z-50 flex flex-col bg-[#faf8f4]"
-      style={{
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? "auto" : "none",
-        transition: "opacity 300ms ease",
-      }}
-    >
-      {/* Mobile Header with Close button */}
-      <div className="flex justify-between items-center px-4 h-[60px] border-b border-[#e4dfd6] shrink-0 bg-[#faf8f4]">
-        <span className="font-['Source_Serif_Pro:Semi_Bold','Source_Serif_4',serif] font-semibold text-[20px] text-[#6b655b]">
-          Today Assistant
-        </span>
-        <button
-          onClick={onClose}
-          className="cursor-pointer bg-transparent border-none text-[#6b655b] underline text-[16px] transition-colors duration-150"
-          style={{ fontFamily: "'Source Serif 4', serif" }}
-        >
-          Close
-        </button>
-      </div>
-
-      {/* Mobile Chat Card */}
-      <div className="flex-1 flex flex-col p-3 min-h-0">
-        <ChatCard />
-      </div>
-    </div>
-  );
+  return null;
 }

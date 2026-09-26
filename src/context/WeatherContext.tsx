@@ -14,6 +14,7 @@ export interface WeatherContextValue {
   location: LocationInfo;
   setLocation: (loc: LocationInfo) => void;
   openLocationModal: () => void;
+  openChat: () => void;
   openChatWithPrompt: (prompt: string) => void;
   openOverlay: (type: "wear" | "pack") => void;
   chatOpen: boolean;
