@@ -212,29 +212,43 @@ export default function PreparationPanel() {
                   <div
                     key={idx}
                     data-name="Weather Cell"
-                    className="w-[71px] h-[80px] bg-[#FAF8F4] rounded-[12px] p-2 flex flex-col items-center justify-between border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
+                    className="w-[74px] h-[86px] bg-[#FAF8F4] rounded-[12px] py-1.5 px-1.5 flex flex-col items-center justify-between border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
                   >
                     {/* Icon and Degrees Frame */}
                     <div className="flex items-center justify-center gap-1.5 w-full">
                       <div
-                        className="w-[19px] h-[19px] rounded-full flex-shrink-0 transition-all duration-300"
+                        className="w-[18px] h-[18px] rounded-full flex-shrink-0 transition-all duration-300"
                         style={{
                           backgroundColor: hourOrb.color,
                           boxShadow: hourOrb.boxShadow,
                         }}
                         title={`${hourOrb.label}: ${h.tempF}°F`}
                       />
-                      <div className="flex flex-col font-b3 text-[#6B655B] leading-[1.2] text-left">
+                      <div
+                        className="flex flex-col text-[#6B655B] text-left"
+                        style={{
+                          fontFamily: '"Fira Sans", sans-serif',
+                          fontSize: "12px",
+                          lineHeight: "1.2",
+                        }}
+                      >
                         <span>{h.tempF}°F</span>
                         <span>{h.tempC}°C</span>
                       </div>
                     </div>
 
-                    {/* Divider Line 2 */}
-                    <div className="w-full border-t border-[#E4DFD6]" />
+                    {/* Divider Line */}
+                    <div className="w-full border-t border-[#E4DFD6] my-0.5" />
 
                     {/* Hour Time */}
-                    <span className="font-b3 text-[#2E2A26] font-normal tracking-[0.02em] truncate w-full text-center">
+                    <span
+                      className="w-full text-center text-[#2E2A26] font-normal truncate"
+                      style={{
+                        fontFamily: '"Fira Sans", sans-serif',
+                        fontSize: "12px",
+                        lineHeight: "1.2",
+                      }}
+                    >
                       {h.displayTime}
                     </span>
                   </div>

@@ -112,19 +112,9 @@ body,
   letter-spacing: -0.03em;
 }
 
-/* Wear / Pack icon cards — hover state */
+/* Wear / Pack descriptive cells — clean static presentation without hover effects */
 .weather-app-root [data-name="Frame Background Cell"] {
-  cursor: pointer;
-  transition: background-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.weather-app-root [data-name="Frame Background Cell"]:hover {
-  background-color: #e4dfd6 !important;
-  box-shadow: 0px 2px 6px 1px rgba(28, 42, 68, 0.15);
-}
-
-.weather-app-root [data-name="Frame Background Cell"]:active {
-  background-color: #d5cfc4 !important;
+  cursor: default;
 }
 
 /* Suggestion prompt buttons — consistent hover across button + div elements */

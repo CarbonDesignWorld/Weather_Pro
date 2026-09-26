@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import HomeScreen from "#imports/index";
-import WearPackOverlay, { type OverlayType } from "./WearPackOverlay";
 import ChatView from "./ChatView";
 import { DayBrief, LocationInfo } from "./lib/types";
 import { cleanCopyText } from "./lib/constants";
@@ -14,7 +13,6 @@ export default function WeatherApp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [overlay, setOverlay] = useState<OverlayType>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatSeed, setChatSeed] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
@@ -163,10 +161,6 @@ export default function WeatherApp() {
     setChatOpen(true);
   }, []);
 
-  const openOverlay = useCallback((type: "wear" | "pack") => {
-    setOverlay(type);
-  }, []);
-
   const contextValue: WeatherContextValue = {
     brief,
     loading,
@@ -176,7 +170,7 @@ export default function WeatherApp() {
     openLocationModal: () => {},
     openChat,
     openChatWithPrompt,
-    openOverlay,
+    openOverlay: () => {},
     chatOpen,
     chatSeed,
     closeChat: handleCloseChat,
@@ -193,13 +187,6 @@ export default function WeatherApp() {
           <HomeScreen />
         </div>
       </div>
-
-      <WearPackOverlay
-        open={overlay}
-        brief={brief}
-        onClose={() => setOverlay(null)}
-        onSwitch={setOverlay}
-      />
 
       <ChatView
         open={chatOpen}

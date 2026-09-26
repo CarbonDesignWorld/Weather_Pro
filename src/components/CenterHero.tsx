@@ -16,6 +16,16 @@ export default function CenterHero() {
     brief?.wear?.icons ?? []
   );
 
+  const hasRain = Boolean(
+    (brief?.dayRange?.maxPrecipProb && brief.dayRange.maxPrecipProb >= 25) ||
+    (brief?.current?.precipProbability && brief.current.precipProbability >= 25) ||
+    (brief?.dayRange?.totalPrecipMm && brief.dayRange.totalPrecipMm > 0) ||
+    brief?.current?.condition?.toLowerCase().includes("rain") ||
+    brief?.current?.condition?.toLowerCase().includes("drizzle") ||
+    brief?.current?.condition?.toLowerCase().includes("shower") ||
+    brief?.current?.condition?.toLowerCase().includes("storm")
+  );
+
   return (
     <div
       data-name="Frame 171"
@@ -30,22 +40,23 @@ export default function CenterHero() {
         />
       </div>
 
-      {/* Floating Pack Item Card (Figma node 431:21782 / Frame 172) - Aligned to floor */}
-      <div
-        data-name="Frame 172"
-        className="absolute bottom-0 right-0 lg:right-2 w-[102px] h-[102px] rounded-[12px] shadow-full-card transition-transform hover:scale-105 active:scale-95 cursor-pointer select-none z-10"
-        style={{
-          boxShadow: "0px -2px 4px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px 1px rgba(0, 0, 0, 0.05)",
-        }}
-        onClick={() => ctx?.openOverlay("pack")}
-        title="View packed items"
-      >
-        <img
-          src="/pack_umbrella.png"
-          alt="Pack umbrella alert"
-          className="w-full h-full object-contain rounded-[12px]"
-        />
-      </div>
+      {/* Floating Pack Umbrella Item Card — Only visible when rain is present in daily forecast */}
+      {hasRain && (
+        <div
+          data-name="Frame 172"
+          className="absolute bottom-0 right-0 lg:right-2 w-[102px] h-[102px] rounded-[12px] shadow-full-card select-none z-10"
+          style={{
+            boxShadow: "0px -2px 4px -1px rgba(0, 0, 0, 0.05), 0px 2px 4px 1px rgba(0, 0, 0, 0.05)",
+          }}
+          title="Pack umbrella alert"
+        >
+          <img
+            src="/pack_umbrella.png"
+            alt="Pack umbrella alert"
+            className="w-full h-full object-contain rounded-[12px]"
+          />
+        </div>
+      )}
     </div>
   );
 }

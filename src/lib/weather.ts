@@ -281,15 +281,14 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
   // Run Rules Engine
   const rulesResult = evaluateRules({ current, dayRange });
 
-  // Compute 24-hour forward timeline spaced every 3 hours (8 slots total, uncrowded and scrollable)
+  // Compute 24-hour forward timeline with every single hour (24 consecutive hourly slots)
   const hourly: HourlySlot[] = [];
   let foundMidnight = false;
   const todayDay = new Date(data.current.time).getDate();
 
-  for (let i = 0; i < 8; i++) {
-    const idx = currentHourIdx + i * 3;
-    if (idx >= hourlyTimes.length) break;
-
+  const totalHours = Math.min(24, hourlyTimes.length - currentHourIdx);
+  for (let i = 0; i < totalHours; i++) {
+    const idx = currentHourIdx + i;
     const t = hourlyTimes[idx];
     const slotDate = new Date(t);
     const tempF = Math.round(data.hourly.temperature_2m[idx]);
