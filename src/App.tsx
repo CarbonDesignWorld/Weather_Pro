@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import HomeScreen from "#imports/index";
 import ChatView from "./ChatView";
+import LocationSearchModal from "./components/LocationSearchModal";
 import { DayBrief, LocationInfo } from "./lib/types";
 import { cleanCopyText } from "./lib/constants";
 import { resolveUserLocation, fetchDayBrief, saveLocation } from "./lib/weather";
@@ -13,6 +14,7 @@ export default function WeatherApp() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [chatSeed, setChatSeed] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
@@ -167,7 +169,7 @@ export default function WeatherApp() {
     error,
     location: location || { city: "Locating...", region: "", lat: 0, lon: 0, timezone: "auto" },
     setLocation: handleSelectLocation,
-    openLocationModal: () => {},
+    openLocationModal: () => setLocationModalOpen(true),
     openChat,
     openChatWithPrompt,
     openOverlay: () => {},
@@ -191,6 +193,12 @@ export default function WeatherApp() {
       <ChatView
         open={chatOpen}
         onClose={handleCloseChat}
+      />
+
+      <LocationSearchModal
+        open={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+        onSelect={handleSelectLocation}
       />
     </WeatherContext.Provider>
   );

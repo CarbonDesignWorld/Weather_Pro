@@ -47,9 +47,13 @@ export type TagId = TemperatureTagId | SkyTagId | MoistureTagId;
 export interface LocationInfo {
   city: string;
   region: string;
+  stateCode?: string;
+  postalCode?: string;
+  country?: string;
   lat: number;
   lon: number;
   timezone: string;
+  isCustom?: boolean;
 }
 
 export interface CurrentConditions {

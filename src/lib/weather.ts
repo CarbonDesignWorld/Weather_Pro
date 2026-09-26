@@ -17,10 +17,33 @@ const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 export const DEFAULT_LOCATION: LocationInfo = {
   city: "New York",
   region: "New York",
+  stateCode: "NY",
+  postalCode: "10001",
+  country: "United States",
   lat: 40.7128,
   lon: -74.006,
   timezone: "America/New_York",
 };
+
+export function formatLocation(loc: LocationInfo | null | undefined): string {
+  if (!loc) return "Locating...";
+  const stateOrRegion = loc.stateCode || loc.region;
+
+  if (loc.city && stateOrRegion) {
+    const stateZip = loc.postalCode ? `${stateOrRegion} ${loc.postalCode}` : stateOrRegion;
+    return `${loc.city}, ${stateZip}`;
+  }
+
+  if (loc.city) {
+    return loc.postalCode ? `${loc.city} ${loc.postalCode}` : loc.city;
+  }
+
+  if (stateOrRegion) {
+    return loc.postalCode ? `${stateOrRegion} ${loc.postalCode}` : stateOrRegion;
+  }
+
+  return loc.postalCode || "Current Location";
+}
 
 export function getSavedLocation(): LocationInfo | null {
   try {
@@ -40,93 +63,175 @@ export function saveLocation(loc: LocationInfo): void {
 }
 
 export async function searchLocations(query: string): Promise<LocationInfo[]> {
-  if (!query || query.trim().length < 2) return [];
-  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query.trim())}&count=5&language=en&format=json`;
+  const clean = query.trim();
+  if (!clean || clean.length < 2) return [];
+
+  // 1. Check if 5-digit US zip code
+  if (/^\d{5}(-\d{4})?$/.test(clean)) {
+    const zip5 = clean.slice(0, 5);
+    try {
+      const res = await fetch(`https://api.zippopotam.us/us/${zip5}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.places && data.places.length > 0) {
+          const p = data.places[0];
+          return [
+            {
+              city: p["place name"],
+              region: p["state"],
+              stateCode: p["state abbreviation"],
+              postalCode: zip5,
+              country: data["country"] || "United States",
+              lat: parseFloat(p["latitude"]),
+              lon: parseFloat(p["longitude"]),
+              timezone: "auto",
+              isCustom: true,
+            },
+          ];
+        }
+      }
+    } catch (err) {
+      console.warn("Zip code search error:", err);
+    }
+  }
+
+  // 2. Query Open-Meteo for city/region/state/landmark search
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(clean)}&count=8&language=en&format=json`;
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Geocoding failed");
     const data = await res.json();
     if (!data.results) return [];
 
-    return data.results.map((r: any) => ({
-      city: r.name,
-      region: r.admin1 || r.country || "",
-      lat: r.latitude,
-      lon: r.longitude,
-      timezone: r.timezone || "auto",
-    }));
+    return data.results.map((r: any) => {
+      const postCode = r.postcodes && r.postcodes.length > 0 ? r.postcodes[0] : "";
+      return {
+        city: r.name,
+        region: r.admin1 || r.country || "",
+        postalCode: postCode,
+        country: r.country || "",
+        lat: r.latitude,
+        lon: r.longitude,
+        timezone: r.timezone || "auto",
+        isCustom: true,
+      };
+    });
   } catch (err) {
     console.error("Location search error", err);
     return [];
   }
 }
 
-export async function resolveUserLocation(): Promise<LocationInfo> {
-  const saved = getSavedLocation();
-  if (saved) return saved;
-
-  if (typeof navigator === "undefined" || !navigator.geolocation) {
-    return DEFAULT_LOCATION;
+export async function detectLocationViaIP(): Promise<LocationInfo | null> {
+  try {
+    const res = await fetch("https://ipwho.is/");
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success) {
+        return {
+          city: data.city || "Current Location",
+          region: data.region || data.country || "",
+          stateCode: data.region_code || "",
+          postalCode: data.postal || "",
+          country: data.country || "",
+          lat: data.latitude,
+          lon: data.longitude,
+          timezone: data.timezone?.id || Intl.DateTimeFormat().resolvedOptions().timeZone,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn("IP geolocation (ipwho.is) failed:", err);
   }
 
-  return new Promise((resolve) => {
-    let handled = false;
-    const timer = setTimeout(() => {
-      if (!handled) {
-        handled = true;
-        resolve(DEFAULT_LOCATION);
-      }
-    }, 5000);
-
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        if (handled) return;
-        handled = true;
-        clearTimeout(timer);
-
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        try {
-          // Reverse geocode via BigDataCloud or OpenStreetMap
-          const revUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
-          const res = await fetch(revUrl);
-          if (res.ok) {
-            const data = await res.json();
-            const loc: LocationInfo = {
-              city: data.city || data.locality || "Current Location",
-              region: data.principalSubdivision || data.countryName || "",
-              lat,
-              lon,
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            };
-            saveLocation(loc);
-            resolve(loc);
-            return;
-          }
-        } catch {
-          // ignore error
-        }
-
-        const fallbackLoc: LocationInfo = {
-          city: "Local Area",
-          region: "",
-          lat,
-          lon,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  try {
+    const res = await fetch("https://freeipapi.com/api/json");
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.latitude) {
+        return {
+          city: data.cityName || "Current Location",
+          region: data.regionName || data.countryName || "",
+          stateCode: data.regionName?.length === 2 ? data.regionName : "",
+          postalCode: data.zipCode || "",
+          country: data.countryName || "",
+          lat: data.latitude,
+          lon: data.longitude,
+          timezone: data.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         };
-        saveLocation(fallbackLoc);
-        resolve(fallbackLoc);
-      },
-      () => {
-        if (!handled) {
-          handled = true;
-          clearTimeout(timer);
-          resolve(DEFAULT_LOCATION);
-        }
-      },
-      { timeout: 5000 }
-    );
-  });
+      }
+    }
+  } catch (err) {
+    console.warn("IP geolocation fallback failed:", err);
+  }
+
+  return null;
+}
+
+export async function reverseGeocode(lat: number, lon: number): Promise<LocationInfo> {
+  try {
+    const revUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`;
+    const res = await fetch(revUrl);
+    if (res.ok) {
+      const data = await res.json();
+      const rawStateCode = data.principalSubdivisionCode ? data.principalSubdivisionCode.replace(/^US-/, "") : "";
+      return {
+        city: data.city || data.locality || "Current Location",
+        region: data.principalSubdivision || data.countryName || "",
+        stateCode: rawStateCode.length <= 3 ? rawStateCode : "",
+        postalCode: data.postcode || "",
+        country: data.countryName || "",
+        lat,
+        lon,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
+    }
+  } catch (err) {
+    console.warn("Reverse geocode failed:", err);
+  }
+
+  return {
+    city: "Local Area",
+    region: "",
+    lat,
+    lon,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  };
+}
+
+export async function resolveUserLocation(forceRefresh = false): Promise<LocationInfo> {
+  const saved = getSavedLocation();
+  // If user explicitly picked a custom location and forceRefresh is false, keep it
+  if (saved && saved.isCustom && !forceRefresh) {
+    return saved;
+  }
+
+  // 1. Try high-accuracy browser geolocation if available
+  if (typeof navigator !== "undefined" && navigator.geolocation) {
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          timeout: 4000,
+          maximumAge: 300000,
+        });
+      });
+      const loc = await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+      saveLocation(loc);
+      return loc;
+    } catch {
+      // Browser prompt dismissed, denied, or timed out -> fall through to IP detection
+    }
+  }
+
+  // 2. Fallback to fast IP geolocation (detects city, state, zip without permission prompts)
+  const ipLoc = await detectLocationViaIP();
+  if (ipLoc) {
+    saveLocation(ipLoc);
+    return ipLoc;
+  }
+
+  // 3. Fallback to saved or DEFAULT_LOCATION
+  return saved || DEFAULT_LOCATION;
 }
 
 function formatHour(isoString: string): string {

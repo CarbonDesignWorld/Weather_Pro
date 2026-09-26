@@ -1,6 +1,7 @@
 import React from "react";
 import { useWeather } from "../context/WeatherContext";
 import { getNarrativeWearDescription, getNarrativeBringDescription } from "../lib/constants";
+import { formatLocation } from "../lib/weather";
 import { getFeelsLikeOrbStyle } from "./WeeklyForecast";
 import ConditionTags from "./ConditionTags";
 import calendarIcon from "../assets/figma_svgs/calendar_icon.svg";
@@ -127,8 +128,11 @@ export default function PreparationPanel() {
               fill="currentColor"
             />
           </svg>
-          <span className="font-b1 text-[#2E2A26] truncate">
-            {location ? `${location.city}, ${location.region || location.country || ""}` : "New York, New York 100032"}
+          <span
+            className="font-b1 text-[#2E2A26] truncate"
+            title={formatLocation(location)}
+          >
+            {formatLocation(location)}
           </span>
         </div>
 
