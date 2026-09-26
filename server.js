@@ -194,7 +194,7 @@ async function handleChat(req, res) {
     if (!apiKey) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
-        message: "Chat agent is currently running in offline preview mode. Please configure your GEMINI_API_KEY."
+        message: "Stylist agent is currently in offline preview. Configure your GEMINI_API_KEY for live consultations."
       }));
       return;
     }
@@ -204,45 +204,33 @@ async function handleChat(req, res) {
       location: context?.location,
       current: context?.current,
       dayRange: context?.dayRange,
-      wear: {
-        ...context?.wear,
-        items: (context?.wear?.icons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")),
-      },
-      pack: {
-        ...context?.pack,
-        items: (context?.pack?.icons || []).map((id) => ICON_NAMES[id] || id.replace(/_/g, " ")),
-      },
-      tags: context?.tags,
       severity: context?.severity,
       hourly: context?.hourly?.map((h) => ({
         time: h.displayTime,
         tempF: h.tempF,
+        tempC: h.tempC,
         condition: h.condition,
       })),
     });
 
-    const isExtreme = context?.severity === "extreme";
-    const systemInstruction = `You are the personal weather and wardrobe assistant inside Today.io.
-Your job is to answer the user's questions about today's weather and what to wear or pack.
+    const systemInstruction = `You are the personal wardrobe stylist and meteorological editor inside Today.io.
+PERSONA: Minimalist Stylist.
+Tone: Discerning, calm, sharp, understated, and pragmatic. You value clean silhouettes, breathable fabrics, and functional layering over frivolous fashion. Never use emojis, exclamation marks, or corporate filler ("navigate the changing weather", "essential pieces", "seamless transition"). Keep answers under 60 words unless asked for a multi-day itinerary.
 
-You can only discuss TODAY, for the location in CONTEXT below. You have no ability to look up other days, other locations, or historical weather.
+You have access to TODAY's localized weather in CONTEXT below (temperatures, feels-like, wind, humidity, UV index, and hourly trends).
 
-If asked about other days or other locations, say: "I can only talk about today right now." and stop.
-
-Answer only from CONTEXT. Never invent a temperature, condition, or forecast. If CONTEXT doesn't contain the answer, say so.
-
-RULES:
-1. When asked whether an item can be skipped, omitted, or substituted (e.g. "Can I skip the jacket?", "Can I wear shorts?", "Why the boots?", "Can I pack a jacket"):
-   - Give a direct, helpful answer grounded in CONTEXT.
-   - If asked about an item that is NOT recommended in CONTEXT (like boots or a jacket when it is sunny and warm), clarify directly that the item is not needed or recommended today because of the warm conditions.
-2. If asked "What if I am out all day?", summarize the day's temperature progression and key advice based on the hourly timeline in CONTEXT.
-3. Maintain a natural, concise, and helpful tone. Do not output lone fragments like just a temperature number. Provide complete, helpful sentences.
-4. Keep answers under 60 words unless the user explicitly asks for detail.
-5. Use natural English phrasing for clothing and accessories. NEVER use underscores or raw code identifiers (write "t-shirt", "sun hat", "water bottle", "sunscreen").
-6. SAFETY: You do not give medical diagnoses or travel-safety verdicts.
-   - If asked about medical symptoms (heat stroke, hypothermia, etc.): do not diagnose; point to medical professionals or emergency services immediately.
-   - If asked whether it is safe to drive, fly, or travel: describe the conditions accurately, do not issue a safety verdict.
-   - If asked about an active weather emergency: state conditions and direct to official local authorities.
+SPECIAL AGENTIC INTENTS:
+1. "Dress for the night" / Night queries:
+   - Isolate the forecast between 6 PM and 2 AM from CONTEXT.
+   - Address evening temperature drops, rising humidity, or nighttime gusts.
+   - Advise transitioning daytime staples with structured evening outerwear, deeper tonal palettes, and footwear suited for cooler pavement.
+2. "Dress for an event" / Formal or occasion queries:
+   - Provide elevated, tailored styling that directly accounts for today's weather hazards (e.g. humid hair/creasing risks, rain resilience for formal footwear, or wind-blocking outerwear over delicate fabrics).
+3. "Pack for vacation" / "Pack for a vacation":
+   - If the user has not provided a destination or duration, politely ask: "Where are you heading and for how many days? I will curate a modular capsule wardrobe for the trip."
+   - If a destination/trip length is provided, assemble a concise, modular capsule emphasizing interchangeable layers.
+4. Garment omission / substitution ("Can I skip the coat?", "Can I wear shorts?"):
+   - Give a direct verdict in your first sentence grounded in CONTEXT feels-like and wind data.
 
 CONTEXT:
 ${contextJson}`;
@@ -258,7 +246,7 @@ ${contextJson}`;
         systemInstruction: { parts: [{ text: systemInstruction }] },
         contents,
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.35,
           maxOutputTokens: 800,
         },
       });
@@ -266,9 +254,8 @@ ${contextJson}`;
       console.error("Gemini chat error:", callErr);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
-        message: "Unable to complete request right now.",
+        message: "Unable to consult the stylist right now.",
         error: callErr.statusText || callErr.message || "Failed",
-        details: callErr.details,
         retryable: true,
       }));
       return;
@@ -278,7 +265,7 @@ ${contextJson}`;
     const reply = cleanCopyText(rawReply);
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
-      message: reply || "I can only answer questions about today's weather and recommendations."
+      message: reply || "Keep pieces simple, functional, and tailored to current conditions."
     }));
   } catch (err) {
     console.error("Chat turn error:", err);
@@ -289,7 +276,7 @@ ${contextJson}`;
 
 async function handleGenerateCopy(req, res) {
   try {
-    const { current, dayRange, wearIcons, packIcons, severity } = await readJsonBody(req);
+    const { current, dayRange, severity, location } = await readJsonBody(req);
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -298,62 +285,41 @@ async function handleGenerateCopy(req, res) {
       return;
     }
 
-    let voiceTone = "Blunt, dry, and confident. Short declarative sentences. Specific over intense. No exclamation marks, no hedging, no personified weather, no clichés, no emoji.";
-    if (severity === "elevated") {
-      voiceTone = "Blunt but no wit. Straight facts and instruction only. Serious weather conditions.";
-    } else if (severity === "extreme") {
-      voiceTone = "Plain and factual only. No stylisation or humor of any kind. Dangerous weather conditions.";
-    }
+    const systemInstruction = `You write the editorial weather briefing and wardrobe styling for Today.io.
+PERSONA: Minimalist Stylist.
+TONE: Crisp, direct, tactile, and discerning. No exclamation marks. No clichés ("step out in style", "must-have", "navigate the day"). No emojis.
 
-    const wearDescriptions = (wearIcons || []).map((id) => {
-      const meta = ICON_FASHION_META[id];
-      return meta ? `${meta.name} [fabric: ${meta.fabric}; sensation: ${meta.feel}]` : (ICON_NAMES[id] || id.replace(/_/g, " "));
-    }).join("; ");
+CADENCE ARCHITECTURE (Strict 3-beat rhythm for both Wear and Pack):
+- Sentence 1 (Short Anchor): 4 to 7 words. Direct outfit verdict or essential command.
+- Sentence 2 (The Sensory Breath): 10 to 18 words. Specific fabrics (e.g. unlined wool, crisp poplin, washed linen, heavyweight jersey), fit, and how the garment regulates body climate against temperature, humidity, or wind.
+- Sentence 3 (Atmospheric Detail / Shift): 8 to 14 words. Address the day's progression (evening chill, sudden gusts, UV glare, or dampness).
 
-    const packDescriptions = (packIcons || []).map((id) => {
-      const meta = ICON_FASHION_META[id];
-      return meta ? `${meta.name} [fabric: ${meta.fabric}; sensation: ${meta.feel}]` : (ICON_NAMES[id] || id.replace(/_/g, " "));
-    }).join("; ");
+OUTPUT FIELDS:
+1. "nowDescription": Exactly 2 sentences capturing what it immediately feels like outside. Compare ambient temperature with the apparent "feels like" temperature, wind bite, humidity, and atmospheric momentum. (60 to 140 characters).
+2. "wearDescription": 2 or 3 sentences following the Cadence Architecture (Anchor -> Breath -> Detail). Describe specific garments, fabrics, and styling. (70 to 175 characters).
+3. "packDescription": 2 sentences following the Cadence Architecture. Specific carry gear (umbrella, sunglasses, tote, layers) and immediate weather justification. (50 to 130 characters).
+4. "headline": 2 to 4 words on one line. Punchy verdict. (10 to 25 characters).
 
-    const systemInstruction = `You write the editorial copy for Today.io, a weather utility app that tells people what to wear and pack today in one glance.
+Respond in valid strict JSON only.`;
 
-TONE: ${voiceTone}
+    const feelsLikeDelta = (current?.feelsLikeF !== undefined && current?.tempF !== undefined)
+      ? current.feelsLikeF - current.tempF
+      : 0;
+    const precipChance = dayRange?.next3hMaxPrecipProb !== undefined ? dayRange.next3hMaxPrecipProb : current?.precipProbability;
 
-CRITICAL RULES:
-1. You MUST describe ONLY the exact items in WEAR_ITEMS and PACK_ITEMS. Never recommend or name any garment or item not in those lists.
-2. FASHION, FABRICS & SENSORY DEPTH:
-   - For wearDescription, describe the outfit intentionally: evoke fabric textures (cotton, linen, wool, ripstop nylon), fit (boxy, tailored, relaxed), and the physical sensation of the weather against skin and garments.
-   - Do NOT simply list item names like a grocery list. Explain how these specific pieces and fabrics work together to keep the body comfortable today.
-   - nowDescription must capture the immediate 3-hour atmospheric feel (temperature momentum, breeze, UV intensity, or dampness).
-3. Character limits (STRICT):
-   - headline: 10 to 25 characters STRICT MAX. Exactly 2 to 4 words on ONE single line (e.g. "Dress light today", "Layer up for cold", "Stay cool out there"). NEVER exceed 25 characters or wrap.
-   - wearDescription: 40 to 110 characters STRICT MAX. Exactly 1 or 2 concise, complete sentences describing fabric textures and how it feels. Never exceed 110 characters. Must finish the sentence completely.
-   - packDescription: 30 to 85 characters STRICT MAX.
-   - nowDescription: 40 to 105 characters STRICT MAX.
-4. Use natural English phrasing for clothing and items (write "t-shirt", "sun hat", "water bottle", "sunscreen"). NEVER use underscores or raw code identifiers.
-5. Respond in valid, strict JSON ONLY. No markdown fences, no explanatory text.`;
-
-    const shortTermPrecip = dayRange?.next3hMaxPrecipProb !== undefined ? dayRange.next3hMaxPrecipProb : current?.precipProbability;
-    const prompt = `Current Weather: ${current?.condition}, ${current?.tempF}°F (Feels like ${current?.feelsLikeF}°F).
-Day Range: Low ${dayRange?.minTempF}°F / High ${dayRange?.maxTempF}°F. Rain probability (next 3 hours): ${shortTermPrecip}%. Wind: ${current?.windMph} mph.
-WEAR_ITEMS: ${wearDescriptions || "None"}
-PACK_ITEMS: ${packDescriptions || "None"}
-Severity: ${severity}
-
-Return strict JSON:
-{
-  "headline": "Short single-line punchy headline (10-25 chars)",
-  "wearDescription": "Why and how to wear these specific fabrics and items (40-110 chars)",
-  "packDescription": "Why to pack these specific items (30-85 chars)",
-  "nowDescription": "Immediate 3-hour atmospheric conditions summary (40-105 chars)"
-}`;
+    const weatherSummary = `Location: ${location?.city || "Local"}
+Current: ${current?.condition || "Clear"}, ${current?.tempF}°F (Apparent feels-like: ${current?.feelsLikeF}°F, delta: ${feelsLikeDelta > 0 ? "+" : ""}${feelsLikeDelta}°F).
+Wind: ${current?.windMph || 0} mph. Humidity: ${current?.humidity || 50}%. UV Index: ${current?.uvIndex || 0}.
+Day Range: Low ${dayRange?.minTempF || current?.tempF || 65}°F / High ${dayRange?.maxTempF || current?.tempF || 75}°F.
+Precipitation chance (next 3 hours): ${precipChance || 0}%.
+Severity: ${severity || "normal"}`;
 
     let data;
     try {
       data = await callGemini(apiKey, {
-        contents: [{ parts: [{ text: `${systemInstruction}\n\n${prompt}` }] }],
+        contents: [{ parts: [{ text: `${systemInstruction}\n\n${weatherSummary}` }] }],
         generationConfig: {
-          temperature: 0.4,
+          temperature: 0.35,
           responseMimeType: "application/json",
         },
       });
@@ -369,14 +335,14 @@ Return strict JSON:
     if (parsed.headline && typeof parsed.headline === 'string') {
       parsed.headline = cleanCopyText(parsed.headline.trim().replace(/[\r\n]+/g, ' ').slice(0, 25));
     }
+    if (parsed.nowDescription && typeof parsed.nowDescription === 'string') {
+      parsed.nowDescription = smartTrim(parsed.nowDescription, 160);
+    }
     if (parsed.wearDescription && typeof parsed.wearDescription === 'string') {
-      parsed.wearDescription = smartTrim(parsed.wearDescription, 115);
+      parsed.wearDescription = smartTrim(parsed.wearDescription, 195);
     }
     if (parsed.packDescription && typeof parsed.packDescription === 'string') {
-      parsed.packDescription = smartTrim(parsed.packDescription, 90);
-    }
-    if (parsed.nowDescription && typeof parsed.nowDescription === 'string') {
-      parsed.nowDescription = smartTrim(parsed.nowDescription, 110);
+      parsed.packDescription = smartTrim(parsed.packDescription, 150);
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(parsed));

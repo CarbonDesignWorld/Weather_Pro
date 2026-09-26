@@ -4,7 +4,11 @@ interface GreetingCardProps {
   name?: string;
 }
 
-export default function GreetingCard({ name = "Mandy" }: GreetingCardProps) {
+export default function GreetingCard({ name }: GreetingCardProps) {
+  const greetingText = name && name.trim()
+    ? `Welcome ${name.trim()}, I’m your Daily Preparation partner. Together we’ll ensure you are always ready.`
+    : "Welcome, I’m your Daily Preparation partner. Together we’ll ensure you are always ready.";
+
   return (
     <div
       data-name="Greeting Frame"
@@ -16,7 +20,7 @@ export default function GreetingCard({ name = "Mandy" }: GreetingCardProps) {
       }}
     >
       <h1 className="text-white font-mobile-h1 lg:font-h1">
-        Welcome {name}, I’m your Daily Preparation partner. Together we’ll ensure you are always ready.
+        {greetingText}
       </h1>
     </div>
   );

@@ -47,14 +47,15 @@ export default function PreparationPanel() {
         { displayTime: "4:00 pm", tempF: 38, tempC: 3, conditionCode: 0 },
       ];
 
-  // Overview copy
+  // Overview copy (Sensory & Atmospheric weather feeling from LLM or local fallback)
   const overviewCopy = brief?.nowDescription || 
-    (brief?.wear?.description 
-      ? `You can expect ${condition.toLowerCase()} and steady conditions today. ${brief.wear.description}`
-      : `You can expect a cold morning and a high chance of snow. Wear closed shoes, a heavy jacket, and gloves today.`);
+    (current?.feelsLikeF !== undefined && Math.abs(current.feelsLikeF - tempF) >= 3
+      ? `${condition} and ${tempF}°, though it feels closer to ${current.feelsLikeF}° due to current wind and humidity levels.`
+      : `${condition} and ${tempF}°. Mild, steady atmospheric conditions holding across the afternoon.`);
 
-  const wearNarrative = getNarrativeWearDescription(brief?.wear?.icons || [], tempF, condition);
-  const bringNarrative = getNarrativeBringDescription(brief?.pack?.icons || [], tempF, condition);
+  // What to wear & What to bring (Direct LLM copy with Technique 1 cadence)
+  const wearNarrative = brief?.wear?.description || getNarrativeWearDescription(brief?.wear?.icons || [], tempF, condition);
+  const bringNarrative = brief?.pack?.description || getNarrativeBringDescription(brief?.pack?.icons || [], tempF, condition);
 
   return (
     <div

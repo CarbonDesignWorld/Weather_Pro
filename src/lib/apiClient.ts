@@ -11,9 +11,10 @@ export async function requestCopyGeneration(brief: DayBrief): Promise<GeneratedC
       body: JSON.stringify({
         current: brief.current,
         dayRange: brief.dayRange,
-        wearIcons: brief.wear.icons,
-        packIcons: brief.pack.icons,
         severity: brief.severity,
+        location: {
+          city: brief.current?.condition || "",
+        },
       }),
     });
     const contentType = res.headers.get("content-type") || "";

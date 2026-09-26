@@ -6,7 +6,7 @@ import {
   HourlySlot,
   DailyForecastSlot,
 } from "./types";
-import { getWMOInfo, cleanCopyText, getFallbackHeadline, getFallbackWearDescription, getFallbackPackDescription, getFallbackNowDescription } from "./constants";
+import { getWMOInfo, cleanCopyText, getFallbackHeadline, getFallbackNowDescription, getNarrativeWearDescription, getNarrativeBringDescription } from "./constants";
 import { evaluateRules } from "./rules";
 import { resolveWeatherTheme } from "./backgrounds";
 
@@ -280,8 +280,8 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
 
   const headline = getFallbackHeadline(current.condition, current.tempF, rulesResult.severity);
   const nowDescription = getFallbackNowDescription(current.condition, current.tempF, dayRange.maxTempF, current.windMph, next3hMaxPrecipProb);
-  const wearDescription = getFallbackWearDescription(rulesResult.wearIcons);
-  const packDescription = getFallbackPackDescription(rulesResult.packIcons);
+  const wearDescription = getNarrativeWearDescription(rulesResult.wearIcons, current.tempF, current.condition);
+  const packDescription = getNarrativeBringDescription(rulesResult.packIcons, current.tempF, current.condition);
 
   // Compute 7-day daily forecast
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

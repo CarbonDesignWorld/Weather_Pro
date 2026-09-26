@@ -537,15 +537,11 @@ export function getFallbackHeadline(condition: string, tempF: number, severity: 
 }
 
 export function getFallbackWearDescription(icons: IconId[]): string {
-  const names = icons.map((id) => ICONS[id]?.name ?? id);
-  if (names.length === 0) return "Dress comfortably for today's weather.";
-  return cleanCopyText(`Wear ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`);
+  return "Opt for breathable transitional layers. A relaxed cotton crewneck paired with tailored trousers keeps you comfortable through shifting temperatures. Drape a clean unlined overcoat as evening sets in.";
 }
 
 export function getFallbackPackDescription(icons: IconId[]): string {
-  const names = icons.map((id) => ICONS[id]?.name ?? id);
-  if (names.length === 0) return "No extra items needed today.";
-  return cleanCopyText(`Pack ${names.slice(0, -1).join(", ")}${names.length > 1 ? " and " : ""}${names[names.length - 1]}.`);
+  return "Keep essential gear compact. Carry polarized UV sunglasses and an insulated water bottle for all-day hydration. Slip an umbrella into your carry if clouds gather.";
 }
 
 export function getFallbackNowDescription(
@@ -586,30 +582,30 @@ export function getFallbackNowDescription(
 
 export function getNarrativeWearDescription(icons: IconId[], tempF: number, condition: string): string {
   if (tempF <= 35 || condition.toLowerCase().includes("snow")) {
-    return "Today you should wear something warm. A heavy jacket, long insulated pants, warm and insulated boots. If you are going to be outside for a long time, you'll want to wear a warm hat and gloves.";
+    return "Prioritize heavy insulated warmth. Layer a thick down jacket over a merino wool knit, paired with lined trousers and lug-sole winter boots. Add a ribbed beanie and fleece gloves before dusk.";
   }
   if (condition.toLowerCase().includes("rain")) {
-    return "Damp air and persistent rain call for a waterproof jacket or raincoat, breathable layers underneath, and water-resistant boots or closed shoes with good grip on slick streets.";
+    return "Opt for sealed waterproof outerwear. Wear an unlined rain shell over a lightweight cotton crewneck with treated trousers and water-resistant boots. Keep layers breathable to prevent overheating indoors.";
   }
   if (tempF >= 78) {
-    return "Light, breathable fabrics are your best friend today. A loose cotton tee or linen shirt, tailored shorts, and comfortable open or slip-on footwear will keep you cool in the heat.";
+    return "Keep your base minimal. A boxy organic cotton tee with tailored linen shorts promotes clean airflow on warm sidewalks. Slip-on leather slides or low canvas sneakers complete the silhouette.";
   }
   if (tempF >= 65) {
-    return "A comfortable, temperate day ideal for breathable layers. A relaxed long-sleeve or light tee with straight-leg trousers and versatile everyday shoes.";
+    return "Stick to versatile midweight layers. A relaxed cotton long-sleeve paired with straight-leg trousers offers effortless temperature balance. Keep an unlined overshirt on hand when the sun dips.";
   }
-  return "Cooler conditions call for medium-weight layering. A classic crewneck or sweater over a soft tee, durable denim or chinos, and sturdy closed leather shoes.";
+  return "Layer structured transitional staples. Pair a classic wool crewneck with relaxed dark denim and sturdy leather derbies. Drape a clean trench or chore coat to cut the morning breeze.";
 }
 
 export function getNarrativeBringDescription(icons: IconId[], tempF: number, condition: string): string {
   if (condition.toLowerCase().includes("rain") || icons.includes("umbrella")) {
-    return "Keep an umbrella within arm's reach and consider a compact waterproof bag cover to protect your everyday carry from sudden rain bursts.";
+    return "Keep a compact umbrella ready. Persistent drizzle will coat surfaces through the afternoon. Slip extra tech into a water-resistant tote.";
   }
   if (tempF <= 35) {
-    return "Always pack water, but you can also pack hot tea or water as an alternative. Pack your gloves, maybe a scarf, if you plan to be outside for a long period of time.";
+    return "Pack thermal essentials. Carry lined leather gloves and an insulated flask of hot tea. An extra wool scarf prevents sudden wind chill.";
   }
   if (tempF >= 78) {
-    return "Stay hydrated with a cold water bottle, pack your sunglasses for peak afternoon glare, and keep sunscreen handy if you will be under direct sun.";
+    return "Carry sun and hydration protection. Pack UV400 dark sunglasses and a chilled water bottle. A compact mineral sunscreen handles direct afternoon exposure.";
   }
-  return "Bring a reusable water bottle and sunglasses for changing light conditions throughout the afternoon.";
+  return "Bring essentials for changing light. Carry polarized frames and an insulated bottle for steady hydration across the afternoon.";
 }
 
