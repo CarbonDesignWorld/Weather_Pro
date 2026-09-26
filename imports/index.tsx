@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useWeather } from "../src/context/WeatherContext";
 import { WEATHER_BACKGROUNDS } from "../src/lib/backgrounds";
 import PrepareHeader from "../src/components/PrepareHeader";
@@ -17,11 +17,23 @@ export default function HomeScreen() {
   const theme = brief?.weatherTheme || "cloudy";
   const bg = WEATHER_BACKGROUNDS[theme] || WEATHER_BACKGROUNDS.cloudy;
 
+  // Responsive mobile vs desktop background
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 1023px)");
+    const update = () => setIsMobile(mql.matches);
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
+
+  const currentBgSrc = isMobile ? bg.mobileSrc : bg.src;
+
   return (
     <div
       className="relative min-h-screen w-full flex flex-col font-sans transition-all duration-700 ease-in-out overflow-x-hidden bg-[#FAF8F4]"
       style={{
-        backgroundImage: `url(${bg.src})`,
+        backgroundImage: `url(${currentBgSrc})`,
         backgroundSize: "cover",
         backgroundPosition: "center top",
         backgroundRepeat: "no-repeat",

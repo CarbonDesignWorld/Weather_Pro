@@ -1,39 +1,46 @@
 import { WeatherTheme } from "./types";
 import { getWMOInfo } from "./constants";
 
-export const WEATHER_BACKGROUNDS: Record<WeatherTheme, { src: string; alt: string; label: string }> = {
+export const WEATHER_BACKGROUNDS: Record<WeatherTheme, { src: string; mobileSrc: string; alt: string; label: string }> = {
   cloudy: {
     src: "/backgrounds/cloudy.jpg",
+    mobileSrc: "/backgrounds/mobile/cloudy.jpg",
     alt: "Cloudy day woven canvas tapestry",
     label: "Cloudy",
   },
   snowy: {
     src: "/backgrounds/snowy.jpg",
+    mobileSrc: "/backgrounds/mobile/snowy.jpg",
     alt: "Snowy day frosty woven tapestry",
     label: "Snowy",
   },
   rainy: {
     src: "/backgrounds/rainy.jpg",
+    mobileSrc: "/backgrounds/mobile/rainy.jpg",
     alt: "Rainy day woven tapestry with cloud and umbrella",
     label: "Rainy",
   },
   clear_sky: {
     src: "/backgrounds/clear_sky.jpg",
+    mobileSrc: "/backgrounds/mobile/clear_sky.jpg",
     alt: "Clear sky gentle blue tapestry",
     label: "Clear sky",
   },
   sunny: {
     src: "/backgrounds/sunny.jpg",
+    mobileSrc: "/backgrounds/mobile/sunny.jpg",
     alt: "Sunny day golden amber woven tapestry",
     label: "Sunny",
   },
   humid: {
     src: "/backgrounds/humid.jpg",
+    mobileSrc: "/backgrounds/mobile/humid.jpg",
     alt: "Humid day warm misty woven tapestry",
     label: "Humid",
   },
   windy: {
     src: "/backgrounds/windy.jpg",
+    mobileSrc: "/backgrounds/mobile/windy.jpg",
     alt: "Windy day sweeping pointillist wind tapestry",
     label: "Windy",
   },
