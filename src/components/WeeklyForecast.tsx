@@ -138,32 +138,31 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                   padding: "8px 4px",
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "flex-start",
-                  gap: "10px",
+                  alignItems: "center",
+                  gap: "6px",
                 }}
-                className="bg-[#FAF8F4] rounded-[12px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
+                className="bg-[#FAF8F4] rounded-[16px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
               >
-                {/* Day Name (B3 - Primary color) + Divider Frame */}
-                <div className="w-full flex flex-col items-center">
-                  <span
-                    className="w-full truncate text-center"
-                    style={{
-                      color: "var(--text-primary, #2E2A26)",
-                      textAlign: "center",
-                      leadingTrim: "both",
-                      textEdge: "cap",
-                      fontFamily: '"PT Serif", serif',
-                      fontSize: "11.108px",
-                      fontStyle: "normal",
-                      fontWeight: 400,
-                      lineHeight: "150%",
-                      letterSpacing: "0.222px",
-                    }}
-                  >
-                    {slot.dayName}
-                  </span>
-                  <div className="w-full border-t border-[#E4DFD6] mt-1" />
-                </div>
+                {/* Day Name (B3 - Primary color) */}
+                <span
+                  style={{
+                    color: "var(--text-primary, #2E2A26)",
+                    textAlign: "center",
+                    fontFamily: '"PT Serif", serif',
+                    fontSize: "11.108px",
+                    fontStyle: "normal",
+                    fontWeight: 400,
+                    lineHeight: "150%",
+                    letterSpacing: "0.222px",
+                    whiteSpace: "nowrap",
+                  }}
+                  className="w-full text-center block"
+                >
+                  {slot.dayName}
+                </span>
+
+                {/* Divider Line */}
+                <div className="w-[63px] border-t border-[#E4DFD6]" />
 
                 {/* Icon and Temp Frame */}
                 <div className="flex items-center justify-center gap-1.5 w-full">
@@ -182,13 +181,11 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                     className="flex flex-col text-left"
                     style={{
                       color: "var(--text-secondary, #6B655B)",
-                      leadingTrim: "both",
-                      textEdge: "cap",
                       fontFamily: '"PT Serif", serif',
                       fontSize: "11.108px",
                       fontStyle: "normal",
                       fontWeight: 400,
-                      lineHeight: "120%",
+                      lineHeight: "130%",
                       letterSpacing: "0.222px",
                     }}
                   >

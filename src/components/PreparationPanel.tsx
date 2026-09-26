@@ -226,10 +226,10 @@ export default function PreparationPanel() {
                       padding: "8px 4px",
                       flexDirection: "column",
                       justifyContent: "center",
-                      alignItems: "flex-start",
-                      gap: "10px",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
-                    className="bg-[#FAF8F4] rounded-[12px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
+                    className="bg-[#FAF8F4] rounded-[16px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
                   >
                     {/* Icon and Degrees Frame */}
                     <div className="flex items-center justify-center gap-1.5 w-full">
@@ -246,13 +246,11 @@ export default function PreparationPanel() {
                         className="flex flex-col text-left"
                         style={{
                           color: "var(--text-secondary, #6B655B)",
-                          leadingTrim: "both",
-                          textEdge: "cap",
                           fontFamily: '"PT Serif", serif',
                           fontSize: "11.108px",
                           fontStyle: "normal",
                           fontWeight: 400,
-                          lineHeight: "120%",
+                          lineHeight: "130%",
                           letterSpacing: "0.222px",
                         }}
                       >
@@ -261,28 +259,26 @@ export default function PreparationPanel() {
                       </div>
                     </div>
 
-                    {/* Divider Line + Hour Time Frame */}
-                    <div className="w-full flex flex-col items-center">
-                      <div className="w-full border-t border-[#E4DFD6] mb-1" />
-                      {/* Hour Time (B3 - Primary color #2E2A26) */}
-                      <span
-                        className="w-full text-center truncate"
-                        style={{
-                          color: "var(--text-primary, #2E2A26)",
-                          textAlign: "center",
-                          leadingTrim: "both",
-                          textEdge: "cap",
-                          fontFamily: '"PT Serif", serif',
-                          fontSize: "11.108px",
-                          fontStyle: "normal",
-                          fontWeight: 400,
-                          lineHeight: "150%",
-                          letterSpacing: "0.222px",
-                        }}
-                      >
-                        {h.displayTime}
-                      </span>
-                    </div>
+                    {/* Divider Line */}
+                    <div className="w-[63px] border-t border-[#E4DFD6]" />
+
+                    {/* Hour Time (B3 - Primary color #2E2A26) */}
+                    <span
+                      style={{
+                        color: "var(--text-primary, #2E2A26)",
+                        textAlign: "center",
+                        fontFamily: '"PT Serif", serif',
+                        fontSize: "11.108px",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        lineHeight: "150%",
+                        letterSpacing: "0.222px",
+                        whiteSpace: "nowrap",
+                      }}
+                      className="w-full text-center block"
+                    >
+                      {h.displayTime}
+                    </span>
                   </div>
                 );
               })}
