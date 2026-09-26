@@ -212,7 +212,7 @@ export default function PreparationPanel() {
                   <div
                     key={idx}
                     data-name="Weather Cell"
-                    className="w-[74px] h-[86px] bg-[#FAF8F4] rounded-[12px] py-1.5 px-1.5 flex flex-col items-center justify-between border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
+                    className="w-[74px] h-[86px] bg-[#FAF8F4] rounded-[12px] p-2 flex flex-col items-center justify-between border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
                   >
                     {/* Icon and Degrees Frame */}
                     <div className="flex items-center justify-center gap-1.5 w-full">
@@ -224,12 +224,19 @@ export default function PreparationPanel() {
                         }}
                         title={`${hourOrb.label}: ${h.tempF}°F`}
                       />
+                      {/* Temperature Stack (B3 - Secondary color #6B655B) */}
                       <div
-                        className="flex flex-col text-[#6B655B] text-left"
+                        className="flex flex-col text-left"
                         style={{
-                          fontFamily: '"Fira Sans", sans-serif',
-                          fontSize: "12px",
-                          lineHeight: "1.2",
+                          color: "var(--text-secondary, #6B655B)",
+                          leadingTrim: "both",
+                          textEdge: "cap",
+                          fontFamily: '"PT Serif", serif',
+                          fontSize: "11.108px",
+                          fontStyle: "normal",
+                          fontWeight: 400,
+                          lineHeight: "150%",
+                          letterSpacing: "0.222px",
                         }}
                       >
                         <span>{h.tempF}°F</span>
@@ -238,15 +245,22 @@ export default function PreparationPanel() {
                     </div>
 
                     {/* Divider Line */}
-                    <div className="w-full border-t border-[#E4DFD6] my-0.5" />
+                    <div className="w-full border-t border-[#E4DFD6]" />
 
-                    {/* Hour Time */}
+                    {/* Hour Time (B3 - Primary color #2E2A26) */}
                     <span
-                      className="w-full text-center text-[#2E2A26] font-normal truncate"
+                      className="w-full text-center truncate"
                       style={{
-                        fontFamily: '"Fira Sans", sans-serif',
-                        fontSize: "12px",
-                        lineHeight: "1.2",
+                        color: "var(--text-primary, #2E2A26)",
+                        textAlign: "center",
+                        leadingTrim: "both",
+                        textEdge: "cap",
+                        fontFamily: '"PT Serif", serif',
+                        fontSize: "11.108px",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        lineHeight: "150%",
+                        letterSpacing: "0.222px",
                       }}
                     >
                       {h.displayTime}

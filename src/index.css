@@ -74,6 +74,7 @@ body,
 
 :root {
   --text-primary: #2E2A26;
+  --text-secondary: #6B655B;
 }
 
 .font-b1 {
@@ -98,10 +99,13 @@ body,
 
 .font-b3 {
   font-family: 'PT Serif', serif;
+  font-size: 11.108px;
+  font-style: normal;
   font-weight: 400;
-  font-size: 11.11px;
-  line-height: 150%;
-  letter-spacing: 0.02em;
+  line-height: 150%; /* 16.663px */
+  letter-spacing: 0.222px;
+  leading-trim: both;
+  text-edge: cap;
 }
 
 .font-btn {
