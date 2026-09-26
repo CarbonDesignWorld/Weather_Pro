@@ -5,7 +5,7 @@ export default function PrepareHeader() {
   const ctx = useWeather();
 
   return (
-    <header className="w-full max-w-[1234px] mx-auto h-[69px] flex items-center justify-between px-2 lg:px-6 py-[9px] z-20">
+    <header className="w-full h-[69px] flex items-center justify-between px-4 py-[9px] z-20">
       {/* Brand Monogram "P" (Figma: prepare-mark 1) */}
       <div className="flex items-center pl-1 sm:pl-0">
         <a

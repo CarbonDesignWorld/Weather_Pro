@@ -32,20 +32,20 @@ export default function HomeScreen() {
       <div className="absolute inset-0 bg-black/[0.03] pointer-events-none" />
 
       {/* Main App Container */}
-      <div className="relative z-10 flex flex-col min-h-screen max-w-[1234px] mx-auto w-full">
+      <div className="relative z-10 flex flex-col min-h-screen w-full">
         {/* Top Header Navigation */}
         <PrepareHeader />
 
         {/* Main Content Area */}
-        <main className="flex-1 w-full px-2 lg:px-4 flex flex-col justify-center">
+        <main className="flex-1 w-full px-4 flex flex-col justify-center">
           {/* ================= DESKTOP 3-COLUMN LAYOUT (Figma node 416:8537 / Frame 211) ================= */}
-          <div className="hidden lg:flex flex-row items-end justify-between w-full max-w-[1202px] mx-auto min-h-[713px] h-[713px]">
-            {/* Left Column: Left side panel (426px x 697px / 713px with 8px left/right padding, Figma node 461:10584) */}
+          <div className="hidden lg:flex flex-row items-end justify-between w-full min-h-[713px] h-[713px]">
+            {/* Left Column: Left side panel (426px x 697px / 713px, Figma node 461:10584) */}
             <div
               data-name="left panel"
               className={`w-[426px] ${
                 isExpanded ? "h-[713px]" : "h-[697px]"
-              } px-2 flex flex-col justify-between items-start flex-shrink-0 transition-all duration-300`}
+              } flex flex-col justify-between items-start flex-shrink-0 transition-all duration-300`}
             >
               {!isExpanded && <GreetingCard />}
 
