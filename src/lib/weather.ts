@@ -424,8 +424,8 @@ export async function fetchDayBrief(location: LocationInfo): Promise<DayBrief> {
   const wearDescription = getNarrativeWearDescription(rulesResult.wearIcons, current.tempF, current.condition);
   const packDescription = getNarrativeBringDescription(rulesResult.packIcons, current.tempF, current.condition);
 
-  // Compute 7-day daily forecast
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // Compute 7-day daily forecast (abbreviated day names for compact weather cells)
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const weekly: DailyForecastSlot[] = [];
   const dailyTimes: string[] = data.daily?.time || [];
   for (let i = 0; i < Math.min(7, dailyTimes.length); i++) {

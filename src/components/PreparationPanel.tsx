@@ -223,16 +223,16 @@ export default function PreparationPanel() {
                       maxWidth: "71px",
                       minHeight: "80px",
                       maxHeight: "80px",
-                      padding: "8px 4px",
+                      padding: "8px 6px",
                       flexDirection: "column",
-                      justifyContent: "center",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      gap: "6px",
+                      boxSizing: "border-box",
                     }}
                     className="bg-[#FAF8F4] rounded-[16px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
                   >
                     {/* Icon and Degrees Frame */}
-                    <div className="flex items-center justify-center gap-1.5 w-full">
+                    <div className="flex items-center justify-center gap-1.5 w-full pt-0.5">
                       <div
                         className="w-[18px] h-[18px] rounded-full flex-shrink-0 transition-all duration-300"
                         style={{
@@ -250,7 +250,7 @@ export default function PreparationPanel() {
                           fontSize: "11.11px",
                           fontStyle: "normal",
                           fontWeight: 400,
-                          lineHeight: "130%",
+                          lineHeight: "115%",
                           letterSpacing: "0.02em",
                         }}
                       >
@@ -260,7 +260,7 @@ export default function PreparationPanel() {
                     </div>
 
                     {/* Divider Line */}
-                    <div className="w-[63px] border-t border-[#E4DFD6]" />
+                    <div className="w-full border-t border-[#E4DFD6]" />
 
                     {/* Hour Time (B3 - Primary color #2E2A26) */}
                     <span
@@ -271,11 +271,11 @@ export default function PreparationPanel() {
                         fontSize: "11.11px",
                         fontStyle: "normal",
                         fontWeight: 400,
-                        lineHeight: "150%",
+                        lineHeight: "120%",
                         letterSpacing: "0.02em",
                         whiteSpace: "nowrap",
                       }}
-                      className="w-full text-center block"
+                      className="w-full text-center block pb-0.5"
                     >
                       {h.displayTime}
                     </span>

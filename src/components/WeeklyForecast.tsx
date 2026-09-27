@@ -55,19 +55,42 @@ export function getFeelsLikeOrbStyle(tempF: number): OrbStyle {
   };
 }
 
+export function formatDayAbbreviation(day: string): string {
+  if (!day) return "";
+  const cleaned = day.trim();
+  const map: Record<string, string> = {
+    monday: "Mon",
+    tuesday: "Tue",
+    wednesday: "Wed",
+    thursday: "Thu",
+    friday: "Fri",
+    saturday: "Sat",
+    sunday: "Sun",
+    mon: "Mon",
+    tue: "Tue",
+    wed: "Wed",
+    thu: "Thu",
+    fri: "Fri",
+    sat: "Sat",
+    sun: "Sun",
+    today: "Today",
+  };
+  return map[cleaned.toLowerCase()] || cleaned.slice(0, 3);
+}
+
 export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
   const ctx = useWeather();
   const isExpandedOrOpen = Boolean(ctx?.chatOpen);
 
   // Default mock 7-day slots if API is still loading
   const displaySlots = slots.length > 0 ? slots.slice(0, 7) : [
-    { dayName: "Monday", maxTempF: 75, maxTempC: 24, conditionCode: 0, date: "", minTempF: 60, minTempC: 16, condition: "Sunny" },
-    { dayName: "Tuesday", maxTempF: 72, maxTempC: 22, conditionCode: 1, date: "", minTempF: 58, minTempC: 14, condition: "Clear" },
-    { dayName: "Wednesday", maxTempF: 68, maxTempC: 20, conditionCode: 61, date: "", minTempF: 54, minTempC: 12, condition: "Rain" },
-    { dayName: "Thursday", maxTempF: 70, maxTempC: 21, conditionCode: 3, date: "", minTempF: 55, minTempC: 13, condition: "Overcast" },
-    { dayName: "Friday", maxTempF: 74, maxTempC: 23, conditionCode: 0, date: "", minTempF: 59, minTempC: 15, condition: "Sunny" },
-    { dayName: "Saturday", maxTempF: 60, maxTempC: 16, conditionCode: 61, date: "", minTempF: 48, minTempC: 9, condition: "Rain" },
-    { dayName: "Sunday", maxTempF: 61, maxTempC: 16, conditionCode: 3, date: "", minTempF: 50, minTempC: 10, condition: "Overcast" },
+    { dayName: "Mon", maxTempF: 75, maxTempC: 24, conditionCode: 0, date: "", minTempF: 60, minTempC: 16, condition: "Sunny" },
+    { dayName: "Tue", maxTempF: 72, maxTempC: 22, conditionCode: 1, date: "", minTempF: 58, minTempC: 14, condition: "Clear" },
+    { dayName: "Wed", maxTempF: 68, maxTempC: 20, conditionCode: 61, date: "", minTempF: 54, minTempC: 12, condition: "Rain" },
+    { dayName: "Thu", maxTempF: 70, maxTempC: 21, conditionCode: 3, date: "", minTempF: 55, minTempC: 13, condition: "Overcast" },
+    { dayName: "Fri", maxTempF: 74, maxTempC: 23, conditionCode: 0, date: "", minTempF: 59, minTempC: 15, condition: "Sunny" },
+    { dayName: "Sat", maxTempF: 60, maxTempC: 16, conditionCode: 61, date: "", minTempF: 48, minTempC: 9, condition: "Rain" },
+    { dayName: "Sun", maxTempF: 61, maxTempC: 16, conditionCode: 3, date: "", minTempF: 50, minTempC: 10, condition: "Overcast" },
   ];
 
   return (
@@ -135,11 +158,11 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                   maxWidth: "71px",
                   minHeight: "80px",
                   maxHeight: "80px",
-                  padding: "8px 4px",
+                  padding: "8px 6px",
                   flexDirection: "column",
-                  justifyContent: "center",
+                  justifyContent: "space-between",
                   alignItems: "center",
-                  gap: "6px",
+                  boxSizing: "border-box",
                 }}
                 className="bg-[#FAF8F4] rounded-[16px] border border-[#E4DFD6] shadow-2xs transition-transform hover:scale-[1.03] flex-shrink-0 select-none cursor-default"
               >
@@ -152,20 +175,20 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                     fontSize: "11.11px",
                     fontStyle: "normal",
                     fontWeight: 400,
-                    lineHeight: "150%",
+                    lineHeight: "120%",
                     letterSpacing: "0.02em",
                     whiteSpace: "nowrap",
                   }}
-                  className="w-full text-center block"
+                  className="w-full text-center block pt-0.5"
                 >
-                  {slot.dayName}
+                  {formatDayAbbreviation(slot.dayName)}
                 </span>
 
                 {/* Divider Line */}
-                <div className="w-[63px] border-t border-[#E4DFD6]" />
+                <div className="w-full border-t border-[#E4DFD6]" />
 
                 {/* Icon and Temp Frame */}
-                <div className="flex items-center justify-center gap-1.5 w-full">
+                <div className="flex items-center justify-center gap-1.5 w-full pb-0.5">
                   {/* Glowing Weather Orb */}
                   <div
                     className="w-[18px] h-[18px] rounded-full flex-shrink-0 transition-all duration-300"
@@ -185,7 +208,7 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                       fontSize: "11.11px",
                       fontStyle: "normal",
                       fontWeight: 400,
-                      lineHeight: "130%",
+                      lineHeight: "115%",
                       letterSpacing: "0.02em",
                     }}
                   >
