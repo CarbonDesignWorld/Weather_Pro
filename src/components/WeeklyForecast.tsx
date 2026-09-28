@@ -153,9 +153,9 @@ export default function WeeklyForecast({ slots = [] }: WeeklyForecastProps) {
                 data-name="Weather Cell"
                 style={{
                   display: "flex",
-                  width: "71px",
-                  minWidth: "71px",
-                  maxWidth: "71px",
+                  width: "80px",
+                  minWidth: "80px",
+                  maxWidth: "80px",
                   minHeight: "80px",
                   maxHeight: "80px",
                   padding: "8px 6px",
